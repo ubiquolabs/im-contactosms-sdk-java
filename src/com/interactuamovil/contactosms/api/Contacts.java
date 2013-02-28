@@ -1,5 +1,6 @@
 package com.interactuamovil.contactosms.api;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interactuamovil.contactosms.api.responses.ActionMessageResponse;
 import com.interactuamovil.contactosms.api.responses.ContactResponse;
@@ -31,8 +32,12 @@ public class Contacts extends Request {
      * @param type
      * @return
      */
-    private static Integer decodeStatus(int type) {
+    private static Integer decodeStatus(Integer type) {
         int result;
+
+        if (type == null) {
+            return -1;
+        }
 
         switch (type) {
             case 0:
@@ -72,20 +77,19 @@ public class Contacts extends Request {
             urlParams.put("first_name", firstName);
         if (lastName != null)
             urlParams.put("last_name", lastName);
-        if (limit != 0) {
+        if (limit != null && limit != 0) {
             urlParams.put("limit", limit);
             urlParams.put("start", start);
         }
 
         ListResponse<ContactResponse> response = new ListResponse<ContactResponse>();
-        List<ContactResponse> contactResponse;
+        List<ContactResponse> contactResponses;
 
         try {
             String serverResponse = doRequest("contacts", "get", urlParams, null, true);
             ObjectMapper mapper = new ObjectMapper();
-
-            contactResponse = mapper.readValue(serverResponse, List.class);
-            response.setResult(contactResponse);
+            contactResponses = mapper.readValue(serverResponse, new TypeReference<List<ContactResponse>>() {});
+            response.setResult(contactResponses);
         } catch (Exception e) {
             response.setHasError(true);
             response.setErrorMessage(e.getMessage());

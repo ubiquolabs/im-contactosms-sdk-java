@@ -77,7 +77,7 @@ public class ContactsExample extends BaseExample {
             testContactMsisdn,
             testContactLastName,
             testContactFirstName,
-            null
+            testContactMsisdn
         );
 
         Response<ContactResponse> contactResponse =
@@ -122,7 +122,8 @@ public class ContactsExample extends BaseExample {
         List<ContactResponse> firstResult = contactOneFromList.getResult();
         List<ContactResponse> secondResult = contactTwoFromList.getResult();
 
-        if (!firstResult.isEmpty() && !secondResult.isEmpty()) {
+        if ((firstResult != null && !firstResult.isEmpty())
+                && (secondResult != null && !secondResult.isEmpty())) {
             ContactResponse firstContact = firstResult.get(0);
             ContactResponse secondContact = secondResult.get(0);
             String msisdn = firstContact.getMsisdn();
@@ -145,8 +146,7 @@ public class ContactsExample extends BaseExample {
         );
 
         if (response.hasError()) {
-            throw new AssertionError("Could not add contact: "
-                + response.getErrorMessage());
+            System.out.println("Error: " + response.getErrorMessage());
         }
 
         Response<ContactResponse> contactResponse =

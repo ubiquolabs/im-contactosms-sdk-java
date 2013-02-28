@@ -108,25 +108,37 @@ public abstract class Request {
             wr.close();
         }
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        InputStream inputStream;
+        Integer responseCode = connection.getResponseCode();
+
+        if (responseCode != 200) {
+            inputStream = connection.getErrorStream();
+        } else {
+            inputStream = connection.getInputStream();
+        }
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
         String decodedString, resultString = "";
         while ((decodedString = in.readLine()) != null) {
             resultString += decodedString;
         }
 
         in.close();
-
         connection.disconnect();
+
+        if (responseCode != 200) {
+            throw new IOException(resultString);
+        }
 
         return resultString;
     }
 
     private String generateAuthString(String request, String httpDate, String jsonText, String filters) throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeyException {
 
-        if (jsonText == null || jsonText == "null")
+        if (jsonText == null || jsonText.equals("null"))
             jsonText = "";
         String canonicalString;
-        if (request == "get")
+        if (request.equals("get"))
             canonicalString = getApiKey() + httpDate + filters; // + jsonText;
         else
             canonicalString = getApiKey() + httpDate + filters + jsonText;
