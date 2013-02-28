@@ -14,6 +14,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
@@ -82,9 +83,14 @@ public abstract class Request {
     public String send(URL url, String auth, String httpDate, String requestType, String bodyParams) throws IOException, ProtocolException {
 
         SSLContext sc =  getSSLContext();
+        HttpURLConnection connection;
+        if (url.getProtocol().equalsIgnoreCase("https")) {
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            connection = (HttpsURLConnection) url.openConnection();
+        } else {
+            connection = (HttpURLConnection) url.openConnection();
+        }
 
-        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         requestType = requestType.toUpperCase();
 
         connection.setInstanceFollowRedirects(false);
