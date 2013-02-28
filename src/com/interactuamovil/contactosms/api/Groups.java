@@ -1,5 +1,6 @@
 package com.interactuamovil.contactosms.api;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interactuamovil.contactosms.api.responses.ActionMessageResponse;
 import com.interactuamovil.contactosms.api.responses.ContactResponse;
@@ -24,8 +25,7 @@ public class Groups extends Request {
         try {
             String serverResponse = doRequest("groups", "get", null, null, false);
             ObjectMapper mapper = new ObjectMapper();
-
-            groupResponse = mapper.readValue(serverResponse, List.class);
+            groupResponse = mapper.readValue(serverResponse, new TypeReference<List<GroupResponse>>() {});
             response.setResult(groupResponse);
         } catch (Exception e) {
             response.setHasError(true);
