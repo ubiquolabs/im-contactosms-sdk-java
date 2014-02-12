@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.interactuamovil.contactosms.api;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -15,15 +11,15 @@ import java.io.IOException;
  * @author sergeiw
  */
 public class InboxReceiver {
-    
+
     private static final ObjectMapper mapper = new ObjectMapper();
-    
+
     public static InboxMessage parseInboxJson(String inboxJson) throws JsonMappingException, JsonParseException, IOException {
         InboxMessage messageResponse = mapper.readValue(inboxJson, InboxMessage.class);
-        return messageResponse;        
+        return messageResponse;
     }
-     
-    
-    
-    
+
+
+
+
 }

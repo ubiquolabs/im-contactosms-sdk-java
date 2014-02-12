@@ -1,5 +1,8 @@
 package com.interactuamovil.contactosms.api.responses;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 public class GroupResponse {
 
     class GroupMembers {
@@ -7,6 +10,7 @@ public class GroupResponse {
         private int total;
         private int pending;
         private int confirmed;
+        private int cancelled;
 
         public void setTotal(int i) {
             total = i;
@@ -32,8 +36,17 @@ public class GroupResponse {
             return confirmed;
         }
 
+        public int getCancelled() {
+            return cancelled;
+        }
+
+        public void setCancelled(int cancelled) {
+            this.cancelled = cancelled;
+        }
+
     }
 
+    @JsonProperty("short_name")
     private String shortName;
     private String name;
     private String description;

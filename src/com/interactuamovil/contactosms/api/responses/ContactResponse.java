@@ -1,9 +1,13 @@
 package com.interactuamovil.contactosms.api.responses;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ContactResponse {
 
     private String msisdn = null;
+    @JsonProperty("first_name")
     private String firstName = null;
+    @JsonProperty("last_name")
     private String lastName = null;
     private String status = null;
 
