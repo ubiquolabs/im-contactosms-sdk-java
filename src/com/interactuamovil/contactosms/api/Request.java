@@ -22,8 +22,12 @@ import java.security.InvalidKeyException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.TimeZone;
 
 
@@ -154,13 +158,16 @@ public abstract class Request {
         Boolean firstParam = true;
 
         if (parameters != null)
-            if (parameters.size() > 0)
-                for (String key : parameters.keySet()) {
+            if (parameters.size() > 0) {                        
+                ArrayList<String> sortedList = new ArrayList<String>(parameters.keySet());
+                Collections.sort(sortedList);                
+                for (String key : sortedList) {
                     if (!firstParam)
                         queryString += "&";
                     queryString += key + "=" + parameters.get(key);
                     firstParam = false;
                 }
+            }
 
         return queryString;
     }

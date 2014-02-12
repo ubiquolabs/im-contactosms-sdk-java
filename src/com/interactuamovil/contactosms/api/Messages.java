@@ -21,7 +21,7 @@ public class Messages extends Request {
     }
 
     private String getDateFormat(Date d) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyy-MM-dd");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         return formatter.format(d);
     }
 
@@ -180,16 +180,18 @@ public class Messages extends Request {
      * @param groups
      * @return
      */
-    public Response<ActionMessageResponse> addSchedule(Date startDate, Date endDate, String message, String time, String frequency, String[] groups) {
+    public Response<ActionMessageResponse> addSchedule(Date startDate, Date endDate, String eventName, String message, String time, String frequency, String repeatDays, String[] groups) {
         Map<String, Serializable> params = new LinkedHashMap<String, Serializable>();
         Response<ActionMessageResponse> response = new Response<ActionMessageResponse>();
         ActionMessageResponse messageResponse;
 
+        params.put("event_name", eventName);
         params.put("start_date", getDateFormat(startDate));
         params.put("end_date", getDateFormat(endDate));
         params.put("message", message);
-        params.put("time", time);
-        params.put("frequency", frequency);
+        params.put("execution_time", time);
+        params.put("repeat_interval", frequency);
+        params.put("repeat_days", repeatDays);
         params.put("groups", groups);
 
         try {
