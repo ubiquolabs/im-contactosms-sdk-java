@@ -50,6 +50,9 @@ public class JsonSerializer implements ISerializer {
     public String serialize(Object o) throws IOException {
         StringWriter sw = new StringWriter();
         try {
+            if (o == null)
+                return "";
+            
             JsonGenerator jg = jsonFactory.createGenerator(sw);
             //jg.useDefaultPrettyPrinter();        
             objectMapper.writeValue(jg, o);

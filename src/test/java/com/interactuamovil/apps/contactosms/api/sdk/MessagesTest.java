@@ -56,11 +56,11 @@ public class MessagesTest extends TestCase {
 
     /**
      * Test of sendToGroups method, of class Messages.
-     *
+     */
     public void testSendToGroups() {
         System.out.println("sendToGroups");
         String[] short_name = new String[] {"G1"};
-        String message = "probando a grupo 2";
+        String message = "probando a grupo 3";
         Messages instance = new Messages(
                     "61ee667b06f9409ed02e88bd0416abaf", 
                     "ebf9d11ba96c630011216f1fa3c436ca", 
@@ -72,11 +72,11 @@ public class MessagesTest extends TestCase {
 
     /**
      * Test of sendToContact method, of class Messages.
-     *
+     */
     public void testSendToContact() {
         System.out.println("sendToContact");
         String msisdn = "50252017507";
-        String message = "probando individual 2";
+        String message = "probando individual 3";
         Messages instance = new Messages(
                     "61ee667b06f9409ed02e88bd0416abaf", 
                     "ebf9d11ba96c630011216f1fa3c436ca", 

@@ -1,7 +1,6 @@
 package com.interactuamovil.apps.contactosms.api.sdk.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.interactuamovil.apps.contactosms.api.client.rest.contacts.ContactJsonObject;
 import com.interactuamovil.apps.contactosms.api.utils.JsonObject;
 import java.io.IOException;
 

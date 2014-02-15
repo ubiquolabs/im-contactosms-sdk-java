@@ -130,13 +130,16 @@ public class ContactsTest extends TestCase {
      *
     public void testAdd_String() throws Exception {
         System.out.println("add");
-        String msisdn = "";
-        Contacts instance = null;
+        String countryCode = "502";
+        String msisdn = "50252017510";
+        Contacts instance = new Contacts(
+                    "61ee667b06f9409ed02e88bd0416abaf", 
+                    "ebf9d11ba96c630011216f1fa3c436ca", 
+                    "http://localhost:8088/api/");
         ApiResponse expResult = null;
-        ApiResponse result = instance.add(msisdn);
+        ApiResponse result = instance.add(countryCode, msisdn);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
     }
 
     /**

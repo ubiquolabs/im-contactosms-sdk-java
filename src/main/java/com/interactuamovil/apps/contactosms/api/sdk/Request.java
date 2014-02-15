@@ -63,6 +63,9 @@ public abstract class Request {
 
         
         String jsonText = getSerializer().serialize(bodyParams);
+        if (jsonText == null) {
+            jsonText = "";
+        }
 
         String filters = toQueryString(urlParams);
         if (addToQueryString) {

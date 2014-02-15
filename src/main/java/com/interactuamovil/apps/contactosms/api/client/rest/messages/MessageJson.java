@@ -55,6 +55,9 @@ public class MessageJson extends JsonObject {
     @JsonProperty(value="recipients")
     private List<RecipientJson> recipients;
 
+    public MessageJson() {
+    }
+
     public static MessageJson fromJson(String json) throws IOException {
         return JsonObject.fromJson(json, MessageJson.class);        
     }
@@ -68,6 +71,10 @@ public class MessageJson extends JsonObject {
         @JsonProperty(value="status")
         private MessageStatus messageStatus;
 
+        public RecipientJson() {
+        }
+
+        
         /**
          * @return the msisdn
          */

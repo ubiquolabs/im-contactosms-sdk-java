@@ -21,12 +21,16 @@ public class ContactJsonObject extends JsonObject {
     
     @JsonProperty(value="msisdn")
     private String msisdn;
+    @JsonProperty(value="phoneNumber")
+    private String phoneNumber;
     @JsonProperty(value="country_code")
     private String countryCode;
     @JsonProperty(value="first_name")
     private String firstName;
     @JsonProperty(value="last_name")
     private String lastName;
+    @JsonProperty(value="full_name")
+    private String fullName;
     @JsonProperty(value="email")
     private String email;
     @JsonProperty(value="status")
@@ -234,6 +238,34 @@ public class ContactJsonObject extends JsonObject {
      */
     public void setAddedFrom(AddedFrom addedFrom) {
         this.addedFrom = addedFrom;
+    }
+
+    /**
+     * @return the fullName
+     */
+    public String getFullName() {
+        return fullName;
+    }
+
+    /**
+     * @param fullName the fullName to set
+     */
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    /**
+     * @return the phoneNumber
+     */
+    public String getPhoneNumber() {
+        return msisdn.substring(countryCode.length()+1, msisdn.length());        
+    }
+
+    /**
+     * @param phoneNumber the phoneNumber to set
+     */
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
     
     

@@ -2,6 +2,7 @@ package com.interactuamovil.apps.contactosms.api.sdk;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.interactuamovil.apps.contactosms.api.client.rest.contacts.ContactJsonObject;
+import com.interactuamovil.apps.contactosms.api.client.rest.groups.GroupJsonObject;
 import com.interactuamovil.apps.contactosms.api.enums.AddedFrom;
 import com.interactuamovil.apps.contactosms.api.enums.ContactStatus;
 import com.interactuamovil.apps.contactosms.api.sdk.responses.GroupResponse;
@@ -23,35 +24,6 @@ public class Contacts extends Request {
 
     public Contacts(String apiKey, String secretKey, String apiUri) {
         super(apiKey, secretKey, apiUri);
-    }
-
-    /**
-     * Validates de Status sent
-     *
-     * @param type
-     * @return
-     */
-    private static Integer decodeStatus(Integer type) {
-        int result;
-
-        if (type == null) {
-            return -1;
-        }
-
-        switch (type) {
-            case 0:
-                result = 0;
-                break;
-            case 1:
-                result = 1;
-                break;
-            case 2:
-                result = 2;
-                break;
-            default:
-                result = -1;
-        }
-        return result;
     }
 
     /**
@@ -78,6 +50,9 @@ public class Contacts extends Request {
             urlParams.put("start", start);
         if (limit != null && limit != 0) {
             urlParams.put("limit", limit);            
+        }
+        if (shortResults) {
+            urlParams.put("short_results", "true");
         }
 
         ApiResponse<List<ContactJsonObject>> response;
@@ -269,21 +244,21 @@ public class Contacts extends Request {
      * @throws InvalidKeyException
      * @throws NoSuchAlgorithmException
      */
-    public ApiResponse<List<GroupResponse>> getGroupList(String msisdn) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
+    public ApiResponse<List<GroupJsonObject>> getGroupList(String msisdn) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
         Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
         urlParams.put("msisdn", msisdn);
         
-        ApiResponse<List<GroupResponse>> response;
-        List<GroupResponse> groupResponse;
+        ApiResponse<List<GroupJsonObject>> response;
+        List<GroupJsonObject> groupResponse;
 
         try {
             response = doRequest("contacts/" + msisdn + "/groups", "get", urlParams, null, false);
             if (response.isOk()) {
-                groupResponse = JsonObjectCollection.fromJson(response.getRawResponse(), new TypeReference<List<GroupResponse>>() {});
+                groupResponse = JsonObjectCollection.fromJson(response.getRawResponse(), new TypeReference<List<GroupJsonObject>>() {});
                 response.setResponse(groupResponse);            
             }
         } catch (Exception e) {
-            response = new ApiResponse<List<GroupResponse>>();
+            response = new ApiResponse<List<GroupJsonObject>>();
             response.setErrorCode(-1);
             response.setErrorDescription(e.getMessage());
         }
