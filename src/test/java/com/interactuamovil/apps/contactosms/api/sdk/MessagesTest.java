@@ -56,7 +56,7 @@ public class MessagesTest extends TestCase {
 
     /**
      * Test of sendToGroups method, of class Messages.
-     */
+     *
     public void testSendToGroups() {
         System.out.println("sendToGroups");
         String[] short_name = new String[] {"G1"};
@@ -72,7 +72,7 @@ public class MessagesTest extends TestCase {
 
     /**
      * Test of sendToContact method, of class Messages.
-     */
+     *
     public void testSendToContact() {
         System.out.println("sendToContact");
         String msisdn = "50252017507";

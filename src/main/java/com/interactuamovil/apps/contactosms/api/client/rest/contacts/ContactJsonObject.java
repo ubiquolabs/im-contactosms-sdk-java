@@ -21,7 +21,7 @@ public class ContactJsonObject extends JsonObject {
     
     @JsonProperty(value="msisdn")
     private String msisdn;
-    @JsonProperty(value="phoneNumber")
+    @JsonProperty(value="phone_number")
     private String phoneNumber;
     @JsonProperty(value="country_code")
     private String countryCode;

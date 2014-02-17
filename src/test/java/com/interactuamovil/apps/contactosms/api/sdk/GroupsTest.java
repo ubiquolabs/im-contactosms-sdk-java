@@ -142,7 +142,7 @@ public class GroupsTest extends TestCase {
 
     /**
      * Test of getContactList method, of class Groups.
-     */
+     *
     public void testGetContactList() {
         System.out.println("getContactList");
         String shortName = "g1";
@@ -159,7 +159,7 @@ public class GroupsTest extends TestCase {
 
     /**
      * Test of getAvailableContactList method, of class Groups.
-     */
+     *
     public void testGetAvailableContactList() {
         System.out.println("getAvailableContactList");
         String shortName = "g1";

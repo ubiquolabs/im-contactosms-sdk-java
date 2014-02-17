@@ -7,6 +7,7 @@ package com.interactuamovil.apps.contactosms.api.client.rest.groups;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.interactuamovil.apps.contactosms.api.utils.JsonObject;
 import java.io.IOException;
+import java.util.List;
 
 /**
  *
@@ -20,8 +21,24 @@ public class GroupJsonObject extends JsonObject  {
     private String name;
     @JsonProperty(value = "description")
     private String description;
-    @JsonProperty(value = "members")
+    @JsonProperty(value = "tags")
+    private List<String> tags;
+    @JsonProperty(value = "members")    
     private GroupMembersJsonObject members;
+
+    /**
+     * @return the tags
+     */
+    public List<String> getTags() {
+        return tags;
+    }
+
+    /**
+     * @param tags the tags to set
+     */
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
 
     
     public class GroupMembersJsonObject extends JsonObject  {
