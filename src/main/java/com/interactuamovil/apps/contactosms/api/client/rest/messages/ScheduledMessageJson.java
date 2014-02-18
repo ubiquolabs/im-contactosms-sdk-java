@@ -29,6 +29,8 @@ import org.apache.commons.lang.StringUtils;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ScheduledMessageJson extends JsonObject {
     
+    @JsonProperty(value="scheduled_message_id") 
+    private Integer scheduledMessageId;
     @JsonProperty(value="groups") 
     private List<String> groups;
     @JsonProperty(value="message") 
@@ -84,10 +86,14 @@ public class ScheduledMessageJson extends JsonObject {
     @JsonIgnore
     public String getGroupsNames() {
         List<String> grpList = getGroups();
-        String[] grpArr = new String[grpList.size()];
-        grpArr = grpList.toArray(grpArr);
-        String groupNames = StringUtils.join(grpArr, ",");
-        return groupNames;
+        if (grpList != null) {
+            String[] grpArr = new String[grpList.size()];
+            grpArr = grpList.toArray(grpArr);
+            String groupNames = StringUtils.join(grpArr, ",");
+            return groupNames;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -193,6 +199,20 @@ public class ScheduledMessageJson extends JsonObject {
     @JsonDeserialize(using = JsonRepeatIntervalDeserializer.class)
     public void setRepeatInterval(RepeatInterval repeatInterval) {
         this.repeatInterval = repeatInterval;
+    }
+
+    /**
+     * @return the scheduledMessageId
+     */
+    public Integer getScheduledMessageId() {
+        return scheduledMessageId;
+    }
+
+    /**
+     * @param scheduledMessageId the scheduledMessageId to set
+     */
+    public void setScheduledMessageId(Integer scheduledMessageId) {
+        this.scheduledMessageId = scheduledMessageId;
     }
     
 }

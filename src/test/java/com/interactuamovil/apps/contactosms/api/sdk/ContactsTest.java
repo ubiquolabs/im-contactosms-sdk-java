@@ -42,10 +42,10 @@ public class ContactsTest extends TestCase {
     public void testGetList_5args() throws Exception {
         System.out.println("getList");
         List<ContactStatus> contactStatuses = null;
-        String query = "jo";
+        String query = "";
         Integer start = 0;
         Integer limit = 10;
-        boolean shortResults = false;
+        boolean shortResults = true;        
         Contacts instance = new Contacts(
                     "61ee667b06f9409ed02e88bd0416abaf", 
                     "ebf9d11ba96c630011216f1fa3c436ca", 
