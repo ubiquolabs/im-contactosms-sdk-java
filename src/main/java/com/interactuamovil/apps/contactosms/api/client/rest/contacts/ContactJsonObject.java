@@ -258,7 +258,7 @@ public class ContactJsonObject extends JsonObject {
      * @return the phoneNumber
      */
     public String getPhoneNumber() {
-        return msisdn.substring(countryCode.length()+1, msisdn.length());        
+        return msisdn.substring(countryCode.length(), msisdn.length());        
     }
 
     /**
