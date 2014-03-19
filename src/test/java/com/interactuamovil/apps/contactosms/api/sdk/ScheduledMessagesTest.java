@@ -98,7 +98,7 @@ public class ScheduledMessagesTest extends TestCase {
 
     /**
      * Test of add method, of class ScheduledMessages.
-     */
+     *
     public void testAdd() {
         System.out.println("add");
         Date startDate = new Date();

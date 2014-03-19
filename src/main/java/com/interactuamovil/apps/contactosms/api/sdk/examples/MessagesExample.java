@@ -41,9 +41,9 @@ public class MessagesExample extends BaseExample {
 
     }
 
-    @Override
+    @Override   
     public void test() throws IOException, InvalidKeyException, NoSuchAlgorithmException {
-
+/*
         Messages messagesApi = new Messages(
             getApiKey(),
             getApiSecretKey(),
@@ -61,7 +61,7 @@ public class MessagesExample extends BaseExample {
 
         // Test inbox messages
         testInboxMessages(messagesApi);
-
+*/
     }
 
     private void testInboxMessages(Messages messagesApi) {
@@ -79,7 +79,7 @@ public class MessagesExample extends BaseExample {
     private void testSendToContact(Messages messagesApi) {
 
         ApiResponse<MessageJson> response = messagesApi.sendToContact(
-            testContactMsisdn, testMessage);
+            testContactMsisdn, testMessage, "idunico");
 
         if (response.isOk()) {
             throw new AssertionError("Error sending message to contact: "

@@ -22,6 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -166,7 +167,7 @@ public abstract class Request {
         return "IM " + getApiKey() + ":" + b64Mac;
     }
 
-    private static String toQueryString(Map<String, Serializable> parameters) {
+    private static String toQueryString(Map<String, Serializable> parameters) throws UnsupportedEncodingException {
         String queryString = "";
         Boolean firstParam = true;
 
@@ -177,7 +178,7 @@ public abstract class Request {
                 for (String key : sortedList) {
                     if (!firstParam)
                         queryString += "&";
-                    queryString += key + "=" + parameters.get(key);
+                    queryString += key + "=" + URLEncoder.encode(parameters.get(key).toString(), "UTF-8");
                     firstParam = false;
                 }
             }

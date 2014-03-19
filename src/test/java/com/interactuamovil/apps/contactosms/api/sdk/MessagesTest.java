@@ -8,7 +8,12 @@ import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageJson
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
 import com.interactuamovil.contactosms.api.responses.ListResponse;
 import com.interactuamovil.contactosms.api.responses.Response;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static junit.framework.Assert.assertEquals;
 import junit.framework.TestCase;
 
@@ -17,6 +22,8 @@ import junit.framework.TestCase;
  * @author sergeiw
  */
 public class MessagesTest extends TestCase {
+    
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
     public MessagesTest(String testName) {
         super(testName);
@@ -40,18 +47,25 @@ public class MessagesTest extends TestCase {
      * Test of getList method, of class Messages.
      *
     public void testGetList() {
-        System.out.println("getList");
-        Date startDate = null;
-        Date endDate = null;
-        int start = 0;
-        int limit = 0;
-        String msisdn = "";
-        Messages instance = null;
-        ListResponse expResult = null;
-        ListResponse result = instance.getList(startDate, endDate, start, limit, msisdn);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            System.out.println("getList");        
+            Date startDate = formatter.parse("2014-02-01 00:00:00");
+            Date endDate = formatter.parse("2014-02-20 00:00:00");
+            int start = 0;
+            int limit = 50;
+            String msisdn = null;
+            Messages instance = new Messages(
+                        "61ee667b06f9409ed02e88bd0416abaf", 
+                        "ebf9d11ba96c630011216f1fa3c436ca", 
+                        "http://localhost:8088/api/");
+            ApiResponse<List<MessageJson>> expResult = null;
+            ApiResponse<List<MessageJson>> result = instance.getList(startDate, endDate, start, limit, msisdn);
+            assertEquals(expResult, result);
+            // TODO review the generated test code and remove the default call to fail.
+            fail("The test case is a prototype.");
+        } catch (ParseException ex) {
+            Logger.getLogger(MessagesTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

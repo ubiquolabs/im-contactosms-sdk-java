@@ -5,11 +5,14 @@
 package com.interactuamovil.apps.contactosms.api.client.rest.messages;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.interactuamovil.apps.contactosms.api.enums.MessageDirection;
 import com.interactuamovil.apps.contactosms.api.enums.MessageSentFrom;
 import com.interactuamovil.apps.contactosms.api.enums.MessageStatus;
+import com.interactuamovil.apps.contactosms.api.utils.JsonDateTimeSerializer;
 import com.interactuamovil.apps.contactosms.api.utils.JsonObject;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,7 +35,7 @@ public class MessageJson extends JsonObject {
     private MessageSentFrom sentFrom;
     @JsonProperty(value="id")
     private String clientMessageId;
-    @JsonProperty(value="message")
+    @JsonProperty(value="message")    
     private String message;
     @JsonProperty(value="sent_count")
     private Integer sentCount;
@@ -48,18 +51,55 @@ public class MessageJson extends JsonObject {
     private boolean billable;
     @JsonProperty(value="is_scheduled")
     private boolean scheduled;
+    @JsonProperty(value="created_on")
+    @JsonSerialize(using = JsonDateTimeSerializer.class)
+    private Date createdOn;
     
     @JsonProperty(value="groups")
     private List<String> groups;
     
     @JsonProperty(value="recipients")
     private List<RecipientJson> recipients;
-
+        
+    /* LEGACY v2 */
+    @JsonProperty(value="sms_sent", required = false)
+    private Integer smsSent;    
+    @JsonProperty(value="sms_message", required = false)
+    private Integer smsMessage;
+    
     public MessageJson() {
     }
 
     public static MessageJson fromJson(String json) throws IOException {
         return JsonObject.fromJson(json, MessageJson.class);        
+    }
+
+    /**
+     * @return the createdOn
+     */
+    public Date getCreatedOn() {
+        return createdOn;
+    }
+
+    /**
+     * @param createdOn the createdOn to set
+     */
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    /**
+     * @return the smsSent
+     */
+    public Integer getSmsSent() {
+        return smsSent;
+    }
+
+    /**
+     * @param smsSent the smsSent to set
+     */
+    public void setSmsSent(Integer smsSent) {
+        this.smsSent = smsSent;
     }
     
     public class RecipientJson extends JsonObject {

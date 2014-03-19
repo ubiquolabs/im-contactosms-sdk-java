@@ -1,17 +1,9 @@
 package com.interactuamovil.apps.contactosms.api.sdk;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageJson;
-import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageToContactResponse;
-import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageToGroupResponse;
-import com.interactuamovil.apps.contactosms.api.client.rest.messages.ScheduledMessageJson;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
-import com.interactuamovil.contactosms.api.responses.ActionMessageResponse;
-import com.interactuamovil.contactosms.api.responses.InboxMessageResponse;
-import com.interactuamovil.contactosms.api.responses.ListResponse;
-import com.interactuamovil.contactosms.api.responses.MessageResponse;
-import com.interactuamovil.contactosms.api.responses.Response;
-import com.interactuamovil.contactosms.api.responses.ScheduleMessageResponse;
+import com.interactuamovil.apps.contactosms.api.utils.JsonObjectCollection;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,7 +17,7 @@ public class Messages extends Request {
     }
 
     private String getDateFormat(Date d) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return formatter.format(d);
     }
 
@@ -38,11 +30,11 @@ public class Messages extends Request {
      * @param limit
      * @param msisdn
      * @return
-     *
-    public ListResponse<MessageResponse> getList(Date startDate, Date endDate, int start, int limit, String msisdn) {
+     */
+    public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn) {
         Map<String, Serializable> urlParameters = new LinkedHashMap<String, Serializable>();
-        ListResponse<MessageResponse> response = new ListResponse<MessageResponse>();
-        List<MessageResponse> messageResponse;
+        ApiResponse<List<MessageJson>> response;
+        List<MessageJson> messageResponse;
 
 
         if (!(startDate == null) && !(endDate == null)) {
@@ -57,14 +49,15 @@ public class Messages extends Request {
             urlParameters.put("msisdn", msisdn);
 
         try {
-            String serverResponse = doRequest("messages", "get", urlParameters, null, true);
-            ObjectMapper mapper = new ObjectMapper();
-
-            messageResponse = mapper.readValue(serverResponse, List.class);
-            response.setResult(messageResponse);
+            response = doRequest("messages", "get", urlParameters, null, true);
+            if (response.isOk()) {
+                messageResponse = JsonObjectCollection.fromJson(response.getRawResponse(), new TypeReference<List<MessageJson>>() {});                
+                response.setResponse(messageResponse);
+            }            
         } catch (Exception e) {
-            response.setHasError(true);
-            response.setErrorMessage(e.getMessage());
+            response = new ApiResponse<List<MessageJson>>();
+            response.setErrorCode(-1);
+            response.setErrorDescription(e.getMessage());
         }
         return response;
     }
@@ -105,13 +98,14 @@ public class Messages extends Request {
      * @param message
      * @return
      */
-    public ApiResponse<MessageJson> sendToContact(String msisdn, String message) {
+    public ApiResponse<MessageJson> sendToContact(String msisdn, String message, String messageId) {
         Map<String, Serializable> params = new LinkedHashMap<String, Serializable>();
         ApiResponse<MessageJson> response;
         MessageJson messageResponse;
 
         params.put("msisdn", msisdn);
         params.put("message", message);
+        params.put("id", messageId);
 
         try {
             response = doRequest("messages/send_to_contact", "post", null, params, false);
