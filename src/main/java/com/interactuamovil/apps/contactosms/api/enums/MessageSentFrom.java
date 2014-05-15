@@ -12,5 +12,7 @@ public enum MessageSentFrom {
     WEB,
     API_HTTP,
     API_REST,
-    SMS
+    SMS,
+    SYSTEM,
+    SCHEDULER
 }
