@@ -93,15 +93,16 @@ public class ContactsTest extends TestCase {
      *
     public void testUpdate() throws Exception {
         System.out.println("update");
+        String countryCode = "502";
         String msisdn = "50252017508";
         String firstName = "GAby";
         String lastName = "Pardo";        
         Contacts instance = new Contacts(
-                    "61ee667b06f9409ed02e88bd0416abaf", 
-                    "ebf9d11ba96c630011216f1fa3c436ca", 
+                    "1d4e705080edec039fe580dd26fd1927", 
+                    "0b9aa43039efacc16072a9774af72993", 
                     "http://localhost:8088/api/");
         ApiResponse<ContactJsonObject> expResult = null;
-        ApiResponse<ContactJsonObject> result = instance.update(msisdn, firstName, lastName);
+        ApiResponse<ContactJsonObject> result = instance.update(countryCode, msisdn, firstName, lastName);
         assertEquals(expResult, result);                
     }
 
@@ -111,12 +112,12 @@ public class ContactsTest extends TestCase {
     public void testAdd_3args() throws Exception {
         System.out.println("add");
         String countryCode = "502";
-        String msisdn = "50252017509";
+        String msisdn = "50252017508";
         String firstName = "Aram";
         String lastName = "Guerra";
         Contacts instance = new Contacts(
-                    "61ee667b06f9409ed02e88bd0416abaf", 
-                    "ebf9d11ba96c630011216f1fa3c436ca", 
+                    "1d4e705080edec039fe580dd26fd1927", 
+                    "0b9aa43039efacc16072a9774af72993", 
                     "http://localhost:8088/api/");
         ApiResponse expResult = null;
         ApiResponse result = instance.add(countryCode, msisdn, firstName, lastName);
@@ -149,8 +150,8 @@ public class ContactsTest extends TestCase {
         System.out.println("delete");
         String msisdn = "50252017508";
         Contacts instance = new Contacts(
-                    "61ee667b06f9409ed02e88bd0416abaf", 
-                    "ebf9d11ba96c630011216f1fa3c436ca", 
+                    "1d4e705080edec039fe580dd26fd1927", 
+                    "0b9aa43039efacc16072a9774af72993", 
                     "http://localhost:8088/api/");
         ApiResponse expResult = null;
         ApiResponse result = instance.delete(msisdn);

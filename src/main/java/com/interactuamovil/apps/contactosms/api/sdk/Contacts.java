@@ -118,9 +118,10 @@ public class Contacts extends Request {
      * @throws InvalidKeyException
      * @throws NoSuchAlgorithmException
      */
-    public ApiResponse<ContactJsonObject> update(String msisdn, String firstName, String lastName) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
+    public ApiResponse<ContactJsonObject> update(String countryCode, String msisdn, String firstName, String lastName) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
         
         ContactJsonObject contact = new ContactJsonObject();
+        contact.setCountryCode(countryCode);
         contact.setMsisdn(msisdn);
         contact.setFirstName(firstName);
         contact.setLastName(lastName);
@@ -164,7 +165,7 @@ public class Contacts extends Request {
      * @throws NoSuchAlgorithmException
      */
     public ApiResponse<ContactJsonObject> add(String countryCode, String msisdn, String firstName, String lastName) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
-        logger.debug(String.format("Adding contact with msisdn: %s, firstName: %s, lastName: %s", msisdn, firstName, lastName));
+        logger.debug(String.format("Adding contact with countryCode: %s, msisdn: %s, firstName: %s, lastName: %s", countryCode, msisdn, firstName, lastName));
 
         ContactJsonObject contact = new ContactJsonObject();
         contact.setCountryCode(countryCode);

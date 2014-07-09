@@ -4,10 +4,10 @@
  */
 package com.interactuamovil.apps.contactosms.api.sdk;
 
-import com.interactuamovil.apps.contactosms.api.client.rest.groups.GroupJsonObject;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
 import static junit.framework.Assert.assertTrue;
 import junit.framework.TestCase;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -73,11 +73,11 @@ public class GroupsTest extends TestCase {
         System.out.println("update");
         String shortName = "G1";
         String name = "Grupito1";
-        String description = "Este es el grupito 1";
+        String description = "Este es el grupito 1111";
         String newShortName = "G1";
         Groups instance = new Groups(
-                    "61ee667b06f9409ed02e88bd0416abaf", 
-                    "ebf9d11ba96c630011216f1fa3c436ca", 
+                    "1d4e705080edec039fe580dd26fd1927", 
+                    "0b9aa43039efacc16072a9774af72993", 
                     "http://localhost:8088/api/");
         ApiResponse expResult = null;
         ApiResponse result = instance.update(shortName, name, description, newShortName);
@@ -92,18 +92,19 @@ public class GroupsTest extends TestCase {
      *
     public void testAdd_3args() {
         System.out.println("add");
-        String shortName = "g3";
-        String name = "Grupito3";
-        String description = "Este es el grupo 3";
+        String shortName = "g1";
+        String name = "Grupito1";
+        String description = "Este es el grupo 1";
         Groups instance = new Groups(
-                    "61ee667b06f9409ed02e88bd0416abaf", 
-                    "ebf9d11ba96c630011216f1fa3c436ca", 
+                    "1d4e705080edec039fe580dd26fd1927", 
+                    "0b9aa43039efacc16072a9774af72993", 
+                    //"https://apps.interactuamovil.com/tigocorp/api/");
                     "http://localhost:8088/api/");
         ApiResponse expResult = null;
         ApiResponse result = instance.add(shortName, name, description);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        fail("The test case is a prototype.");;
     }
 
     /**
@@ -180,10 +181,10 @@ public class GroupsTest extends TestCase {
     public void testAddContact() {
         System.out.println("addContact");
         String shortName = "G1";
-        String msisdn = "50212345678";
+        String msisdn = "50252017507";
         Groups instance = new Groups(
-                    "61ee667b06f9409ed02e88bd0416abaf", 
-                    "ebf9d11ba96c630011216f1fa3c436ca", 
+                    "1d4e705080edec039fe580dd26fd1927", 
+                    "0b9aa43039efacc16072a9774af72993", 
                     "http://localhost:8088/api/");
         ApiResponse expResult = null;
         ApiResponse result = instance.addContact(shortName, msisdn);
@@ -198,10 +199,10 @@ public class GroupsTest extends TestCase {
     public void testRemoveContact() {
         System.out.println("removeContact");
         String shortName = "g1";
-        String msisdn = "50212345678";
+        String msisdn = "50252017507";
         Groups instance = new Groups(
-                    "61ee667b06f9409ed02e88bd0416abaf", 
-                    "ebf9d11ba96c630011216f1fa3c436ca", 
+                    "1d4e705080edec039fe580dd26fd1927", 
+                    "0b9aa43039efacc16072a9774af72993", 
                     "http://localhost:8088/api/");
         ApiResponse expResult = null;
         ApiResponse result = instance.removeContact(shortName, msisdn);

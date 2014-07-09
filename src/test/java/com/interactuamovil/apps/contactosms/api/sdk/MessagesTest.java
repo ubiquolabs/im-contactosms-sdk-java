@@ -70,14 +70,14 @@ public class MessagesTest extends TestCase {
 
     /**
      * Test of sendToGroups method, of class Messages.
-     *
+     */
     public void testSendToGroups() {
         System.out.println("sendToGroups");
         String[] short_name = new String[] {"G1"};
-        String message = "probando a grupo 3";
+        String message = "probando a grupo 1";
         Messages instance = new Messages(
-                    "61ee667b06f9409ed02e88bd0416abaf", 
-                    "ebf9d11ba96c630011216f1fa3c436ca", 
+                    "1d4e705080edec039fe580dd26fd1927", 
+                    "0b9aa43039efacc16072a9774af72993", 
                     "http://localhost:8088/api/");
         ApiResponse<MessageJson> expResult = new ApiResponse();
         ApiResponse<MessageJson> result = instance.sendToGroups(short_name, message);
@@ -91,12 +91,13 @@ public class MessagesTest extends TestCase {
         System.out.println("sendToContact");
         String msisdn = "50252017507";
         String message = "probando individual 3";
+        String messageId = "1726";
         Messages instance = new Messages(
-                    "61ee667b06f9409ed02e88bd0416abaf", 
-                    "ebf9d11ba96c630011216f1fa3c436ca", 
+                    "1d4e705080edec039fe580dd26fd1927", 
+                    "0b9aa43039efacc16072a9774af72993", 
                     "http://localhost:8088/api/");
         ApiResponse<MessageJson> expResult = new ApiResponse();
-        ApiResponse<MessageJson> result = instance.sendToContact(msisdn, message);
+        ApiResponse<MessageJson> result = instance.sendToContact(msisdn, message, messageId);
         assertEquals(expResult.getHttpCode(), result.getHttpCode());        
     }
 
