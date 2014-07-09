@@ -75,6 +75,7 @@ public class ContactsExample extends BaseExample {
 
         // Update contact with inverted first and last name
         contactsApi.update(
+                "",
             testContactMsisdn,
             testContactLastName,
             testContactFirstName
