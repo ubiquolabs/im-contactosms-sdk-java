@@ -5,10 +5,12 @@
 package com.interactuamovil.apps.contactosms.api.client.rest.messages;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.interactuamovil.apps.contactosms.api.enums.MessageDirection;
 import com.interactuamovil.apps.contactosms.api.enums.MessageSentFrom;
 import com.interactuamovil.apps.contactosms.api.enums.MessageStatus;
+import com.interactuamovil.apps.contactosms.api.utils.JsonDateTimeDeserializer;
 import com.interactuamovil.apps.contactosms.api.utils.JsonDateTimeSerializer;
 import com.interactuamovil.apps.contactosms.api.utils.JsonObject;
 import java.io.IOException;
@@ -53,6 +55,7 @@ public class MessageJson extends JsonObject {
     private boolean scheduled;
     @JsonProperty(value="created_on")
     @JsonSerialize(using = JsonDateTimeSerializer.class)
+    @JsonDeserialize(using = JsonDateTimeDeserializer.class)
     private Date createdOn;
     
     @JsonProperty(value="groups")
