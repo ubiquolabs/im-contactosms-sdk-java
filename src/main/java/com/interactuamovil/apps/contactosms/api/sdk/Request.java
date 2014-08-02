@@ -32,15 +32,19 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.TimeZone;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
 
 
-public abstract class Request {
+abstract class Request {
 
     private String apiUri;
     private String apiKey;
     private String apiSecretKey;
     
     private ISerializer serializer;
+    
+    private boolean certificatedValidationEnabled = Boolean.TRUE;
 
     protected Request(String _apiKey, String _apiSecretKey, String _apiUri) {
         apiKey = _apiKey;
@@ -113,6 +117,7 @@ public abstract class Request {
         //connection.setRequestProperty("X-IM-USERNAME", "java");
         
         connection.setUseCaches(false);
+        
 
         if (!requestType.equals("GET") && !requestType.equals("DELETE")) {
             DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
@@ -205,19 +210,21 @@ public abstract class Request {
     private SSLContext getSSLContext() {
 
         TrustManager[] trustAllCerts = new TrustManager[] {
-            new X509TrustManager() {
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-                public void checkClientTrusted(
-                    java.security.cert.X509Certificate[] certs, String authType) {
-                }
-                public void checkServerTrusted(
-                    java.security.cert.X509Certificate[] certs, String authType) {
-                }
-            }
+            new TrustAllTrustManager()
         };
-
+        
+        if (!isCertificatedValidationEnabled()) {
+            HostnameVerifier hv = new HostnameVerifier()
+            {
+                public boolean verify(String urlHostName, SSLSession session)
+                {
+                    System.out.println("Warning: URL Host: " + urlHostName + " vs. "
+                            + session.getPeerHost());
+                    return true;
+                }
+            };
+            HttpsURLConnection.setDefaultHostnameVerifier(hv);
+        }
 
         SSLContext sc = null;
         try {
@@ -238,4 +245,51 @@ public abstract class Request {
         return serializer;
     }
 
+    /**
+     * @return the certificatedValidationEnabled
+     */
+    public boolean isCertificatedValidationEnabled() {
+        return certificatedValidationEnabled;
+    }
+
+    /**
+     * @param certificatedValidationEnabled the certificatedValidationEnabled to set
+     */
+    public void setCertificatedValidationEnabled(boolean certificatedValidationEnabled) {
+        this.certificatedValidationEnabled = certificatedValidationEnabled;
+    }
+    
+    private static class TrustAllTrustManager implements javax.net.ssl.TrustManager,
+            javax.net.ssl.X509TrustManager
+    {
+        public java.security.cert.X509Certificate[] getAcceptedIssuers()
+        {
+            return null;
+        }
+ 
+        public boolean isServerTrusted(
+                java.security.cert.X509Certificate[] certs)
+        {
+            return true;
+        }
+ 
+        public boolean isClientTrusted(
+                java.security.cert.X509Certificate[] certs)
+        {
+            return true;
+        }
+ 
+        public void checkServerTrusted(
+                java.security.cert.X509Certificate[] certs, String authType)
+                throws java.security.cert.CertificateException
+        {            
+        }
+ 
+        public void checkClientTrusted(
+                java.security.cert.X509Certificate[] certs, String authType)
+                throws java.security.cert.CertificateException
+        {
+        }
+    }    
+    
 }
