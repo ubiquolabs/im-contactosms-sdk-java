@@ -14,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
  * @author Pablo Rosales
  * @copyright InteractúaMóvil 2012
  */
-public class ApiExamples {
+class ApiExamples {
 
     private static final Logger logger = Logger.getLogger(ApiExamples.class);
 

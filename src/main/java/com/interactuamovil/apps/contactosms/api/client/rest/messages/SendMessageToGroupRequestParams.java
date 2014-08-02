@@ -17,7 +17,7 @@ import org.apache.commons.lang.StringUtils;
  * @author sergeiw
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SendMessageToGroupRequestParams extends JsonObject {
+class SendMessageToGroupRequestParams extends JsonObject {
     
     @JsonProperty(value="groups") 
     private List<String> groups;

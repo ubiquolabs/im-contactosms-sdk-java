@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 import junit.framework.TestCase;
 
 /**
@@ -50,14 +51,16 @@ public class MessagesTest extends TestCase {
         try {
             System.out.println("getList");        
             Date startDate = formatter.parse("2014-02-01 00:00:00");
-            Date endDate = formatter.parse("2014-02-20 00:00:00");
+            Date endDate = formatter.parse("2015-02-20 00:00:00");
             int start = 0;
             int limit = 50;
-            String msisdn = null;
+            String msisdn = "";
             Messages instance = new Messages(
-                        "61ee667b06f9409ed02e88bd0416abaf", 
-                        "ebf9d11ba96c630011216f1fa3c436ca", 
-                        "http://localhost:8088/api/");
+                        "1d4e705080edec039fe580dd26fd1927", 
+                        "0b9aa43039efacc16072a9774af72993",
+                        "https://mensajeriacorporativa.tigobusiness.hn/api/");
+                        //"http://localhost:8088/api/");
+            instance.setCertificatedValidationEnabled(false);
             ApiResponse<List<MessageJson>> expResult = null;
             ApiResponse<List<MessageJson>> result = instance.getList(startDate, endDate, start, limit, msisdn);
             assertEquals(expResult, result);
@@ -70,7 +73,7 @@ public class MessagesTest extends TestCase {
 
     /**
      * Test of sendToGroups method, of class Messages.
-     */
+     *
     public void testSendToGroups() {
         System.out.println("sendToGroups");
         String[] short_name = new String[] {"G1"};

@@ -65,8 +65,8 @@ public class ScheduledMessagesTest extends TestCase {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             Date since = formatter.parse("2014-01-01");        
             ScheduledMessages instance = new ScheduledMessages(
-                        "61ee667b06f9409ed02e88bd0416abaf", 
-                        "ebf9d11ba96c630011216f1fa3c436ca", 
+                        "1d4e705080edec039fe580dd26fd1927", 
+                        "0b9aa43039efacc16072a9774af72993", 
                         "http://localhost:8088/api/");        
             ApiResponse expResult = null;
             ApiResponse result = instance.getSchedule(since);

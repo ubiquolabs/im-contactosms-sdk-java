@@ -15,7 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 
-public class ContactsExample extends BaseExample {
+class ContactsExample extends BaseExample {
 
     private String testContactMsisdn = null;
     private String testContactFirstName = null;

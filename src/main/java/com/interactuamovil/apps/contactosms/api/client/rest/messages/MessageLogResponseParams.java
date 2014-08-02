@@ -20,7 +20,7 @@ import java.util.List;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"id","groups","msisdn","recipients_count","message","recipients"})
-public class MessageLogResponseParams extends JsonObject {
+class MessageLogResponseParams extends JsonObject {
     
     @JsonProperty("id")
     private Integer messageId;

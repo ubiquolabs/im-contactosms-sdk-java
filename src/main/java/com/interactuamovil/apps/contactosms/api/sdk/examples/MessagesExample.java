@@ -10,7 +10,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 @SuppressWarnings("ChainedMethodCall")
-public class MessagesExample extends BaseExample {
+class MessagesExample extends BaseExample {
 
     private String testMessage = null;
     private String testContactMsisdn = null;

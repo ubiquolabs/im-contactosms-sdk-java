@@ -14,7 +14,7 @@ import java.io.IOException;
  * @author sergeiw
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SendMessageToContactRequestParams extends JsonObject {
+class SendMessageToContactRequestParams extends JsonObject {
     
     @JsonProperty(value="msisdn") 
     private String msisdn;

@@ -39,11 +39,12 @@ public class GroupsTest extends TestCase {
     public void testGetList() {
         System.out.println("getList");
         Groups instance = new Groups(
-                    "61ee667b06f9409ed02e88bd0416abaf", 
-                    "ebf9d11ba96c630011216f1fa3c436ca", 
-                    "http://localhost:8088/api/");
+                    "1d4e705080edec039fe580dd26fd1927", 
+                    "0b9aa43039efacc16072a9774af72993", 
+                    "https://mensajeriacorporativa.tigobusiness.hn/api/");
+                    //"http://localhost:8088/api/");
         ApiResponse expResult = null;
-        ApiResponse result = instance.getList("g", 0, 10, false);
+        ApiResponse result = instance.getList("", 0, 10, false);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");

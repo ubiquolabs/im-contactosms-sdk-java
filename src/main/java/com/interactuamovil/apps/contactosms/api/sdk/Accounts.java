@@ -21,7 +21,7 @@ public class Accounts extends Request {
      * @throws InvalidKeyException
      * @throws NoSuchAlgorithmException
      */
-    public ApiResponse<AccountResponse> getStatus() throws IOException, InvalidKeyException, NoSuchAlgorithmException {
+    protected ApiResponse<AccountResponse> getStatus() throws IOException, InvalidKeyException, NoSuchAlgorithmException {
 
         ObjectMapper mapper = new ObjectMapper();
         ApiResponse<AccountResponse> response;

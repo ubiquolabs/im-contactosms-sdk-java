@@ -7,7 +7,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 
-public abstract class BaseExample {
+abstract class BaseExample {
 
     private String apiKey;
     private String apiSecretKey;

@@ -11,7 +11,7 @@ import com.interactuamovil.apps.contactosms.api.utils.JsonObject;
  *
  * @author sergeiw
  */
-public class ScheduledMessageJsonResponse extends JsonObject {
+class ScheduledMessageJsonResponse extends JsonObject {
     
     @JsonProperty(value="scheduled_message_id") 
     private Integer scheduledMessageId;

@@ -2,7 +2,7 @@ package com.interactuamovil.apps.contactosms.api.client.rest.messages;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class MessageToGroupResponse {
+class MessageToGroupResponse {
 
     @JsonProperty(value="sms_sent")
     private Integer sent = null;

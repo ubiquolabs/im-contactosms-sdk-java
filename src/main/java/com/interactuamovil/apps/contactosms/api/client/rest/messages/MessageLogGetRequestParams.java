@@ -19,7 +19,7 @@ import java.util.TimeZone;
  * @author sergeiw
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MessageLogGetRequestParams extends JsonObject {
+class MessageLogGetRequestParams extends JsonObject {
     
     public static final int DEFAULT_LIMIT = 200;
     public static final int DEFAULT_START = 0;

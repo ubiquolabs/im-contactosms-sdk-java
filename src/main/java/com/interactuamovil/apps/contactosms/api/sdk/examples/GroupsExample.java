@@ -13,7 +13,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-public class GroupsExample extends BaseExample {
+class GroupsExample extends BaseExample {
 
     private String testGroupName = null;
     private String testGroupDescription = null;
