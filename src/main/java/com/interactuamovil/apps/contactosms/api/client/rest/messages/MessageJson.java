@@ -58,6 +58,12 @@ public class MessageJson extends JsonObject {
     @JsonDeserialize(using = JsonDateTimeDeserializer.class)
     private Date createdOn;
     
+    @JsonProperty(value="created_by")
+    private String createdBy;
+    
+    @JsonProperty(value="total_monitors")
+    private Integer totalMonitors;
+    
     @JsonProperty(value="groups")
     private List<String> groups;
     
@@ -103,6 +109,34 @@ public class MessageJson extends JsonObject {
      */
     public void setSmsSent(Integer smsSent) {
         this.smsSent = smsSent;
+    }
+
+    /**
+     * @return the createdBy
+     */
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    /**
+     * @param createdBy the createdBy to set
+     */
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    /**
+     * @return the totalMonitors
+     */
+    public Integer getTotalMonitors() {
+        return totalMonitors;
+    }
+
+    /**
+     * @param totalMonitors the totalMonitors to set
+     */
+    public void setTotalMonitors(Integer totalMonitors) {
+        this.totalMonitors = totalMonitors;
     }
     
     public class RecipientJson extends JsonObject {
