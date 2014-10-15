@@ -69,13 +69,14 @@ public class Messages extends Request {
      * @param message
      * @return
      */
-    public ApiResponse<MessageJson> sendToGroups(String[] short_name, String message) {
+    public ApiResponse<MessageJson> sendToGroups(String[] short_name, String message, String messageId) {
         Map<String, Serializable> params = new LinkedHashMap<String, Serializable>();
         ApiResponse<MessageJson> response;
         MessageJson messageResponse;
 
         params.put("groups", short_name);
         params.put("message", message);
+        params.put("id", messageId);
 
         try {
             response = doRequest("messages/send", "post", null, params, false);
@@ -98,6 +99,10 @@ public class Messages extends Request {
      * @param message
      * @return
      */
+    public ApiResponse<MessageJson> sendToContact(String msisdn, String message) {
+        return sendToContact(msisdn, message, null);
+    }
+    
     public ApiResponse<MessageJson> sendToContact(String msisdn, String message, String messageId) {
         Map<String, Serializable> params = new LinkedHashMap<String, Serializable>();
         ApiResponse<MessageJson> response;
@@ -105,7 +110,9 @@ public class Messages extends Request {
 
         params.put("msisdn", msisdn);
         params.put("message", message);
-        params.put("id", messageId);
+        if (messageId != null) {
+            params.put("id", messageId);
+        }
 
         try {
             response = doRequest("messages/send_to_contact", "post", null, params, false);
