@@ -92,7 +92,8 @@ class MessagesExample extends BaseExample {
 
         ApiResponse<MessageJson> response = messagesApi.sendToGroups(
             new String[]{testGroupSmsShortName},
-            testMessage
+            testMessage,
+            null
         );
 
         if (response.isOk()) {

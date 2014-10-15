@@ -49,6 +49,8 @@ public class GroupJsonObject extends JsonObject  {
         private Integer pending;
         @JsonProperty(value = "confirmed")
         private Integer confirmed;
+        @JsonProperty(value = "cancelled")
+        private Integer cancelled;
 
         public GroupMembersJsonObject() {
         }
@@ -93,6 +95,20 @@ public class GroupJsonObject extends JsonObject  {
          */
         public void setConfirmed(Integer confirmed) {
             this.confirmed = confirmed;
+        }
+
+        /**
+         * @return the cancelled
+         */
+        public Integer getCancelled() {
+            return cancelled;
+        }
+
+        /**
+         * @param cancelled the cancelled to set
+         */
+        public void setCancelled(Integer cancelled) {
+            this.cancelled = cancelled;
         }
         
     }
