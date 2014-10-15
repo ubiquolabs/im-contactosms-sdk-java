@@ -1,7 +1,7 @@
 # IntelliJ settings
 *.iml
 .idea
-
+.DS_Store
 *.class
 
 # Package Files #
