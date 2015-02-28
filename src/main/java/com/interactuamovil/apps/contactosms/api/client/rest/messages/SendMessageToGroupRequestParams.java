@@ -25,6 +25,8 @@ class SendMessageToGroupRequestParams extends JsonObject {
     private String message;
     @JsonProperty(value="id") 
     private String clientMessageId;
+    @JsonProperty(value="from_file")
+    private String fromFile;
 
     /**
      * @return the groups
@@ -80,5 +82,12 @@ class SendMessageToGroupRequestParams extends JsonObject {
     public void setClientMessageId(String clientMessageId) {
         this.clientMessageId = clientMessageId;
     }
-    
+
+    public String getFromFile() {
+        return fromFile;
+    }
+
+    public void setFromFile(String fromFile) {
+        this.fromFile = fromFile;
+    }
 }
