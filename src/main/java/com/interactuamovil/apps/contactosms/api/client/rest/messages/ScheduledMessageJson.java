@@ -4,18 +4,14 @@
  */
 package com.interactuamovil.apps.contactosms.api.client.rest.messages;
 
-import com.interactuamovil.apps.contactosms.api.utils.JsonDateSerializer;
-import com.interactuamovil.apps.contactosms.api.utils.JsonDateDeserializer;
+import com.interactuamovil.apps.contactosms.api.utils.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.interactuamovil.apps.contactosms.api.enums.RepeatInterval;
-import com.interactuamovil.apps.contactosms.api.utils.JsonObject;
-import com.interactuamovil.apps.contactosms.api.utils.JsonRepeatIntervalDeserializer;
-import com.interactuamovil.apps.contactosms.api.utils.JsonTimeDeserializer;
-import com.interactuamovil.apps.contactosms.api.utils.JsonTimeSerializer;
+
 import java.io.IOException;
 import java.sql.Time;
 import java.util.Date;
@@ -39,9 +35,9 @@ public class ScheduledMessageJson extends JsonObject {
     private String clientMessageId;
     @JsonProperty(value="event_name") 
     private String eventName;
-    @JsonProperty(value="start_date") 
+    @JsonProperty(value="start_date")
     private Date startDate;
-    @JsonProperty(value="end_date") 
+    @JsonProperty(value="end_date")
     private Date endDate;
     @JsonProperty(value="execution_time") 
     private Time executionTime;

@@ -12,7 +12,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.IOException;
-import java.io.StringWriter;
+import java.text.DateFormat;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -33,8 +34,8 @@ public class JsonSerializer implements ISerializer {
             .disable(SerializationFeature.WRITE_NULL_MAP_VALUES)
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, Boolean.TRUE)
-            .configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, Boolean.TRUE);
-            //.enable(SerializationFeature.WRAP_ROOT_VALUE); 
+            .configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, Boolean.TRUE)
+            .configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
         
         jsonFactory = new JsonFactory(); 
                 
@@ -45,24 +46,22 @@ public class JsonSerializer implements ISerializer {
             instance = new JsonSerializer();
         return instance;
     }
-    
+
     @Override
     public String serialize(Object o) throws IOException {
-        StringWriter sw = new StringWriter();
+        //StringWriter sw = new StringWriter();
         try {
             if (o == null)
                 return "";
-            
-            JsonGenerator jg = jsonFactory.createGenerator(sw);
-            //jg.useDefaultPrettyPrinter();        
-            objectMapper.writeValue(jg, o);
-            String s = sw.toString();
-            if (logger.isTraceEnabled()) {
-                logger.trace(String.format("%s:Json: %s", o != null ? o.getClass().getCanonicalName() : "null", s));
-            }
+
+            //JsonGenerator jg = jsonFactory.createJsonGenerator(sw);
+            //jg.useDefaultPrettyPrinter();
+            //return objectMapper.writeValueAsString(this);
+            String s = objectMapper.writeValueAsString(o);
+            logger.trace(String.format("%s:Json: %s", o.getClass().getCanonicalName(), s));
             return s;
         } finally {
-            sw.close();
+            //sw.close();
         }
     }
     
