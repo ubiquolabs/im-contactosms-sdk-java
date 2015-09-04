@@ -3,7 +3,7 @@
 
   <groupId>com.interactuamovil.apps.contactosms</groupId>
   <artifactId>im-contactosms-sdk-java</artifactId>
-  <version>2.7-SNAPSHOT</version>
+  <version>2.6</version>
   <packaging>jar</packaging>
 
   <name>im-contactosms-sdk-java</name>
@@ -123,7 +123,7 @@
         <url>scm:git:git@github.com:interactuamovil/im-contactosms-sdk-java.git</url>
         <connection>scm:git:git@github.com:interactuamovil/im-contactosms-sdk-java.git</connection>
         <developerConnection>scm:git:git@github.com:interactuamovil/im-contactosms-sdk-java.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>im-contactosms-sdk-java-2.6</tag>
     </scm>
   
 </project>
