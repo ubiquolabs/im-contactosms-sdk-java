@@ -5,7 +5,6 @@
 package com.interactuamovil.apps.contactosms.api.utils;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import java.io.IOException;
@@ -26,9 +25,16 @@ public class JsonDateTimeDeserializer extends JsonDeserializer<Date> {
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");        
     
     @Override
-    public Date deserialize(JsonParser jp, DeserializationContext dc) throws IOException, JsonProcessingException {
+    public Date deserialize(JsonParser jp, DeserializationContext dc) throws IOException {
+
+//        System.out.println("asdf-" + jp.getText());
+
         try {
             return dateFormat.parse(jp.getText());
+//            Date date = dateFormat.parse(jp.getText());
+//            System.out.println("asdf-" + date);
+//            return date;
+
         } catch (ParseException ex) {
             logger.error("Unable to deserialize date: " + jp.getText(), ex);
         }
