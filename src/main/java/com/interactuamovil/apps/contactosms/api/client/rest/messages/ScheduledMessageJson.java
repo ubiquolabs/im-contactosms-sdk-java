@@ -45,6 +45,15 @@ public class ScheduledMessageJson extends JsonObject {
     private RepeatInterval repeatInterval;
     @JsonProperty(value="repeat_days") 
     private String repeatDays;
+
+    @JsonProperty(value="type")
+    private String type;
+
+    @JsonProperty(value = "phone_number")
+    private String phoneNumber;
+
+    @JsonProperty(value = "country_code")
+    private String countryCode;
     
 
     /**
@@ -82,14 +91,8 @@ public class ScheduledMessageJson extends JsonObject {
     @JsonIgnore
     public String getGroupsNames() {
         List<String> grpList = getGroups();
-        if (grpList != null) {
-            String[] grpArr = new String[grpList.size()];
-            grpArr = grpList.toArray(grpArr);
-            String groupNames = StringUtils.join(grpArr, ",");
-            return groupNames;
-        } else {
-            return null;
-        }
+        if (grpList==null) return null;
+        return String.join(",", grpList);
     }
 
     /**
@@ -210,5 +213,52 @@ public class ScheduledMessageJson extends JsonObject {
     public void setScheduledMessageId(Integer scheduledMessageId) {
         this.scheduledMessageId = scheduledMessageId;
     }
-    
+
+    /**
+     * The type can be: SINGLE or GROUP
+     * @return The type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * The type can be: SINGLE or GROUP
+     * @param type Sets the type
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     *
+     * @return the phone number
+     */
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    /**
+     *
+     * @param phoneNumber The phone number
+     */
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    /**
+     *
+     * @return Gets the country code
+     */
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    /**
+     *
+     * @param countryCode The country code
+     */
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
 }
