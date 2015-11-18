@@ -54,6 +54,9 @@ public class ScheduledMessageJson extends JsonObject {
 
     @JsonProperty(value = "country_code")
     private String countryCode;
+
+    @JsonProperty(value = "name")
+    private String name;
     
 
     /**
@@ -260,5 +263,21 @@ public class ScheduledMessageJson extends JsonObject {
      */
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
+    }
+
+    /**
+     *
+     * @return The name for this scheduled message
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     *
+     * @param name The name for this scheduled message
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 }
