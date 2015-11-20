@@ -55,11 +55,8 @@ public class ScheduledMessageJson extends JsonObject {
     @JsonProperty(value = "country_code")
     private String countryCode;
 
-    @JsonProperty(value = "name")
-    private String name;
-
     @JsonProperty(value = "days_of_week")
-    private String daysOfWeek;
+    private String[] daysOfWeek;
     
 
     /**
@@ -269,27 +266,11 @@ public class ScheduledMessageJson extends JsonObject {
     }
 
     /**
-     *
-     * @return The name for this scheduled message
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     *
-     * @param name The name for this scheduled message
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
      * Get a list of the days of week separated by commas
      * Used when repeatInterval is weekly
      * @return The days of week, Sun=0,Mon=1...Sat=6
      */
-    public String getDaysOfWeek() {
+    public String[] getDaysOfWeek() {
         return daysOfWeek;
     }
 
@@ -298,7 +279,7 @@ public class ScheduledMessageJson extends JsonObject {
      * Used when repeatInterval is weekly
      * @param daysOfWeek The days of the week, Sun=0,Mon=1...Sat=6
      */
-    public void setDaysOfWeek(String daysOfWeek) {
+    public void setDaysOfWeek(String[] daysOfWeek) {
         this.daysOfWeek = daysOfWeek;
     }
 }
