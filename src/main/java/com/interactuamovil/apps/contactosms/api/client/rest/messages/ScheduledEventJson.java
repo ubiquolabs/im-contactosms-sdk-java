@@ -16,8 +16,8 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ScheduledEventJson {
 
-    public static final String STATUS_PROJECTED = "projected";
-    public static final String STATUS_EXECUTED = "executed";
+    public static final String STATUS_PROJECTED = "PROJECTED";
+    public static final String STATUS_EXECUTED = "EXECUTED";
 
 
     @JsonProperty("id")
