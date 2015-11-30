@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.interactuamovil.apps.contactosms.api.utils.JsonDateDeserializer;
-import com.interactuamovil.apps.contactosms.api.utils.JsonDateSerializer;
+import com.interactuamovil.apps.contactosms.api.utils.JsonDateTimeDeserializer;
+import com.interactuamovil.apps.contactosms.api.utils.JsonDateTimeSerializer;
 
 import java.util.Date;
 
@@ -59,12 +59,12 @@ public class ScheduledEventJson {
         this.name = name;
     }
 
-    @JsonSerialize(using = JsonDateSerializer.class)
+    @JsonSerialize(using = JsonDateTimeSerializer.class)
     public Date getExecution() {
         return execution;
     }
 
-    @JsonDeserialize(using = JsonDateDeserializer.class)
+    @JsonDeserialize(using = JsonDateTimeDeserializer.class)
     public void setExecution(Date execution) {
         this.execution = execution;
     }
