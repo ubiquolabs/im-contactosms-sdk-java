@@ -56,6 +56,9 @@ public class ScheduledMessageJson extends JsonObject {
 
     @JsonProperty(value = "days_of_week")
     private String[] daysOfWeek;
+
+    @JsonProperty(value = "file_name")
+    private String fileName;
     
 
     /**
@@ -280,5 +283,21 @@ public class ScheduledMessageJson extends JsonObject {
      */
     public void setDaysOfWeek(String[] daysOfWeek) {
         this.daysOfWeek = daysOfWeek;
+    }
+
+    /**
+     * Gets the file name if scheduled message type is file
+     * @return File name
+     */
+    public String getFileName() {
+        return fileName;
+    }
+
+    /**
+     * Sets the file name if scheduled message type is file
+     * @param fileName The file name
+     */
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }
