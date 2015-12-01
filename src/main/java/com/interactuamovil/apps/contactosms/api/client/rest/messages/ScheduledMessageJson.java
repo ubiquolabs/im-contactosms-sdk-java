@@ -59,6 +59,12 @@ public class ScheduledMessageJson extends JsonObject {
 
     @JsonProperty(value = "file_name")
     private String fileName;
+
+    @JsonProperty(value = "created_by")
+    private String createdBy;
+
+    @JsonProperty(value = "created_on")
+    private String createdOn;
     
 
     /**
@@ -299,5 +305,21 @@ public class ScheduledMessageJson extends JsonObject {
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(String createdOn) {
+        this.createdOn = createdOn;
     }
 }
