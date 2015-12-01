@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.interactuamovil.apps.contactosms.api.utils.JsonDateTimeDeserializer;
 import com.interactuamovil.apps.contactosms.api.utils.JsonDateTimeSerializer;
+import com.interactuamovil.apps.contactosms.api.utils.JsonObject;
 
 import java.util.Date;
 
@@ -14,7 +15,7 @@ import java.util.Date;
  * Scheduled event object
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ScheduledEventJson {
+public class ScheduledEventJson extends JsonObject{
 
     public static final String STATUS_PROJECTED = "PROJECTED";
     public static final String STATUS_EXECUTED = "EXECUTED";

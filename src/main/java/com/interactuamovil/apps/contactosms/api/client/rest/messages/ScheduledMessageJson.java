@@ -4,19 +4,18 @@
  */
 package com.interactuamovil.apps.contactosms.api.client.rest.messages;
 
-import com.interactuamovil.apps.contactosms.api.utils.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.interactuamovil.apps.contactosms.api.enums.RepeatInterval;
+import com.interactuamovil.apps.contactosms.api.utils.*;
 
 import java.io.IOException;
 import java.sql.Time;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 
 /**
  *
