@@ -34,7 +34,7 @@ public class ScheduledEventJson extends JsonObject{
     private Date execution;
 
     @JsonProperty("status")
-    private String type;
+    private String status;
 
     public Integer getId() {
         return id;
@@ -70,11 +70,11 @@ public class ScheduledEventJson extends JsonObject{
         this.execution = execution;
     }
 
-    public String getType() {
-        return type;
+    public String getStatus() {
+        return status;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
