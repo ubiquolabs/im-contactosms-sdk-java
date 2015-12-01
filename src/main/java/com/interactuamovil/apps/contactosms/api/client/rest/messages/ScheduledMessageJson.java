@@ -64,7 +64,7 @@ public class ScheduledMessageJson extends JsonObject {
     private String createdBy;
 
     @JsonProperty(value = "created_on")
-    private String createdOn;
+    private Date createdOn;
     
 
     /**
@@ -315,11 +315,13 @@ public class ScheduledMessageJson extends JsonObject {
         this.createdBy = createdBy;
     }
 
-    public String getCreatedOn() {
+    @JsonSerialize(using = JsonDateTimeSerializer.class)
+    public Date getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(String createdOn) {
+    @JsonDeserialize(using = JsonDateTimeDeserializer.class)
+    public void setCreatedOn(Date createdOn) {
         this.createdOn = createdOn;
     }
 }
