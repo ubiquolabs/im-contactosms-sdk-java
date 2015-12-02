@@ -54,6 +54,9 @@ public class MessageScheduledLogJson extends JsonObject {
     @JsonProperty("status_description")
     private String statusDescription;
 
+    @JsonProperty("type")
+    private String type;
+
     public Integer getId() {
         return id;
     }
@@ -150,5 +153,13 @@ public class MessageScheduledLogJson extends JsonObject {
 
     public void setStatusDescription(String statusDescription) {
         this.statusDescription = statusDescription;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
