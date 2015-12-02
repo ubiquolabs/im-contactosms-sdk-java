@@ -57,6 +57,12 @@ public class MessageScheduledLogJson extends JsonObject {
     @JsonProperty("type")
     private String type;
 
+    @JsonProperty("created_on")
+    private Date createdOn;
+
+    @JsonProperty("created_by")
+    private String createdBy;
+
     public Integer getId() {
         return id;
     }
@@ -161,5 +167,21 @@ public class MessageScheduledLogJson extends JsonObject {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Date getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 }
