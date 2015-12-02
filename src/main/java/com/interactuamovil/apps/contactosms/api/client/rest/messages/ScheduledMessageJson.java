@@ -57,6 +57,23 @@ public class ScheduledMessageJson extends JsonObject {
     @JsonProperty(value = "country_code")
     private String countryCode;
 
+    @JsonProperty("rows_found")
+    private Integer rowsFound;
+
+    @JsonProperty("rows_processed")
+    private Integer rowsProcessed;
+
+    @JsonProperty("rows_duplicated")
+    private Integer rowsDuplicated;
+
+    @JsonProperty("rows_error")
+    private Integer rowsError;
+
+    @JsonProperty("rows_ok")
+    private Integer rowsOk;
+
+
+
     @JsonProperty(value = "days_of_week")
     private String[] daysOfWeek;
 
@@ -274,6 +291,47 @@ public class ScheduledMessageJson extends JsonObject {
      */
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
+    }
+
+
+    public Integer getRowsFound() {
+        return rowsFound;
+    }
+
+    public void setRowsFound(Integer rowsFound) {
+        this.rowsFound = rowsFound;
+    }
+
+    public Integer getRowsProcessed() {
+        return rowsProcessed;
+    }
+
+    public void setRowsProcessed(Integer rowsProcessed) {
+        this.rowsProcessed = rowsProcessed;
+    }
+
+    public Integer getRowsDuplicated() {
+        return rowsDuplicated;
+    }
+
+    public void setRowsDuplicated(Integer rowsDuplicated) {
+        this.rowsDuplicated = rowsDuplicated;
+    }
+
+    public Integer getRowsError() {
+        return rowsError;
+    }
+
+    public void setRowsError(Integer rowsError) {
+        this.rowsError = rowsError;
+    }
+
+    public Integer getRowsOk() {
+        return rowsOk;
+    }
+
+    public void setRowsOk(Integer rowsOk) {
+        this.rowsOk = rowsOk;
     }
 
     /**
