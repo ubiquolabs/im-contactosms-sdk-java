@@ -36,9 +36,6 @@ public class MessageScheduledLogJson extends JsonObject {
     @JsonProperty("groups")
     private List<String> groups;
 
-    @JsonProperty("name")
-    private String name;
-
     @JsonProperty("execution")
     private Date execution;
 
@@ -109,14 +106,6 @@ public class MessageScheduledLogJson extends JsonObject {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @JsonSerialize(using = JsonDateTimeSerializer.class)
