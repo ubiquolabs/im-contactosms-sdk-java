@@ -48,6 +48,9 @@ public class ScheduledMessageJson extends JsonObject {
     @JsonProperty(value="type")
     private String type;
 
+    @JsonProperty(value = "status")
+    private String status;
+
     @JsonProperty(value = "phone_number")
     private String phoneNumber;
 
@@ -323,5 +326,13 @@ public class ScheduledMessageJson extends JsonObject {
     @JsonDeserialize(using = JsonDateTimeDeserializer.class)
     public void setCreatedOn(Date createdOn) {
         this.createdOn = createdOn;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
