@@ -9,6 +9,7 @@ import com.interactuamovil.apps.contactosms.api.utils.JsonDateTimeSerializer;
 import com.interactuamovil.apps.contactosms.api.utils.JsonObject;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by javier on 1/12/15.
@@ -20,8 +21,20 @@ public class MessageScheduledLogJson extends JsonObject {
     @JsonProperty("id")
     private Integer id;
 
+    @JsonProperty("event_name")
+    private String eventName;
+
     @JsonProperty("message")
     private String message;
+
+    @JsonProperty("country_code")
+    private String countryCode;
+
+    @JsonProperty("phone_number")
+    private String phoneNumber;
+
+    @JsonProperty("groups")
+    private List<String> groups;
 
     @JsonProperty("name")
     private String name;
@@ -47,6 +60,38 @@ public class MessageScheduledLogJson extends JsonObject {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public List<String> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<String> groups) {
+        this.groups = groups;
     }
 
     public String getMessage() {
@@ -97,5 +142,13 @@ public class MessageScheduledLogJson extends JsonObject {
 
     public void setRowsError(int rowsError) {
         this.rowsError = rowsError;
+    }
+
+    public String getStatusDescription() {
+        return statusDescription;
+    }
+
+    public void setStatusDescription(String statusDescription) {
+        this.statusDescription = statusDescription;
     }
 }
