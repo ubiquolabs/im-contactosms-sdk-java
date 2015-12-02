@@ -158,10 +158,12 @@ public class MessageScheduledLogJson extends JsonObject {
         this.type = type;
     }
 
+    @JsonSerialize(using = JsonDateTimeSerializer.class)
     public Date getCreatedOn() {
         return createdOn;
     }
 
+    @JsonDeserialize(using = JsonDateTimeDeserializer.class)
     public void setCreatedOn(Date createdOn) {
         this.createdOn = createdOn;
     }
