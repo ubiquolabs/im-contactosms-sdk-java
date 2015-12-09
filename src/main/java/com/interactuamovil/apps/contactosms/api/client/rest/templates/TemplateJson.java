@@ -2,6 +2,10 @@ package com.interactuamovil.apps.contactosms.api.client.rest.templates;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.interactuamovil.apps.contactosms.api.utils.JsonDateTimeDeserializer;
+import com.interactuamovil.apps.contactosms.api.utils.JsonDateTimeSerializer;
 import com.interactuamovil.apps.contactosms.api.utils.JsonObject;
 
 import java.util.Date;
@@ -59,10 +63,12 @@ public class TemplateJson  extends JsonObject{
         this.message = message;
     }
 
+    @JsonDeserialize(using = JsonDateTimeDeserializer.class)
     public Date getCreatedOn() {
         return createdOn;
     }
 
+    @JsonSerialize(using = JsonDateTimeSerializer.class)
     public void setCreatedOn(Date createdOn) {
         this.createdOn = createdOn;
     }
