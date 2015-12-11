@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.interactuamovil.apps.contactosms.api.client.rest.templates.TemplateJson;
 import com.interactuamovil.apps.contactosms.api.enums.RepeatInterval;
 import com.interactuamovil.apps.contactosms.api.utils.*;
 
@@ -82,7 +83,11 @@ public class ScheduledMessageJson extends JsonObject {
 
     @JsonProperty(value = "created_on")
     private Date createdOn;
-    
+
+    @JsonProperty("fields")
+    private List<TemplateJson.Field> fields;
+
+    private Integer templateId;
 
     /**
      * @return the groups
@@ -381,5 +386,21 @@ public class ScheduledMessageJson extends JsonObject {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public List<TemplateJson.Field> getFields() {
+        return fields;
+    }
+
+    public void setFields(List<TemplateJson.Field> fields) {
+        this.fields = fields;
+    }
+
+    public Integer getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(Integer templateId) {
+        this.templateId = templateId;
     }
 }
