@@ -87,6 +87,7 @@ public class ScheduledMessageJson extends JsonObject {
     @JsonProperty("fields")
     private List<TemplateJson.Field> fields;
 
+    @JsonProperty("template_id")
     private Integer templateId;
 
     /**
