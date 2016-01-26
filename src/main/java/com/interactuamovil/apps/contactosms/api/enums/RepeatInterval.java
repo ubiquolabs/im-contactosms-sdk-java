@@ -7,6 +7,7 @@ package com.interactuamovil.apps.contactosms.api.enums;
  */
 public enum RepeatInterval {
     
+    YEARLY("YEARLY"),
     MONTHLY("MONTHLY"),
     WEEKLY("WEEKLY"),
     DAILY("DAILY"),
