@@ -88,6 +88,8 @@ public class AccountJsonObject extends JsonObject {
         private Integer smsExtraLimit;
         @JsonProperty("sms_used")
         private Integer smsUsed;
+        @JsonProperty("sms_error")
+        private Integer smsError;
         @JsonProperty("sms_sold")
         private Integer smsSold;
         @JsonProperty("valid_since")
@@ -117,6 +119,14 @@ public class AccountJsonObject extends JsonObject {
 
         public void setSmsUsed(Integer smsUsed) {
             this.smsUsed = smsUsed;
+        }
+
+        public Integer getSmsError() {
+            return smsError;
+        }
+
+        public void setSmsError(Integer smsError) {
+            this.smsError = smsError;
         }
 
         public Integer getSmsSold() {
