@@ -88,6 +88,8 @@ public class AccountJsonObject extends JsonObject {
         private Integer smsExtraLimit;
         @JsonProperty("sms_used")
         private Integer smsUsed;
+        @JsonProperty("sms_sold")
+        private Integer smsSold;
         @JsonProperty("valid_since")
         private Date validSince;
         @JsonProperty("valid_thru")
@@ -115,6 +117,14 @@ public class AccountJsonObject extends JsonObject {
 
         public void setSmsUsed(Integer smsUsed) {
             this.smsUsed = smsUsed;
+        }
+
+        public Integer getSmsSold() {
+            return smsSold;
+        }
+
+        public void setSmsSold(Integer smsSold) {
+            this.smsSold = smsSold;
         }
 
         @JsonSerialize(using = JsonDateTimeSerializer.class)
