@@ -23,6 +23,10 @@ public class PackageJsonObject extends JsonObject {
     private Integer smsUsed;
     @JsonProperty("sms_error")
     private Integer smsError;
+    @JsonProperty("sms_control")
+    private Integer smsControl;
+    @JsonProperty("sms_control_error")
+    private Integer smsControlError;
     @JsonProperty("sms_sold")
     private Integer smsSold;
     @JsonProperty("valid_since")
@@ -60,6 +64,22 @@ public class PackageJsonObject extends JsonObject {
 
     public void setSmsError(Integer smsError) {
         this.smsError = smsError;
+    }
+
+    public Integer getSmsControl() {
+        return smsControl;
+    }
+
+    public void setSmsControl(Integer smsControl) {
+        this.smsControl = smsControl;
+    }
+
+    public Integer getSmsControlError() {
+        return smsControlError;
+    }
+
+    public void setSmsControlError(Integer smsControlError) {
+        this.smsControlError = smsControlError;
     }
 
     public Integer getSmsSold() {
