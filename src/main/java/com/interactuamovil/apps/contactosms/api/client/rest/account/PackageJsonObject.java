@@ -33,6 +33,8 @@ public class PackageJsonObject extends JsonObject {
     private Date validSince;
     @JsonProperty("valid_thru")
     private Date validThru;
+    @JsonProperty("is_active")
+    private Boolean isActive;
 
     public Integer getSmsLimit() {
         return smsLimit;
@@ -108,5 +110,13 @@ public class PackageJsonObject extends JsonObject {
     @JsonDeserialize(using= JsonDateTimeDeserializer.class)
     public void setValidThru(Date validThru) {
         this.validThru = validThru;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 }
