@@ -24,12 +24,12 @@ public class Messages extends Request {
     /**
      * Gets log message list
      *
-     * @param startDate
-     * @param endDate
-     * @param start
-     * @param limit
-     * @param msisdn
-     * @return
+     * @param startDate The star date
+     * @param endDate The end date
+     * @param start the offset of the results
+     * @param limit the limit of the result list
+     * @param msisdn The msisdn
+     * @return The messages list queried
      */
     public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn) {
         Map<String, Serializable> urlParameters = new LinkedHashMap<String, Serializable>();
@@ -65,9 +65,9 @@ public class Messages extends Request {
     /**
      * Sends a message to a group array list
      *
-     * @param short_name
-     * @param message
-     * @return
+     * @param short_name The group short name
+     * @param message The message
+     * @return The message just sent
      */
     public ApiResponse<MessageJson> sendToGroups(String[] short_name, String message, String messageId) {
         Map<String, Serializable> params = new LinkedHashMap<String, Serializable>();
@@ -95,14 +95,22 @@ public class Messages extends Request {
     /**
      * Sends a message to a specific contact
      *
-     * @param msisdn
-     * @param message
-     * @return
+     * @param msisdn The msisdn to send
+     * @param message The text message
+     * @return The message just sent
      */
     public ApiResponse<MessageJson> sendToContact(String msisdn, String message) {
         return sendToContact(msisdn, message, null);
     }
-    
+
+
+    /**
+     * Sends a message to a contact
+     * @param msisdn The msisdn
+     * @param message The text message
+     * @param messageId The message Id
+     * @return The message just sent
+     */
     public ApiResponse<MessageJson> sendToContact(String msisdn, String message, String messageId) {
         Map<String, Serializable> params = new LinkedHashMap<String, Serializable>();
         ApiResponse<MessageJson> response;

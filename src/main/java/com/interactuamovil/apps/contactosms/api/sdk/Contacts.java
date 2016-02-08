@@ -27,19 +27,18 @@ public class Contacts extends Request {
     }
 
     /**
-     * Gets a contact list
-     *
-     * @param start
-     * @param limit
-     * @param firstName
-     * @param lastName
-     * @param statusType
-     * @return
-     * @throws IOException
-     * @throws InvalidKeyException
-     * @throws NoSuchAlgorithmException
+     * Get the contacts list
+     * @param contactStatuses The contact status to find
+     * @param query The query string
+     * @param start The offset
+     * @param limit The limit of results
+     * @param shortResults true to show short results
+     * @return Lists of contacts
+     * @throws IOException IOException
+     * @throws InvalidKeyException InvalidKeyException
+     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
      */
-    public ApiResponse<List<ContactJsonObject>> getList(List<ContactStatus> contactStatuses, String query, Integer start, Integer limit, boolean shortResults) throws IOException, InvalidKeyException, NoSuchAlgorithmException {        
+    public ApiResponse<List<ContactJsonObject>> getList(List<ContactStatus> contactStatuses, String query, Integer start, Integer limit, boolean shortResults) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
         Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
         if (contactStatuses != null && !contactStatuses.isEmpty()) {            
             urlParams.put("status", StringUtils.join(contactStatuses, ","));
@@ -79,11 +78,11 @@ public class Contacts extends Request {
     /**
      * Gets a contact by its msisdn
      *
-     * @param msisdn
-     * @return
-     * @throws IOException
-     * @throws InvalidKeyException
-     * @throws NoSuchAlgorithmException
+     * @param msisdn The msisdn
+     * @return A contact
+     * @throws IOException IOException
+     * @throws InvalidKeyException InvalidKeyException
+     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
      */
     public ApiResponse<ContactJsonObject> getByMsisdn(String msisdn) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
 
@@ -106,17 +105,17 @@ public class Contacts extends Request {
         return response;
     }
 
+
     /**
-     * Updates a contact base on its msisdn
-     *
-     * @param msisdn
-     * @param firstName
-     * @param lastName
-     * @param newMsisdn
-     * @return
-     * @throws IOException
-     * @throws InvalidKeyException
-     * @throws NoSuchAlgorithmException
+     * Udpates a contact with the specified msisdn
+     * @param countryCode The country code e.g. 502
+     * @param msisdn The msisdn i.e. The phone number with the country code
+     * @param firstName The contact's first name
+     * @param lastName The contact's last name
+     * @return The updated contact
+     * @throws IOException IOException
+     * @throws InvalidKeyException InvalidKeyException
+     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
      */
     public ApiResponse<ContactJsonObject> update(String countryCode, String msisdn, String firstName, String lastName) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
         
@@ -128,7 +127,15 @@ public class Contacts extends Request {
         
         return update(contact);
     }
-    
+
+    /**
+     * Updates a contact
+     * @param contact The contact
+     * @return The contact udpated
+     * @throws IOException IOException
+     * @throws InvalidKeyException InvalidKeyException
+     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+     */
     public ApiResponse<ContactJsonObject> update(ContactJsonObject contact) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
 
         Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
@@ -153,16 +160,17 @@ public class Contacts extends Request {
         return response;
     }
 
+
     /**
-     * Adds a new contact
-     *
-     * @param msisdn
-     * @param firstName
-     * @param lastName
-     * @return
-     * @throws IOException
-     * @throws InvalidKeyException
-     * @throws NoSuchAlgorithmException
+     * Add a contact
+     * @param countryCode the contact country code
+     * @param msisdn The msisdn. i.e. the phone number including the country code
+     * @param firstName The first name
+     * @param lastName The last name
+     * @return The contact added
+     * @throws IOException IOException
+     * @throws InvalidKeyException InvalidKeyException
+     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
      */
     public ApiResponse<ContactJsonObject> add(String countryCode, String msisdn, String firstName, String lastName) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
         logger.debug(String.format("Adding contact with countryCode: %s, msisdn: %s, firstName: %s, lastName: %s", countryCode, msisdn, firstName, lastName));
@@ -178,6 +186,15 @@ public class Contacts extends Request {
         return add(contact);
     }
 
+    /**
+     * Adds a contact
+     * @param countryCode The country code
+     * @param msisdn The msisdn
+     * @return The new contact
+     * @throws IOException IOException
+     * @throws InvalidKeyException InvalidKeyException
+     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+     */
     public ApiResponse<ContactJsonObject> add(String countryCode, String msisdn) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
         return add(countryCode, msisdn, null, null);
     }
@@ -210,8 +227,8 @@ public class Contacts extends Request {
     /**
      * Deletes a contact
      *
-     * @param msisdn
-     * @return
+     * @param msisdn The msisdn
+     * @return the contact just deleted
      * @throws IOException
      * @throws InvalidKeyException
      * @throws NoSuchAlgorithmException
@@ -239,11 +256,11 @@ public class Contacts extends Request {
     /**
      * Gets contact's group list
      *
-     * @param msisdn
-     * @return
-     * @throws IOException
-     * @throws InvalidKeyException
-     * @throws NoSuchAlgorithmException
+     * @param msisdn The msisdn
+     * @return The list of groups
+     * @throws IOException IOException
+     * @throws InvalidKeyException InvalidKeyException
+     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
      */
     public ApiResponse<List<GroupJsonObject>> getGroupList(String msisdn) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
         Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
