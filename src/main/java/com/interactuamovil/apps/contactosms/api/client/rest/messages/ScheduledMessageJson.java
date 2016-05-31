@@ -64,6 +64,9 @@ public class ScheduledMessageJson extends JsonObject {
     @JsonProperty("rows_processed")
     private Integer rowsProcessed;
 
+    @JsonProperty("rows_duplicated")
+    private Integer rowsDuplicated;
+
     @JsonProperty("rows_error")
     private Integer rowsError;
 
@@ -311,6 +314,14 @@ public class ScheduledMessageJson extends JsonObject {
 
     public void setRowsProcessed(Integer rowsProcessed) {
         this.rowsProcessed = rowsProcessed;
+    }
+
+    public Integer getRowsDuplicated() {
+        return rowsDuplicated;
+    }
+
+    public void setRowsDuplicated(Integer rowsDuplicated) {
+        this.rowsDuplicated = rowsDuplicated;
     }
 
     public Integer getRowsError() {
