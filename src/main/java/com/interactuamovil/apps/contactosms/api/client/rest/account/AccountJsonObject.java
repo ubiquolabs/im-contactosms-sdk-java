@@ -23,6 +23,8 @@ public class AccountJsonObject extends JsonObject {
     private String smsShortName;
     @JsonProperty("account_status")
     private String accountStatus;
+    @JsonProperty("can_sell_extras")
+    private String canSellExtras;
     @JsonProperty("created_on")
     private Date createdOn;
     @JsonProperty("current_package")
@@ -59,6 +61,14 @@ public class AccountJsonObject extends JsonObject {
 
     public void setAccountStatus(String accountStatus) {
         this.accountStatus = accountStatus;
+    }
+
+    public String getCanSellExtras() {
+        return canSellExtras;
+    }
+
+    public void setCanSellExtras(String canSellExtras) {
+        this.canSellExtras = canSellExtras;
     }
 
     @JsonSerialize(using = JsonDateTimeSerializer.class)
