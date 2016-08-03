@@ -24,7 +24,7 @@ public class AccountJsonObject extends JsonObject {
     @JsonProperty("account_status")
     private String accountStatus;
     @JsonProperty("can_sell_extras")
-    private String canSellExtras;
+    private Boolean canSellExtras;
     @JsonProperty("created_on")
     private Date createdOn;
     @JsonProperty("current_package")
@@ -63,11 +63,11 @@ public class AccountJsonObject extends JsonObject {
         this.accountStatus = accountStatus;
     }
 
-    public String getCanSellExtras() {
+    public Boolean getCanSellExtras() {
         return canSellExtras;
     }
 
-    public void setCanSellExtras(String canSellExtras) {
+    public void setCanSellExtras(Boolean canSellExtras) {
         this.canSellExtras = canSellExtras;
     }
 
