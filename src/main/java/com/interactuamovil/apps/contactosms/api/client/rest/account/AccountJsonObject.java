@@ -25,6 +25,8 @@ public class AccountJsonObject extends JsonObject {
     private String accountStatus;
     @JsonProperty("can_sell_extras")
     private Boolean canSellExtras;
+    @JsonProperty("subscription_type")
+    private String subscriptionType;
     @JsonProperty("created_on")
     private Date createdOn;
     @JsonProperty("current_package")
@@ -69,6 +71,14 @@ public class AccountJsonObject extends JsonObject {
 
     public void setCanSellExtras(Boolean canSellExtras) {
         this.canSellExtras = canSellExtras;
+    }
+
+    public String getSubscriptionType() {
+        return subscriptionType;
+    }
+
+    public void setSubscriptionType(String subscriptionType) {
+        this.subscriptionType = subscriptionType;
     }
 
     @JsonSerialize(using = JsonDateTimeSerializer.class)
