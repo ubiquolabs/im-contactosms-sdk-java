@@ -27,6 +27,8 @@ public class AccountJsonObject extends JsonObject {
     private String smsShortName;
     @JsonProperty("account_status")
     private String accountStatus;
+    @JsonProperty("account_type")
+    private String accountType;
     @JsonProperty("can_sell_extras")
     private Boolean canSellExtras;
     @JsonProperty("subscription_type")
@@ -88,6 +90,14 @@ public class AccountJsonObject extends JsonObject {
 
     public void setAccountStatus(String accountStatus) {
         this.accountStatus = accountStatus;
+    }
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
     }
 
     public Boolean getCanSellExtras() {
