@@ -33,6 +33,8 @@ public class AccountJsonObject extends JsonObject {
     private Boolean canSellExtras;
     @JsonProperty("subscription_type")
     private String subscriptionType;
+    @JsonProperty("default_subaccount_id")
+    private String defaultSubaccountId;
     @JsonProperty("comments")
     private String comments;
     @JsonProperty("created_on")
@@ -114,6 +116,14 @@ public class AccountJsonObject extends JsonObject {
 
     public void setSubscriptionType(String subscriptionType) {
         this.subscriptionType = subscriptionType;
+    }
+
+    public String getDefaultSubaccountId() {
+        return defaultSubaccountId;
+    }
+
+    public void setDefaultSubaccountId(String defaultSubaccountId) {
+        this.defaultSubaccountId = defaultSubaccountId;
     }
 
     public String getComments() {
