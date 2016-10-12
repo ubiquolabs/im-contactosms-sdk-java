@@ -65,17 +65,17 @@ class ApiExamples {
                 contactsExample.test();
 
             }
-            else if ("groups".equalsIgnoreCase(exampleToRun)) {
+            else if ("tags".equalsIgnoreCase(exampleToRun)) {
 
                 // Test groups
-                GroupsExample groupExample = new GroupsExample(
+                TagsExample tagExample = new TagsExample(
                     apiKey,
                     apiSecretKey,
                     apiUri,
                     config
                 );
-                groupExample.configure();
-                groupExample.test();
+                tagExample.configure();
+                tagExample.test();
 
             }
             else if ("messages".equalsIgnoreCase(exampleToRun)) {

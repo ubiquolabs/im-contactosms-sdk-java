@@ -2,13 +2,14 @@ package com.interactuamovil.apps.contactosms.api.sdk;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.interactuamovil.apps.contactosms.api.client.rest.contacts.ContactJsonObject;
-import com.interactuamovil.apps.contactosms.api.client.rest.groups.GroupJsonObject;
+import com.interactuamovil.apps.contactosms.api.client.rest.tags.TagJsonObject;
 import com.interactuamovil.apps.contactosms.api.enums.AddedFrom;
 import com.interactuamovil.apps.contactosms.api.enums.ContactStatus;
-import com.interactuamovil.apps.contactosms.api.sdk.responses.GroupResponse;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
 import com.interactuamovil.apps.contactosms.api.utils.JsonObjectCollection;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.InvalidKeyException;
@@ -16,7 +17,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
 
 public class Contacts extends Request {
 
@@ -29,11 +29,11 @@ public class Contacts extends Request {
     /**
      * Gets a contact list
      *
+     * @param contactStatuses
+     * @param query
      * @param start
      * @param limit
-     * @param firstName
-     * @param lastName
-     * @param statusType
+     * @param shortResults
      * @return
      * @throws IOException
      * @throws InvalidKeyException
@@ -237,7 +237,7 @@ public class Contacts extends Request {
     }
 
     /**
-     * Gets contact's group list
+     * Gets contact's tag list
      *
      * @param msisdn
      * @return
@@ -245,21 +245,21 @@ public class Contacts extends Request {
      * @throws InvalidKeyException
      * @throws NoSuchAlgorithmException
      */
-    public ApiResponse<List<GroupJsonObject>> getGroupList(String msisdn) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
+    public ApiResponse<List<TagJsonObject>> getTagList(String msisdn) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
         Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
         urlParams.put("msisdn", msisdn);
         
-        ApiResponse<List<GroupJsonObject>> response;
-        List<GroupJsonObject> groupResponse;
+        ApiResponse<List<TagJsonObject>> response;
+        List<TagJsonObject> tagResponse;
 
         try {
-            response = doRequest("contacts/" + msisdn + "/groups", "get", urlParams, null, false);
+            response = doRequest("contacts/" + msisdn + "/tags", "get", urlParams, null, false);
             if (response.isOk()) {
-                groupResponse = JsonObjectCollection.fromJson(response.getRawResponse(), new TypeReference<List<GroupJsonObject>>() {});
-                response.setResponse(groupResponse);            
+                tagResponse = JsonObjectCollection.fromJson(response.getRawResponse(), new TypeReference<List<TagJsonObject>>() {});
+                response.setResponse(tagResponse);
             }
         } catch (Exception e) {
-            response = new ApiResponse<List<GroupJsonObject>>();
+            response = new ApiResponse<List<TagJsonObject>>();
             response.setErrorCode(-1);
             response.setErrorDescription(e.getMessage());
         }
