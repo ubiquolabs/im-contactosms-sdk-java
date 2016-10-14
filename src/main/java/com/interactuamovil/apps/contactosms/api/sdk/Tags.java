@@ -2,6 +2,7 @@ package com.interactuamovil.apps.contactosms.api.sdk;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.interactuamovil.apps.contactosms.api.client.rest.contacts.ContactJsonObject;
+import com.interactuamovil.apps.contactosms.api.client.rest.tags.TagJsonObject;
 import com.interactuamovil.apps.contactosms.api.sdk.responses.TagResponse;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
 import com.interactuamovil.apps.contactosms.api.utils.JsonObjectCollection;
@@ -17,20 +18,62 @@ public class Tags extends Request {
         super(apiKey, secretKey, apiUri);
     }
 
-    public ApiResponse<List<TagResponse>> getList() {
-        ApiResponse<List<TagResponse>> response;
-        List<TagResponse> groupResponse;
+    public ApiResponse<List<TagJsonObject>> getList() {
+        ApiResponse<List<TagJsonObject>> response;
+        List<TagJsonObject> tagResponse;
         
         Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
 
         try {
             response = doRequest("tags", "get", urlParams, null, true);
             if (response.isOk()) {
-                groupResponse = JsonObjectCollection.fromJson(response.getRawResponse(), new TypeReference<List<TagResponse>>() {});
-                response.setResponse(groupResponse);            
+                tagResponse = JsonObjectCollection.fromJson(response.getRawResponse(), new TypeReference<List<TagJsonObject>>() {});
+                response.setResponse(tagResponse);
             }
         } catch (Exception e) {
-            response = new ApiResponse<List<TagResponse>>();
+            response = new ApiResponse<>();
+            response.setErrorCode(-1);
+            response.setErrorDescription(e.getMessage());
+        }
+        return response;
+    }
+
+    public ApiResponse<TagJsonObject> getTag(String tagName) {
+        ApiResponse<TagJsonObject> response;
+        TagJsonObject tagResponse;
+
+        Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
+        urlParams.put("tag_name", tagName);
+
+        try {
+            response = doRequest("tags/"+tagName, "get", urlParams, null, true);
+            if (response.isOk()) {
+                tagResponse = TagJsonObject.fromJson(response.getRawResponse());
+                response.setResponse(tagResponse);
+            }
+        } catch (Exception e) {
+            response = new ApiResponse<>();
+            response.setErrorCode(-1);
+            response.setErrorDescription(e.getMessage());
+        }
+        return response;
+    }
+
+    public ApiResponse<TagJsonObject> deleteTag(String tagName) {
+        ApiResponse<TagJsonObject> response;
+        TagJsonObject tagResponse;
+
+        Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
+        urlParams.put("tag_name", tagName);
+
+        try {
+            response = doRequest("tags/"+tagName, "delete", urlParams, null, true);
+            if (response.isOk()) {
+                tagResponse = TagJsonObject.fromJson(response.getRawResponse());
+                response.setResponse(tagResponse);
+            }
+        } catch (Exception e) {
+            response = new ApiResponse<>();
             response.setErrorCode(-1);
             response.setErrorDescription(e.getMessage());
         }
@@ -50,7 +93,7 @@ public class Tags extends Request {
         List<ContactJsonObject> contactResponses;
         
         Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
-        urlParams.put("short_name", name);
+        urlParams.put("tag_name", name);
                 
         if (start != null && start >= 0)
             urlParams.put("start", start);
@@ -72,48 +115,6 @@ public class Tags extends Request {
         return response;
     }
 
-    public ApiResponse<ContactJsonObject> addContact(String shortName, String msisdn) {
-        ApiResponse<ContactJsonObject> response;
-        ContactJsonObject contactResponse;
-        Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
 
-        urlParams.put("short_name", shortName);
-        urlParams.put("msisdn", msisdn);
-
-        try {
-            response = doRequest("groups/" + shortName + "/contacts/" + msisdn, "post", urlParams, null, false);
-            if (response.isOk()) {
-                contactResponse = ContactJsonObject.fromJson(response.getRawResponse());
-                response.setResponse(contactResponse);
-            }
-        } catch (Exception e) {
-            response = new ApiResponse<ContactJsonObject>();
-            response.setErrorCode(-1);
-            response.setErrorDescription(e.getMessage());
-        }
-        return response;
-    }
-
-    public ApiResponse<ContactJsonObject> removeContact(String shortName, String msisdn) {
-        ApiResponse<ContactJsonObject> response;
-        ContactJsonObject contactResponse;
-        Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
-
-        urlParams.put("short_name", shortName);
-        urlParams.put("msisdn", msisdn);
-
-        try {
-            response = doRequest("groups/" + shortName + "/contacts/" + msisdn, "delete", urlParams, null, false);
-            if (response.isOk()) {
-                contactResponse = ContactJsonObject.fromJson(response.getRawResponse());
-                response.setResponse(contactResponse);
-            }
-        } catch (Exception e) {
-            response = new ApiResponse<ContactJsonObject>();
-            response.setErrorCode(-1);
-            response.setErrorDescription(e.getMessage());
-        }
-        return response;
-    }
 
 }

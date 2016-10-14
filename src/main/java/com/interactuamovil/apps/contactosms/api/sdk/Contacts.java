@@ -259,10 +259,55 @@ public class Contacts extends Request {
                 response.setResponse(tagResponse);
             }
         } catch (Exception e) {
-            response = new ApiResponse<List<TagJsonObject>>();
+            response = new ApiResponse<>();
             response.setErrorCode(-1);
             response.setErrorDescription(e.getMessage());
         }
         return response;
     }
+
+    public ApiResponse<ContactJsonObject> addTag(String msisdn, String tagName) {
+        ApiResponse<ContactJsonObject> response;
+        ContactJsonObject contactResponse;
+        Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
+
+        urlParams.put("tag_name", tagName);
+        urlParams.put("msisdn", msisdn);
+
+        try {
+            response = doRequest("contacts/"+msisdn + "/tags/" + tagName, "post", urlParams, null, false);
+            if (response.isOk()) {
+                contactResponse = ContactJsonObject.fromJson(response.getRawResponse());
+                response.setResponse(contactResponse);
+            }
+        } catch (Exception e) {
+            response = new ApiResponse<>();
+            response.setErrorCode(-1);
+            response.setErrorDescription(e.getMessage());
+        }
+        return response;
+    }
+
+    public ApiResponse<ContactJsonObject> removeTag(String msisdn, String shortName) {
+        ApiResponse<ContactJsonObject> response;
+        ContactJsonObject contactResponse;
+        Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
+
+        urlParams.put("tag_name", shortName);
+        urlParams.put("msisdn", msisdn);
+
+        try {
+            response = doRequest("contacts/"+msisdn + "/tags/" + shortName, "delete", urlParams, null, false);
+            if (response.isOk()) {
+                contactResponse = ContactJsonObject.fromJson(response.getRawResponse());
+                response.setResponse(contactResponse);
+            }
+        } catch (Exception e) {
+            response = new ApiResponse<>();
+            response.setErrorCode(-1);
+            response.setErrorDescription(e.getMessage());
+        }
+        return response;
+    }
+
 }
