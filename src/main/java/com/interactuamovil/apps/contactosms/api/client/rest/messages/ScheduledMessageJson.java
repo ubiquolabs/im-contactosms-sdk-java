@@ -93,6 +93,9 @@ public class ScheduledMessageJson extends JsonObject {
     @JsonProperty("template_id")
     private Integer templateId;
 
+    @JsonProperty("interaction_id")
+    private String interactionId;
+
     /**
      * @return the groups
      */
@@ -414,5 +417,13 @@ public class ScheduledMessageJson extends JsonObject {
 
     public void setTemplateId(Integer templateId) {
         this.templateId = templateId;
+    }
+
+    public String getInteractionId() {
+        return interactionId;
+    }
+
+    public void setInteractionId(String interactionId) {
+        this.interactionId = interactionId;
     }
 }
