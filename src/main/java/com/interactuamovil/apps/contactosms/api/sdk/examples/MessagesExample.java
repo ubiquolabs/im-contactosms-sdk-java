@@ -1,13 +1,19 @@
 package com.interactuamovil.apps.contactosms.api.sdk.examples;
 
 import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageJson;
+import com.interactuamovil.apps.contactosms.api.enums.MessageDirection;
 import com.interactuamovil.apps.contactosms.api.sdk.Messages;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
+import com.sun.corba.se.impl.protocol.giopmsgheaders.Message;
 import org.apache.commons.configuration.Configuration;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 @SuppressWarnings("ChainedMethodCall")
 class MessagesExample extends BaseExample {
@@ -43,25 +49,27 @@ class MessagesExample extends BaseExample {
 
     @Override   
     public void test() throws IOException, InvalidKeyException, NoSuchAlgorithmException {
-/*
+
         Messages messagesApi = new Messages(
             getApiKey(),
             getApiSecretKey(),
             getApiUri()
         );
 
+        //testGetMessages(messagesApi);
+
+        // Test send message to single contact
+        //testSendToContact(messagesApi);
+
         // Test send message to group
         testSendToGroup(messagesApi);
 
-        // Test send message to single contact
-        testSendToContact(messagesApi);
-
         // Test adding scheduled message
-        testAddingScheduledMessage(messagesApi);
+        //testAddingScheduledMessage(messagesApi);
 
         // Test inbox messages
-        testInboxMessages(messagesApi);
-*/
+        //testInboxMessages(messagesApi);
+
     }
 
     private void testInboxMessages(Messages messagesApi) {
@@ -76,14 +84,61 @@ class MessagesExample extends BaseExample {
 
     }
 
+    private void testGetMessages(Messages messagesApi) {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date startDate = null;
+        Date endDate = null;
+        int start = 0;
+        int limit = 10;
+        String msisdn = null;
+        MessageDirection direction  = MessageDirection.MT;
+
+        try {
+            startDate = sdf.parse("2015-01-01 00:00");
+            endDate = sdf.parse("2017-01-01 00:00");
+
+            ApiResponse<List<MessageJson>> response = messagesApi.getList(startDate, endDate, start, limit, msisdn, direction);
+
+            if (!response.isOk()) {
+                throw new AssertionError("Error sending message to existing contact: "
+                        + response.getErrorDescription());
+            } else {
+                for (MessageJson m : response.getResponse()) {
+                    System.out.println(String.format("msg: [%s] [%s] [%s] [%s] [%s] [%s]",
+                            m.getMessageDirection().name(),
+                            m.getClientMessageId(),
+                            m.getShortCode(),
+                            m.getMsisdn(),
+                            m.getMessage(),
+                            sdf.format(m.getCreatedOn())
+                    ));
+                }
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void testSendToContact(Messages messagesApi) {
 
-        ApiResponse<MessageJson> response = messagesApi.sendToContact(
-            testContactMsisdn, testMessage, "idunico");
+        ApiResponse<MessageJson> response;
+        /*
+        response = messagesApi.sendToContact(
+            testContactMsisdn, testMessage, java.util.UUID.randomUUID().toString());
 
-        if (response.isOk()) {
-            throw new AssertionError("Error sending message to contact: "
+        if (!response.isOk()) {
+            throw new AssertionError("Error sending message to existing contact: "
                 + response.getErrorDescription());
+        }*/
+
+        response = messagesApi.sendToContact(
+                "50252010101", testMessage, java.util.UUID.randomUUID().toString());
+
+        if (!response.isOk()) {
+            throw new AssertionError("Error sending message to new contact: "
+                    + response.getErrorDescription());
         }
 
     }
@@ -91,12 +146,12 @@ class MessagesExample extends BaseExample {
     private void testSendToGroup(Messages messagesApi) {
 
         ApiResponse<MessageJson> response = messagesApi.sendToGroups(
-            new String[]{testGroupSmsShortName},
+            new String[]{"comida","dennis"},
             testMessage,
-            null
+            java.util.UUID.randomUUID().toString()
         );
 
-        if (response.isOk()) {
+        if (!response.isOk()) {
             throw new AssertionError("Error sending message to group: "
                 + response.getErrorDescription());
         }
