@@ -4,19 +4,9 @@
  */
 package com.interactuamovil.apps.contactosms.api.sdk;
 
-import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageJson;
-import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
-import com.interactuamovil.contactosms.api.responses.ListResponse;
-import com.interactuamovil.contactosms.api.responses.Response;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.fail;
 import junit.framework.TestCase;
+
+import java.text.SimpleDateFormat;
 
 /**
  *
