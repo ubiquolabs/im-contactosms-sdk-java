@@ -3,10 +3,6 @@ package com.interactuamovil.apps.contactosms.api.sdk.examples;
 import com.interactuamovil.apps.contactosms.api.client.rest.contacts.ContactJsonObject;
 import com.interactuamovil.apps.contactosms.api.sdk.Contacts;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
-import com.interactuamovil.contactosms.api.responses.ActionMessageResponse;
-import com.interactuamovil.contactosms.api.responses.ContactResponse;
-import com.interactuamovil.contactosms.api.responses.ListResponse;
-import com.interactuamovil.contactosms.api.responses.Response;
 import org.apache.commons.configuration.Configuration;
 
 import java.io.IOException;
@@ -17,6 +13,7 @@ import java.util.List;
 
 class ContactsExample extends BaseExample {
 
+    private String testContactCountryCode = null;
     private String testContactMsisdn = null;
     private String testContactFirstName = null;
     private String testContactLastName = null;
@@ -28,9 +25,10 @@ class ContactsExample extends BaseExample {
     @Override
     public void configure() {
 
+        testContactCountryCode = getConfig().getString("test_contact_country_code");
         testContactMsisdn = getConfig().getString("test_contact_msisdn");
-        testContactFirstName = getConfig().getString("test_contact_msisdn");
-        testContactLastName = getConfig().getString("test_contact_msisdn");
+        testContactFirstName = getConfig().getString("test_contact_first");
+        testContactLastName = getConfig().getString("test_contact_last");
 
         if (null == testContactMsisdn || null == testContactFirstName
             || null == testContactLastName) {
@@ -75,7 +73,7 @@ class ContactsExample extends BaseExample {
 
         // Update contact with inverted first and last name
         contactsApi.update(
-                "",
+            testContactCountryCode,
             testContactMsisdn,
             testContactLastName,
             testContactFirstName
@@ -113,12 +111,12 @@ class ContactsExample extends BaseExample {
 
     private void testContactsList(Contacts contactsApi)
         throws IOException, InvalidKeyException, NoSuchAlgorithmException {
-/*
+
         ApiResponse<List<ContactJsonObject>> contactOneFromList =
-            contactsApi.getList(null, null, null, 0, 1);
+            contactsApi.getList(null, null, 0, 1, false);
 
         ApiResponse<List<ContactJsonObject>> contactTwoFromList =
-            contactsApi.getList(null, null, null, 1, 1);
+            contactsApi.getList(null, null, 1, 1, false);
 
         List<ContactJsonObject> firstResult = contactOneFromList.getResponse();
         List<ContactJsonObject> secondResult = contactTwoFromList.getResponse();
@@ -133,21 +131,22 @@ class ContactsExample extends BaseExample {
                     "Contact 1 and 2 of list are the same msisdn."
                 );
             }
-        }*/
+        }
 
     }
 
     private void testAddingContact(Contacts contactsApi)
         throws IOException, InvalidKeyException, NoSuchAlgorithmException {
-/*
+
         ApiResponse<ContactJsonObject> response =  contactsApi.add(
+            testContactCountryCode,
             testContactMsisdn,
             testContactFirstName,
             testContactLastName
         );
 
-        if (response.isOk()) {
-            System.out.println("Error: " + response.getErrorDescription());
+        if (!response.isOk()) {
+            throw new AssertionError("Error: " + response.getErrorDescription());
         }
 
         ApiResponse<ContactJsonObject> contactResponse =
@@ -160,11 +159,11 @@ class ContactsExample extends BaseExample {
         ContactJsonObject contact = contactResponse.getResponse();
 
         ApiResponse<List<ContactJsonObject>> contactCheckAddedByFirstName =
-            contactsApi.getList(null, testContactFirstName, null, null, null);
+            contactsApi.getList(null, testContactFirstName, null, null, false);
 
-        ApiResponse<List<ContactJsonObject>> contactCheckAddedByFullName =
+        /*ApiResponse<List<ContactJsonObject>> contactCheckAddedByFullName =
             contactsApi.getList(
-                null, testContactFirstName, testContactLastName, null, null);
+                null, testContactFirstName, testContactLastName, null, null);*/
 
         Boolean contactInResponseByFirstName = Boolean.FALSE;
 
@@ -180,7 +179,7 @@ class ContactsExample extends BaseExample {
             throw new AssertionError("Contact not found in search.");
         }
 
-        Boolean contactInResponseByFullName = Boolean.FALSE;
+        /*Boolean contactInResponseByFullName = Boolean.FALSE;
 
         for (ContactJsonObject contactItem
             : contactCheckAddedByFullName.getResponse()) {
@@ -193,8 +192,8 @@ class ContactsExample extends BaseExample {
 
         if (contactInResponseByFullName.equals(Boolean.FALSE)) {
             throw new AssertionError("Contact not found in search.");
-        }
-*/
+        }*/
+
     }
 
 }
