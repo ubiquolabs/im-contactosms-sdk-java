@@ -2,6 +2,7 @@ package com.interactuamovil.apps.contactosms.api.sdk;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageJson;
+import com.interactuamovil.apps.contactosms.api.enums.MessageDirection;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
 import com.interactuamovil.apps.contactosms.api.utils.JsonObjectCollection;
 import java.io.Serializable;
@@ -32,6 +33,21 @@ public class Messages extends Request {
      * @return
      */
     public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn) {
+        return getList(startDate, endDate, start, limit, msisdn, MessageDirection.ALL);
+    }
+
+
+        /**
+         * Gets log message list
+         *
+         * @param startDate
+         * @param endDate
+         * @param start
+         * @param limit
+         * @param msisdn
+         * @return
+         */
+    public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn, MessageDirection direction) {
         Map<String, Serializable> urlParameters = new LinkedHashMap<String, Serializable>();
         ApiResponse<List<MessageJson>> response;
         List<MessageJson> messageResponse;
@@ -47,6 +63,8 @@ public class Messages extends Request {
             urlParameters.put("limit", limit);
         if (msisdn != null)
             urlParameters.put("msisdn", msisdn);
+        if (direction != null)
+            urlParameters.put("direction", direction.name());
 
         try {
             response = doRequest("messages", "get", urlParameters, null, true);
@@ -65,16 +83,16 @@ public class Messages extends Request {
     /**
      * Sends a message to a group array list
      *
-     * @param short_name
+     * @param tagNames
      * @param message
      * @return
      */
-    public ApiResponse<MessageJson> sendToGroups(String[] short_name, String message, String messageId) {
+    public ApiResponse<MessageJson> sendToGroups(String[] tagNames, String message, String messageId) {
         Map<String, Serializable> params = new LinkedHashMap<String, Serializable>();
         ApiResponse<MessageJson> response;
         MessageJson messageResponse;
 
-        params.put("groups", short_name);
+        params.put("tags", tagNames);
         params.put("message", message);
         params.put("id", messageId);
 
