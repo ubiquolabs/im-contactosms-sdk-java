@@ -12,14 +12,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
  *
  * @author sergeiw
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class SendMessageToGroupRequestParams extends JsonObject {
+class SendMessageToTagsRequestParams extends JsonObject {
     
     @JsonProperty(value="tags")
     private List<String> tags;
@@ -58,8 +56,8 @@ class SendMessageToGroupRequestParams extends JsonObject {
         this.message = message;
     }
     
-    public static SendMessageToGroupRequestParams fromJson(String json) throws IOException {
-        return JsonObject.fromJson(json, SendMessageToGroupRequestParams.class);        
+    public static SendMessageToTagsRequestParams fromJson(String json) throws IOException {
+        return JsonObject.fromJson(json, SendMessageToTagsRequestParams.class);
     }
     
     @JsonIgnore
