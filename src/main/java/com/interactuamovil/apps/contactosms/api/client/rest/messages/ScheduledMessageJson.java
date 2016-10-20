@@ -95,7 +95,9 @@ public class ScheduledMessageJson extends JsonObject {
 
     @JsonProperty("interaction_id")
     private String interactionId;
-
+    
+    @JsonProperty("tags")
+    private List<String> tags;
     /**
      * @return the groups
      */
@@ -255,7 +257,7 @@ public class ScheduledMessageJson extends JsonObject {
     }
 
     /**
-     * The type can be: SINGLE or GROUP
+     * The type can be: SINGLE, GROUP, TAG, INTERACTION
      * @return The type
      */
     public String getType() {
@@ -263,7 +265,7 @@ public class ScheduledMessageJson extends JsonObject {
     }
 
     /**
-     * The type can be: SINGLE or GROUP
+     * The type can be: SINGLE, GROUP, TAG, INTERACTION
      * @param type Sets the type
      */
     public void setType(String type) {
@@ -426,4 +428,14 @@ public class ScheduledMessageJson extends JsonObject {
     public void setInteractionId(String interactionId) {
         this.interactionId = interactionId;
     }
+
+	public List<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
+	}
+    
+    
 }
