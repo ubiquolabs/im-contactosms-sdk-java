@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("ChainedMethodCall")
 class MessagesExample extends BaseExample {
@@ -56,10 +57,10 @@ class MessagesExample extends BaseExample {
             getApiUri()
         );
 
-        //testGetMessages(messagesApi);
+        testGetMessages(messagesApi);
 
         // Test send message to single contact
-        //testSendToContact(messagesApi);
+        testSendToContact(messagesApi);
 
         // Test send message to group
         testSendToGroup(messagesApi);
@@ -105,12 +106,14 @@ class MessagesExample extends BaseExample {
                         + response.getErrorDescription());
             } else {
                 for (MessageJson m : response.getResponse()) {
-                    System.out.println(String.format("msg: [%s] [%s] [%s] [%s] [%s] [%s]",
+                    System.out.println(String.format("msg: [%s] [%d] [%s] [%s] [%s] [%s] [%s] [%s]",
                             m.getMessageDirection().name(),
+                            m.getMessageTypeId(),
                             m.getClientMessageId(),
                             m.getShortCode(),
                             m.getMsisdn(),
                             m.getMessage(),
+                            m.getTags() != null ? m.getTags().stream().collect(Collectors.joining(",")) : "",
                             sdf.format(m.getCreatedOn())
                     ));
                 }
