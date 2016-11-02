@@ -4,19 +4,19 @@
  */
 package com.interactuamovil.apps.contactosms.api.client.rest.messages;
 
-import com.interactuamovil.apps.contactosms.api.utils.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.interactuamovil.apps.contactosms.api.client.rest.templates.TemplateJson;
 import com.interactuamovil.apps.contactosms.api.enums.RepeatInterval;
+import com.interactuamovil.apps.contactosms.api.utils.*;
 
 import java.io.IOException;
 import java.sql.Time;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -45,7 +45,53 @@ public class ScheduledMessageJson extends JsonObject {
     private RepeatInterval repeatInterval;
     @JsonProperty(value="repeat_days") 
     private String repeatDays;
-    
+
+    @JsonProperty(value="type")
+    private String type;
+
+    @JsonProperty(value = "status")
+    private String status;
+
+    @JsonProperty(value = "phone_number")
+    private String phoneNumber;
+
+    @JsonProperty(value = "country_code")
+    private String countryCode;
+
+    @JsonProperty("rows_found")
+    private Integer rowsFound;
+
+    @JsonProperty("rows_processed")
+    private Integer rowsProcessed;
+
+    @JsonProperty("rows_duplicated")
+    private Integer rowsDuplicated;
+
+    @JsonProperty("rows_error")
+    private Integer rowsError;
+
+    @JsonProperty("rows_ok")
+    private Integer rowsOk;
+
+
+
+    @JsonProperty(value = "days_of_week")
+    private String[] daysOfWeek;
+
+    @JsonProperty(value = "file_name")
+    private String fileName;
+
+    @JsonProperty(value = "created_by")
+    private String createdBy;
+
+    @JsonProperty(value = "created_on")
+    private Date createdOn;
+
+    @JsonProperty("fields")
+    private List<TemplateJson.Field> fields;
+
+    @JsonProperty("template_id")
+    private Integer templateId;
 
     /**
      * @return the groups
@@ -82,14 +128,8 @@ public class ScheduledMessageJson extends JsonObject {
     @JsonIgnore
     public String getGroupsNames() {
         List<String> grpList = getGroups();
-        if (grpList != null) {
-            String[] grpArr = new String[grpList.size()];
-            grpArr = grpList.toArray(grpArr);
-            String groupNames = StringUtils.join(grpArr, ",");
-            return groupNames;
-        } else {
-            return null;
-        }
+        if (grpList==null) return null;
+        return String.join(",", grpList);
     }
 
     /**
@@ -210,5 +250,169 @@ public class ScheduledMessageJson extends JsonObject {
     public void setScheduledMessageId(Integer scheduledMessageId) {
         this.scheduledMessageId = scheduledMessageId;
     }
-    
+
+    /**
+     * The type can be: SINGLE or GROUP
+     * @return The type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * The type can be: SINGLE or GROUP
+     * @param type Sets the type
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     *
+     * @return the phone number
+     */
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    /**
+     *
+     * @param phoneNumber The phone number
+     */
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    /**
+     *
+     * @return Gets the country code
+     */
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    /**
+     *
+     * @param countryCode The country code
+     */
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+
+    public Integer getRowsFound() {
+        return rowsFound;
+    }
+
+    public void setRowsFound(Integer rowsFound) {
+        this.rowsFound = rowsFound;
+    }
+
+    public Integer getRowsProcessed() {
+        return rowsProcessed;
+    }
+
+    public void setRowsProcessed(Integer rowsProcessed) {
+        this.rowsProcessed = rowsProcessed;
+    }
+
+    public Integer getRowsDuplicated() {
+        return rowsDuplicated;
+    }
+
+    public void setRowsDuplicated(Integer rowsDuplicated) {
+        this.rowsDuplicated = rowsDuplicated;
+    }
+
+    public Integer getRowsError() {
+        return rowsError;
+    }
+
+    public void setRowsError(Integer rowsError) {
+        this.rowsError = rowsError;
+    }
+
+    public Integer getRowsOk() {
+        return rowsOk;
+    }
+
+    public void setRowsOk(Integer rowsOk) {
+        this.rowsOk = rowsOk;
+    }
+
+    /**
+     * Get a list of the days of week separated by commas
+     * Used when repeatInterval is weekly
+     * @return The days of week, Sun=0,Mon=1...Sat=6
+     */
+    public String[] getDaysOfWeek() {
+        return daysOfWeek;
+    }
+
+    /**
+     * Sets a list of the days of the week separated by commas
+     * Used when repeatInterval is weekly
+     * @param daysOfWeek The days of the week, Sun=0,Mon=1...Sat=6
+     */
+    public void setDaysOfWeek(String[] daysOfWeek) {
+        this.daysOfWeek = daysOfWeek;
+    }
+
+    /**
+     * Gets the file name if scheduled message type is file
+     * @return File name
+     */
+    public String getFileName() {
+        return fileName;
+    }
+
+    /**
+     * Sets the file name if scheduled message type is file
+     * @param fileName The file name
+     */
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @JsonSerialize(using = JsonDateTimeSerializer.class)
+    public Date getCreatedOn() {
+        return createdOn;
+    }
+
+    @JsonDeserialize(using = JsonDateTimeDeserializer.class)
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public List<TemplateJson.Field> getFields() {
+        return fields;
+    }
+
+    public void setFields(List<TemplateJson.Field> fields) {
+        this.fields = fields;
+    }
+
+    public Integer getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(Integer templateId) {
+        this.templateId = templateId;
+    }
 }

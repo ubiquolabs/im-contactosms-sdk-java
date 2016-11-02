@@ -19,14 +19,29 @@ public class AccountJsonObject extends JsonObject {
     private Integer accountId;
     @JsonProperty("account_name")
     private String accountName;
+    @JsonProperty("client_name")
+    private String clientName;
+    @JsonProperty("valid_since")
+    private Date validSince;
     @JsonProperty("sms_short_name")
     private String smsShortName;
     @JsonProperty("account_status")
     private String accountStatus;
+    @JsonProperty("account_type")
+    private String accountType;
+    @JsonProperty("can_sell_extras")
+    private Boolean canSellExtras;
+    @JsonProperty("subscription_type")
+    private String subscriptionType;
+    @JsonProperty("default_subaccount_id")
+    private Integer defaultSubaccountId;
+    @JsonProperty("comments")
+    private String comments;
     @JsonProperty("created_on")
     private Date createdOn;
     @JsonProperty("current_package")
     private PackageJsonObject currentPackage;
+
 
 
     public Integer getAccountId() {
@@ -45,6 +60,24 @@ public class AccountJsonObject extends JsonObject {
         this.accountName = accountName;
     }
 
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
+    @JsonSerialize(using = JsonDateTimeSerializer.class)
+    public Date getValidSince() {
+        return validSince;
+    }
+
+    @JsonDeserialize(using = JsonDateTimeDeserializer.class)
+    public void setValidSince(Date validSince) {
+        this.validSince = validSince;
+    }
+
     public String getSmsShortName() {
         return smsShortName;
     }
@@ -59,6 +92,46 @@ public class AccountJsonObject extends JsonObject {
 
     public void setAccountStatus(String accountStatus) {
         this.accountStatus = accountStatus;
+    }
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
+    }
+
+    public Boolean getCanSellExtras() {
+        return canSellExtras;
+    }
+
+    public void setCanSellExtras(Boolean canSellExtras) {
+        this.canSellExtras = canSellExtras;
+    }
+
+    public String getSubscriptionType() {
+        return subscriptionType;
+    }
+
+    public void setSubscriptionType(String subscriptionType) {
+        this.subscriptionType = subscriptionType;
+    }
+
+    public Integer getDefaultSubaccountId() {
+        return defaultSubaccountId;
+    }
+
+    public void setDefaultSubaccountId(Integer defaultSubaccountId) {
+        this.defaultSubaccountId = defaultSubaccountId;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     @JsonSerialize(using = JsonDateTimeSerializer.class)
