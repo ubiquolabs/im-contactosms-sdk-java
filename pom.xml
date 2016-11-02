@@ -7,7 +7,23 @@
   <packaging>jar</packaging>
 
   <name>im-contactosms-sdk-java</name>
+  <description>SDK to use with CSMS client API implementations</description>
   <url>http://maven.apache.org</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Sergei Walter</name>
+            <email>sergei@ubiquo.io</email>
+            <organization>Ubiquo labs</organization>
+            <organizationUrl>http://ubiquo.io</organizationUrl>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -50,7 +66,6 @@
   
   <build>
         <plugins>
-            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -100,9 +115,60 @@
                 </dependencies>
             </plugin>
 
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
-        
-         
         
         
     </build>
@@ -114,9 +180,8 @@
             <url>http://repo01.im.local:7070/repository/internal/</url>
         </repository>
         <snapshotRepository>
-            <id>archiva.snapshots</id>
-            <name>Internal Snapshot Repository</name>
-            <url>http://repo01.im.local:7070/repository/snapshots/</url>
+          <id>ossrh</id>
+          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
     
@@ -124,7 +189,6 @@
         <url>scm:git:git@github.com:interactuamovil/im-contactosms-sdk-java.git</url>
         <connection>scm:git:git@github.com:interactuamovil/im-contactosms-sdk-java.git</connection>
         <developerConnection>scm:git:git@github.com:interactuamovil/im-contactosms-sdk-java.git</developerConnection>
-        <tag>HEAD</tag>
     </scm>
   
 </project>
