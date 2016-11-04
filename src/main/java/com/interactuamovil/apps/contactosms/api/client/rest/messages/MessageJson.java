@@ -68,7 +68,7 @@ public class MessageJson extends JsonObject {
     private List<String> groups;
     
     @JsonProperty(value="recipients")
-    private List<RecipientJson> recipients;
+    private List<MessageRecipientsJson> recipients;
         
     /* LEGACY v2 */
     @JsonProperty(value="sms_sent", required = false)
@@ -423,14 +423,14 @@ public class MessageJson extends JsonObject {
     /**
      * @return the recipients
      */
-    public List<RecipientJson> getRecipients() {
+    public List<MessageRecipientsJson> getRecipients() {
         return recipients;
     }
 
     /**
      * @param recipients the recipients to set
      */
-    public void setRecipients(List<RecipientJson> recipients) {
+    public void setRecipients(List<MessageRecipientsJson> recipients) {
         this.recipients = recipients;
     }        
     
