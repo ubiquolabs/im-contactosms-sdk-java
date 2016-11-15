@@ -174,9 +174,8 @@
 
     <distributionManagement>
         <repository>
-            <id>archiva.internal</id>
-            <name>Internal Release Repository</name>
-            <url>http://repo01.im.local:7070/repository/internal/</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
         <snapshotRepository>
             <id>ossrh</id>
