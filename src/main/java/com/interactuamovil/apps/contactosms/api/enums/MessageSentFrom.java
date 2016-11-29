@@ -14,5 +14,6 @@ public enum MessageSentFrom {
     API_REST,
     SMS,
     SYSTEM,
-    SCHEDULER
+    SCHEDULER,
+    SMPP
 }
