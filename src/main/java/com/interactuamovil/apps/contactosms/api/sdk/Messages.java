@@ -2,18 +2,18 @@ package com.interactuamovil.apps.contactosms.api.sdk;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageJson;
-import com.interactuamovil.apps.contactosms.api.enums.MessageDirection;
 import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageRecipientsJson;
 import com.interactuamovil.apps.contactosms.api.enums.MessageDirection;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
 import com.interactuamovil.apps.contactosms.api.utils.JsonObjectCollection;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Messages extends Request {
     public Messages(String apiKey, String secretKey, String apiUri) {

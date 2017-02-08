@@ -4,7 +4,6 @@ import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageJson
 import com.interactuamovil.apps.contactosms.api.enums.MessageDirection;
 import com.interactuamovil.apps.contactosms.api.sdk.Messages;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
-import com.sun.corba.se.impl.protocol.giopmsgheaders.Message;
 import org.apache.commons.configuration.Configuration;
 
 import java.io.IOException;
