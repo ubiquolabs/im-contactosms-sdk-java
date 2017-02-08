@@ -4,6 +4,7 @@
  */
 package com.interactuamovil.apps.contactosms.api.client.rest.contacts;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.interactuamovil.apps.contactosms.api.enums.AddedFrom;
@@ -17,6 +18,7 @@ import java.util.List;
  *
  * @author sergeiw
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ContactJsonObject extends JsonObject {
     
     @JsonProperty(value="msisdn")
