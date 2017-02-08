@@ -53,6 +53,9 @@ public class ContactJsonObject extends JsonObject {
     @JsonProperty(value="tags")
     private List<String> tags;
 
+    @JsonProperty(value="profile_uid")
+    private String profileUid;
+
     public static ContactJsonObject fromJson(String json) throws IOException {
         return JsonObject.fromJson(json, ContactJsonObject.class);        
     }    
@@ -267,7 +270,19 @@ public class ContactJsonObject extends JsonObject {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-    
-    
+
+    /**
+     * @return the profileUid
+     */
+    public String getProfileUid() {
+        return this.profileUid;
+    }
+
+    /**
+     * @param profileUid the profileUid to set
+     */
+    public void setProfileUid(String profileUid) {
+        this.profileUid = profileUid;
+    }
     
 }
