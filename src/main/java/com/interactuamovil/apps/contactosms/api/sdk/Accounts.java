@@ -17,9 +17,9 @@ public class Accounts extends Request {
      * Returns the account general information
      *
      * @return Response object
-     * @throws IOException
-     * @throws InvalidKeyException
-     * @throws NoSuchAlgorithmException
+     * @throws IOException exception IO
+     * @throws InvalidKeyException InvalidKey
+     * @throws NoSuchAlgorithmException No algorithm
      */
     protected ApiResponse<AccountResponse> getStatus() throws IOException, InvalidKeyException, NoSuchAlgorithmException {
 

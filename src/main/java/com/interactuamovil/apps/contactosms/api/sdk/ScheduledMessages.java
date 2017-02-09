@@ -58,12 +58,13 @@ public class ScheduledMessages extends Request {
         }
         return response;
     }
-    
+    */
+
 
     /**
-     * Gets schedule messsages
-     *
-     * @return
+     * The scheduled messages list
+     * @param since The date since the scheduled was created
+     * @return The list
      */
     public ApiResponse<List<ScheduledMessageJson>> getSchedule(Date since) {
         Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
@@ -90,8 +91,8 @@ public class ScheduledMessages extends Request {
     /**
      * get a schedule messsage
      *
-     * @param scheduledMessageId
-     * @return
+     * @param scheduledMessageId The scheduled message id
+     * @return The scheduled message
      */
     public ApiResponse<ScheduledMessageJson> getById(int scheduledMessageId) {        
         Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
@@ -117,10 +118,10 @@ public class ScheduledMessages extends Request {
     /**
      * Removes a schedule messsage
      *
-     * @param
-     * @return
-     *
-    public ApiResponse<ScheduledMessageJson> delete(int scheduledMessageId) {        
+     * @param scheduledMessageId The scheduled message id
+     * @return The deleted scheduled message
+     */
+    public ApiResponse<ScheduledMessageJson> delete(int scheduledMessageId) {
         Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
         ApiResponse<ScheduledMessageJson> response;
         ScheduledMessageJson messageResponse;
@@ -164,13 +165,13 @@ public class ScheduledMessages extends Request {
     /**
      * Adds a new schedule messsage with advanced options
      *
-     * @param startDate
-     * @param endDate
-     * @param message
-     * @param time
-     * @param frequency
-     * @param groups
-     * @return
+     * @param startDate The start date
+     * @param endDate The end to finish the sending
+     * @param message The text message
+     * @param time The time of day
+     * @param frequency The frequency
+     * @param groups The groups sms short name list to send
+     * @return The scheduled message added
      */
     public ApiResponse<ScheduledMessageJson> add(
             Date startDate, Date endDate, String eventName, String message, String time, RepeatInterval frequency,
