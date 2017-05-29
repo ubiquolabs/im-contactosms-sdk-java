@@ -40,7 +40,7 @@ public class AccountJsonObject extends JsonObject {
     @JsonProperty("created_on")
     private Date createdOn;
     @JsonProperty("current_package")
-    private PackageJsonObject currentPackage;
+    private AccountBalanceJsonObject balance;
 
 
 
@@ -144,11 +144,11 @@ public class AccountJsonObject extends JsonObject {
         this.createdOn = createdOn;
     }
 
-    public PackageJsonObject getCurrentPackage() {
-        return currentPackage;
+    public AccountBalanceJsonObject getBalance() {
+        return balance;
     }
 
-    public void setCurrentPackage(PackageJsonObject currentPackage) {
-        this.currentPackage = currentPackage;
+    public void setBalance(AccountBalanceJsonObject balance) {
+        this.balance = balance;
     }
 }
