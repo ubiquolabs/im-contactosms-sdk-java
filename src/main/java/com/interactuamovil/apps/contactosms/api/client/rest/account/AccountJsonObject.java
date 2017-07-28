@@ -39,6 +39,10 @@ public class AccountJsonObject extends JsonObject {
     private String comments;
     @JsonProperty("created_on")
     private Date createdOn;
+    @JsonProperty("package")
+    private String packageName;
+    @JsonProperty("cycle")
+    private String cycleName;
     @JsonProperty("current_package")
     private AccountBalanceJsonObject balance;
 
@@ -132,6 +136,22 @@ public class AccountJsonObject extends JsonObject {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public String getPackage() {
+        return packageName;
+    }
+
+    public void setPackage(String packageName) {
+        this.packageName = packageName;
+    }
+
+    public String getCycle() {
+        return cycleName;
+    }
+
+    public void setCycle(String cycleName) {
+        this.cycleName = cycleName;
     }
 
     @JsonSerialize(using = JsonDateTimeSerializer.class)
