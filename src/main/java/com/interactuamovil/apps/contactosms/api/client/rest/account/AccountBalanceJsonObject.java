@@ -12,6 +12,10 @@ import java.util.Date;
  */
 public class AccountBalanceJsonObject {
 
+    @JsonProperty("credit_base_limit")
+    private Double creditBaseLimit;
+    @JsonProperty("credit_extra_limit")
+    private Double creditExtraLimit;
     @JsonProperty("credit_limit")
     private Double creditLimit;
     @JsonProperty("charges")
@@ -24,6 +28,22 @@ public class AccountBalanceJsonObject {
     private Date validSince;
     @JsonProperty("valid_thru")
     private Date validThru;
+
+    public Double getCreditBaseLimit() {
+        return creditBaseLimit;
+    }
+
+    public void setCreditBaseLimit(Double creditBaseLimit) {
+        this.creditBaseLimit = creditBaseLimit;
+    }
+
+    public Double getCreditExtraLimit() {
+        return creditExtraLimit;
+    }
+
+    public void setCreditExtraLimit(Double creditExtraLimit) {
+        this.creditExtraLimit = creditExtraLimit;
+    }
 
     public Double getCreditLimit() {
         return creditLimit;
