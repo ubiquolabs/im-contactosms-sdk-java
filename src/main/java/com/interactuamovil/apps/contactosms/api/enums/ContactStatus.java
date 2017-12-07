@@ -8,7 +8,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
  * @author Kenny
  */
 public enum ContactStatus {
-    
+
+    PENDING("PENDING"),
     SUSCRIBED("SUSCRIBED"),
     CONFIRMED("CONFIRMED"),
     CANCELLED("CANCELLED"),
