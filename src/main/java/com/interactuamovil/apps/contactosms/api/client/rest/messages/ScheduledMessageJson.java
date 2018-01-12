@@ -98,6 +98,9 @@ public class ScheduledMessageJson extends JsonObject {
     
     @JsonProperty("tags")
     private List<String> tags;
+
+    @JsonProperty("error_file")
+    private String errorFile;
     /**
      * @return the groups
      */
@@ -436,6 +439,9 @@ public class ScheduledMessageJson extends JsonObject {
 	public void setTags(List<String> tags) {
 		this.tags = tags;
 	}
-    
+
+	public String getErrorFile() { return errorFile; }
+
+	public void setErrorFile(String errorFile) { this.errorFile = errorFile; }
     
 }
