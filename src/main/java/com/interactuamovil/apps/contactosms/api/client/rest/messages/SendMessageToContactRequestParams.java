@@ -22,6 +22,8 @@ class SendMessageToContactRequestParams extends JsonObject {
     private String message;
     @JsonProperty(value="id") 
     private String clientMessageId;
+    @JsonProperty(value="dcs")
+    private Byte dcs = 0x0;
 
     /**
      * @return the msisdn
@@ -68,7 +70,19 @@ class SendMessageToContactRequestParams extends JsonObject {
     public void setClientMessageId(String clientMessageId) {
         this.clientMessageId = clientMessageId;
     }
-    
-    
+
+    /**
+     * @return the dcs
+     */
+    public Byte getDcs() {
+        return dcs;
+    }
+
+    /**
+     * @param dcs the dcs to set
+     */
+    public void setDcs(Byte dcs) {
+        this.dcs = dcs;
+    }
     
 }

@@ -155,7 +155,7 @@ class TagsExample extends BaseExample {
 
         ApiResponse<TagJsonObject> tag = tagsApi.deleteTag(testTagName);
 
-        if (!testTagName.equalsIgnoreCase(tag.getResponse().getName())) {
+        if (tag.getHttpCode() != 404) {
             throw new AssertionError("Tag not found on list.");
         }
 
