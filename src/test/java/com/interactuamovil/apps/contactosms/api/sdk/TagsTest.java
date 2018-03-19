@@ -4,18 +4,15 @@
  */
 package com.interactuamovil.apps.contactosms.api.sdk;
 
-import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
-import static junit.framework.Assert.assertTrue;
 import junit.framework.TestCase;
-import org.apache.commons.lang.StringUtils;
 
 /**
  *
  * @author sergeiw
  */
-public class GroupsTest extends TestCase {
-    
-    public GroupsTest(String testName) {
+public class TagsTest extends TestCase {
+
+    public TagsTest(String testName) {
         super(testName);
     }
     

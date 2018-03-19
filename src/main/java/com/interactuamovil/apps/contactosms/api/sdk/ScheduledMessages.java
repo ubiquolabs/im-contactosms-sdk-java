@@ -27,12 +27,7 @@ public class ScheduledMessages extends Request {
     /**
      * Gets log message list
      *
-     * @param startDate
-     * @param endDate
-     * @param start
-     * @param limit
-     * @param msisdn
-     * @return
+     *
      *
     public ListResponse<MessageResponse> getList(Date startDate, Date endDate, int start, int limit, String msisdn) {
         Map<String, Serializable> urlParameters = new LinkedHashMap<String, Serializable>();
@@ -126,7 +121,7 @@ public class ScheduledMessages extends Request {
      * @param scheduledMessageId The scheduled message id
      * @return The deleted scheduled message
      */
-    public ApiResponse<ScheduledMessageJson> delete(int scheduledMessageId) {        
+    public ApiResponse<ScheduledMessageJson> delete(int scheduledMessageId) {
         Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
         ApiResponse<ScheduledMessageJson> response;
         ScheduledMessageJson messageResponse;
@@ -148,7 +143,27 @@ public class ScheduledMessages extends Request {
     }
 
     /**
-     * Adds a new schedule messsage
+     * Add scheduled message to group
+     * @param startDate
+     * @param endDate
+     * @param eventName
+     * @param message
+     * @param time
+     * @param frequency
+     * @param repeatDays
+     * @param groups
+     * @return
+     */
+
+    public ApiResponse<ScheduledMessageJson> add(
+            Date startDate, Date endDate, String eventName, String message, String time, RepeatInterval frequency,
+            String repeatDays, String[] groups) {
+        return add(startDate, endDate, eventName, message, time, frequency, repeatDays, groups, "GROUP", null, null,
+                null);
+    }
+
+    /**
+     * Adds a new schedule messsage with advanced options
      *
      * @param startDate The start date
      * @param endDate The end to finish the sending
@@ -158,19 +173,26 @@ public class ScheduledMessages extends Request {
      * @param groups The groups sms short name list to send
      * @return The scheduled message added
      */
-    public ApiResponse<ScheduledMessageJson> add(Date startDate, Date endDate, String eventName, String message, String time, RepeatInterval frequency, String repeatDays, String[] groups) {
+    public ApiResponse<ScheduledMessageJson> add(
+            Date startDate, Date endDate, String eventName, String message, String time, RepeatInterval frequency,
+            String repeatDays, String[] groups, String type, String[] daysOfWeek, String phoneNumber,
+            String countryCode) {
         Map<String, Serializable> params = new LinkedHashMap<String, Serializable>();
         ApiResponse<ScheduledMessageJson> response;
         ScheduledMessageJson messageResponse;
 
         params.put("event_name", eventName);
         params.put("start_date", getDateFormat(startDate));
-        params.put("end_date", getDateFormat(endDate));
+        params.put("end_date", endDate==null?null:getDateFormat(endDate));
         params.put("message", message);
         params.put("execution_time", time);
+        params.put("country_code", countryCode);
+        params.put("phone_number", phoneNumber);
         params.put("repeat_interval", frequency);
         params.put("repeat_days", repeatDays);
         params.put("groups", groups);
+        params.put("days_of_week", daysOfWeek);
+        params.put("type", type);
 
         try {
             response = doRequest("messages/scheduled", "post", null, params, false);            

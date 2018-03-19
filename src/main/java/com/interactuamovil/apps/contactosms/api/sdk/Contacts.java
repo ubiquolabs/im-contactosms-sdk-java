@@ -2,13 +2,14 @@ package com.interactuamovil.apps.contactosms.api.sdk;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.interactuamovil.apps.contactosms.api.client.rest.contacts.ContactJsonObject;
-import com.interactuamovil.apps.contactosms.api.client.rest.groups.GroupJsonObject;
+import com.interactuamovil.apps.contactosms.api.client.rest.tags.TagJsonObject;
 import com.interactuamovil.apps.contactosms.api.enums.AddedFrom;
 import com.interactuamovil.apps.contactosms.api.enums.ContactStatus;
-import com.interactuamovil.apps.contactosms.api.sdk.responses.GroupResponse;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
 import com.interactuamovil.apps.contactosms.api.utils.JsonObjectCollection;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.InvalidKeyException;
@@ -16,7 +17,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
 
 public class Contacts extends Request {
 
@@ -28,6 +28,7 @@ public class Contacts extends Request {
 
     /**
      * Get the contacts list
+	 *
      * @param contactStatuses The contact status to find
      * @param query The query string
      * @param start The offset
@@ -78,11 +79,11 @@ public class Contacts extends Request {
     /**
      * Gets a contact by its msisdn
      *
-     * @param msisdn The msisdn
-     * @return A contact
-     * @throws IOException IOException
-     * @throws InvalidKeyException InvalidKeyException
-     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+     * @param msisdn
+     * @return
+     * @throws IOException
+     * @throws InvalidKeyException
+     * @throws NoSuchAlgorithmException
      */
     public ApiResponse<ContactJsonObject> getByMsisdn(String msisdn) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
 
@@ -105,7 +106,6 @@ public class Contacts extends Request {
         return response;
     }
 
-
     /**
      * Udpates a contact with the specified msisdn
      * @param countryCode The country code e.g. 502
@@ -127,15 +127,7 @@ public class Contacts extends Request {
         
         return update(contact);
     }
-
-    /**
-     * Updates a contact
-     * @param contact The contact
-     * @return The contact udpated
-     * @throws IOException IOException
-     * @throws InvalidKeyException InvalidKeyException
-     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
-     */
+    
     public ApiResponse<ContactJsonObject> update(ContactJsonObject contact) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
 
         Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
@@ -159,7 +151,6 @@ public class Contacts extends Request {
         }
         return response;
     }
-
 
     /**
      * Add a contact
@@ -254,7 +245,7 @@ public class Contacts extends Request {
     }
 
     /**
-     * Gets contact's group list
+     * Gets contact's tag list
      *
      * @param msisdn The msisdn
      * @return The list of groups
@@ -262,24 +253,69 @@ public class Contacts extends Request {
      * @throws InvalidKeyException InvalidKeyException
      * @throws NoSuchAlgorithmException NoSuchAlgorithmException
      */
-    public ApiResponse<List<GroupJsonObject>> getGroupList(String msisdn) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
+    public ApiResponse<List<TagJsonObject>> getTagList(String msisdn) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
         Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
         urlParams.put("msisdn", msisdn);
         
-        ApiResponse<List<GroupJsonObject>> response;
-        List<GroupJsonObject> groupResponse;
+        ApiResponse<List<TagJsonObject>> response;
+        List<TagJsonObject> tagResponse;
 
         try {
-            response = doRequest("contacts/" + msisdn + "/groups", "get", urlParams, null, false);
+            response = doRequest("contacts/" + msisdn + "/tags", "get", urlParams, null, false);
             if (response.isOk()) {
-                groupResponse = JsonObjectCollection.fromJson(response.getRawResponse(), new TypeReference<List<GroupJsonObject>>() {});
-                response.setResponse(groupResponse);            
+                tagResponse = JsonObjectCollection.fromJson(response.getRawResponse(), new TypeReference<List<TagJsonObject>>() {});
+                response.setResponse(tagResponse);
             }
         } catch (Exception e) {
-            response = new ApiResponse<List<GroupJsonObject>>();
+            response = new ApiResponse<>();
             response.setErrorCode(-1);
             response.setErrorDescription(e.getMessage());
         }
         return response;
     }
+
+    public ApiResponse<ContactJsonObject> addTag(String msisdn, String tagName) {
+        ApiResponse<ContactJsonObject> response;
+        ContactJsonObject contactResponse;
+        Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
+
+        urlParams.put("tag_name", tagName);
+        urlParams.put("msisdn", msisdn);
+
+        try {
+            response = doRequest("contacts/"+msisdn + "/tags/" + tagName, "post", urlParams, null, false);
+            if (response.isOk()) {
+                contactResponse = ContactJsonObject.fromJson(response.getRawResponse());
+                response.setResponse(contactResponse);
+            }
+        } catch (Exception e) {
+            response = new ApiResponse<>();
+            response.setErrorCode(-1);
+            response.setErrorDescription(e.getMessage());
+        }
+        return response;
+    }
+
+    public ApiResponse<ContactJsonObject> removeTag(String msisdn, String shortName) {
+        ApiResponse<ContactJsonObject> response;
+        ContactJsonObject contactResponse;
+        Map<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
+
+        urlParams.put("tag_name", shortName);
+        urlParams.put("msisdn", msisdn);
+
+        try {
+            response = doRequest("contacts/"+msisdn + "/tags/" + shortName, "delete", urlParams, null, false);
+            if (response.isOk()) {
+                contactResponse = ContactJsonObject.fromJson(response.getRawResponse());
+                response.setResponse(contactResponse);
+            }
+        } catch (Exception e) {
+            response = new ApiResponse<>();
+            response.setErrorCode(-1);
+            response.setErrorDescription(e.getMessage());
+        }
+        return response;
+    }
+
 }

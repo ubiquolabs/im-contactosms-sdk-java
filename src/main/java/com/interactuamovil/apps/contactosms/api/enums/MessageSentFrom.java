@@ -15,5 +15,6 @@ public enum MessageSentFrom {
     SMS,
     SYSTEM,
     SCHEDULER,
-    SMPP
+    SMPP,
+    ADDON
 }

@@ -2,11 +2,15 @@ package com.interactuamovil.apps.contactosms.api.sdk;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageJson;
+import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageRecipientsJson;
+import com.interactuamovil.apps.contactosms.api.enums.MessageDirection;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
 import com.interactuamovil.apps.contactosms.api.utils.JsonObjectCollection;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +36,21 @@ public class Messages extends Request {
      * @return The messages list queried
      */
     public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn) {
+        return getList(startDate, endDate, start, limit, msisdn, MessageDirection.ALL);
+    }
+
+
+	/**
+	 * Gets log message list
+	 *
+	 * @param startDate The star date
+	 * @param endDate The end date
+	 * @param start the offset of the results
+	 * @param limit the limit of the result list
+	 * @param msisdn The msisdn
+	 * @return The messages list queried
+	 */
+    public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn, MessageDirection direction) {
         Map<String, Serializable> urlParameters = new LinkedHashMap<String, Serializable>();
         ApiResponse<List<MessageJson>> response;
         List<MessageJson> messageResponse;
@@ -47,6 +66,8 @@ public class Messages extends Request {
             urlParameters.put("limit", limit);
         if (msisdn != null)
             urlParameters.put("msisdn", msisdn);
+        if (direction != null)
+            urlParameters.put("direction", direction.name());
 
         try {
             response = doRequest("messages", "get", urlParameters, null, true);
@@ -65,16 +86,16 @@ public class Messages extends Request {
     /**
      * Sends a message to a group array list
      *
-     * @param short_name The group short name
-     * @param message The message
-     * @return The message just sent
+     * @param tagNames The tag names
+	 * @param message The message
+	 * @return The message just sent
      */
-    public ApiResponse<MessageJson> sendToGroups(String[] short_name, String message, String messageId) {
+    public ApiResponse<MessageJson> sendToGroups(String[] tagNames, String message, String messageId) {
         Map<String, Serializable> params = new LinkedHashMap<String, Serializable>();
         ApiResponse<MessageJson> response;
         MessageJson messageResponse;
 
-        params.put("groups", short_name);
+        params.put("tags", tagNames);
         params.put("message", message);
         params.put("id", messageId);
 
@@ -130,6 +151,31 @@ public class Messages extends Request {
             }
         } catch (Exception e) {
             response = new ApiResponse<MessageJson>();
+            response.setErrorCode(-1);
+            response.setErrorDescription(e.getMessage());
+        }
+        return response;
+    }
+
+
+    /**
+     * Gets detailed information of the recipients' delivery status given a message
+     * @param messageId The message Id returned by the sendToContact/sendToGroups endpoint
+     * @param page The page. starts with 1.
+     * @param limit The limit of the result set.
+     * @return A list of recipients and their status.
+     */
+    public ApiResponse<List<MessageRecipientsJson>> getMessageRecipientsList(int messageId, int page, int limit) {
+        Map<String, Serializable> urlParams = new HashMap<String, Serializable>(3);
+        urlParams.put("message_id", messageId);
+        urlParams.put("page", page);
+        urlParams.put("limit", limit);
+        ApiResponse<List<MessageRecipientsJson>> response;
+        try {
+            response =
+                    doRequest("messages/%s/recipients", "get", urlParams, null, true);
+        } catch (Exception e) {
+            response = new ApiResponse<List<MessageRecipientsJson>>();
             response.setErrorCode(-1);
             response.setErrorDescription(e.getMessage());
         }

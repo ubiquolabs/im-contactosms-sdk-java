@@ -9,37 +9,41 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.interactuamovil.apps.contactosms.api.utils.JsonObject;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import java.util.stream.Collectors;
 
 /**
  *
  * @author sergeiw
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class SendMessageToGroupRequestParams extends JsonObject {
+class SendMessageToTagsRequestParams extends JsonObject {
     
-    @JsonProperty(value="groups") 
-    private List<String> groups;
+    @JsonProperty(value="tags")
+    private List<String> tags = Collections.emptyList();
     @JsonProperty(value="message") 
     private String message;
     @JsonProperty(value="id") 
     private String clientMessageId;
     @JsonProperty(value="from_file")
     private String fromFile;
+    @JsonProperty(value="dcs")
+    private Byte dcs = 0x0;
+
 
     /**
-     * @return the groups
+     * @return the tags
      */
-    public List<String> getGroups() {
-        return groups;
+    public List<String> getTags() {
+        return tags;
     }
 
     /**
-     * @param groups the groups to set
+     * @param tags the tags to set
      */
-    public void setGroups(List<String> groups) {
-        this.groups = groups;
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 
     /**
@@ -56,17 +60,13 @@ class SendMessageToGroupRequestParams extends JsonObject {
         this.message = message;
     }
     
-    public static SendMessageToGroupRequestParams fromJson(String json) throws IOException {
-        return JsonObject.fromJson(json, SendMessageToGroupRequestParams.class);        
+    public static SendMessageToTagsRequestParams fromJson(String json) throws IOException {
+        return JsonObject.fromJson(json, SendMessageToTagsRequestParams.class);
     }
     
     @JsonIgnore
-    public String getGroupsNames() {
-        List<String> grpList = getGroups();
-        String[] grpArr = new String[grpList.size()];
-        grpArr = grpList.toArray(grpArr);
-        String groupNames = StringUtils.join(grpArr, ",");
-        return groupNames;
+    public String getTagsString() {
+        return getTags().stream().collect(Collectors.joining(","));
     }
 
     /**
@@ -89,5 +89,19 @@ class SendMessageToGroupRequestParams extends JsonObject {
 
     public void setFromFile(String fromFile) {
         this.fromFile = fromFile;
+    }
+
+    /**
+     * @return the dcs
+     */
+    public Byte getDcs() {
+        return dcs;
+    }
+
+    /**
+     * @param dcs the dcs to set
+     */
+    public void setDcs(Byte dcs) {
+        this.dcs = dcs;
     }
 }

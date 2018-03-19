@@ -4,6 +4,7 @@
  */
 package com.interactuamovil.apps.contactosms.api.client.rest.contacts;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.interactuamovil.apps.contactosms.api.enums.AddedFrom;
@@ -17,6 +18,7 @@ import java.util.List;
  *
  * @author sergeiw
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ContactJsonObject extends JsonObject {
     
     @JsonProperty(value="msisdn")
@@ -52,6 +54,9 @@ public class ContactJsonObject extends JsonObject {
     
     @JsonProperty(value="tags")
     private List<String> tags;
+
+    @JsonProperty(value="profile_uid")
+    private String profileUid;
 
     public static ContactJsonObject fromJson(String json) throws IOException {
         return JsonObject.fromJson(json, ContactJsonObject.class);        
@@ -267,7 +272,19 @@ public class ContactJsonObject extends JsonObject {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-    
-    
+
+    /**
+     * @return the profileUid
+     */
+    public String getProfileUid() {
+        return this.profileUid;
+    }
+
+    /**
+     * @param profileUid the profileUid to set
+     */
+    public void setProfileUid(String profileUid) {
+        this.profileUid = profileUid;
+    }
     
 }

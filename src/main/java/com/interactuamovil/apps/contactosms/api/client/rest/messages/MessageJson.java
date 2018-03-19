@@ -64,11 +64,11 @@ public class MessageJson extends JsonObject {
     @JsonProperty(value="total_monitors")
     private Integer totalMonitors;
     
-    @JsonProperty(value="groups")
-    private List<String> groups;
+    @JsonProperty(value="tags")
+    private List<String> tags;
     
     @JsonProperty(value="recipients")
-    private List<RecipientJson> recipients;
+    private List<MessageRecipientsJson> recipients;
         
     /* LEGACY v2 */
     @JsonProperty(value="sms_sent", required = false)
@@ -407,30 +407,30 @@ public class MessageJson extends JsonObject {
     }
 
     /**
-     * @return the groups
+     * @return the tags
      */
-    public List<String> getGroups() {
-        return groups;
+    public List<String> getTags() {
+        return tags;
     }
 
     /**
-     * @param groups the groups to set
+     * @param tags the tags to set
      */
-    public void setGroups(List<String> groups) {
-        this.groups = groups;
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 
     /**
      * @return the recipients
      */
-    public List<RecipientJson> getRecipients() {
+    public List<MessageRecipientsJson> getRecipients() {
         return recipients;
     }
 
     /**
      * @param recipients the recipients to set
      */
-    public void setRecipients(List<RecipientJson> recipients) {
+    public void setRecipients(List<MessageRecipientsJson> recipients) {
         this.recipients = recipients;
     }        
     

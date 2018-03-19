@@ -6,7 +6,8 @@ package com.interactuamovil.apps.contactosms.api.enums;
  * @author Kenny
  */
 public enum MessageDirection {
-    
+
+    ALL("ALL"),
     MO("MO"),
     MT("MT");
     
