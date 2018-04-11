@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.sql.Time;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -137,7 +138,7 @@ public class ScheduledMessageJson extends JsonObject {
     public String getGroupsNames() {
         List<String> grpList = getGroups();
         if (grpList==null) return null;
-        return String.join(",", grpList);
+        return StringUtils.join(grpList, ",");
     }
 
     /**
