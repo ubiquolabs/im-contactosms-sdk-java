@@ -177,9 +177,9 @@
     </distributionManagement>
 
     <scm>
-        <url>scm:git:git@github.com:interactuamovil/im-contactosms-sdk-java.git</url>
-        <connection>scm:git:git@github.com:interactuamovil/im-contactosms-sdk-java.git</connection>
-        <developerConnection>scm:git:git@github.com:interactuamovil/im-contactosms-sdk-java.git</developerConnection>
+        <url>scm:git:git@github.com:ubiquolabs/im-contactosms-sdk-java.git</url>
+        <connection>scm:git:git@github.com:ubiquolabs/im-contactosms-sdk-java.git</connection>
+        <developerConnection>scm:git:git@github.com:ubiquolabs/im-contactosms-sdk-java.git</developerConnection>
     </scm>
 
     <profiles>
