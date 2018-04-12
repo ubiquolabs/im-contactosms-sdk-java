@@ -75,8 +75,6 @@ public class MessageJson extends JsonObject {
     private Integer smsSent;    
     @JsonProperty(value="sms_message", required = false)
     private Integer smsMessage;
-    @JsonProperty(value = "groups", required = false)
-    private List<String> groups;
 
     
     public MessageJson() {
@@ -436,14 +434,6 @@ public class MessageJson extends JsonObject {
     public void setRecipients(List<MessageRecipientsJson> recipients) {
         this.recipients = recipients;
     }        
-
-    public List<String> getGroups() {
-        return groups;
-    }
-
-    public void setGroups(List<String> groups) {
-        this.groups = groups;
-    }
     
     
 }
