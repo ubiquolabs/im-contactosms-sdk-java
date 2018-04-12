@@ -96,7 +96,7 @@ class MessagesExample extends BaseExample {
 
         try {
             startDate = sdf.parse("2015-01-01 00:00");
-            endDate = sdf.parse("2017-01-01 00:00");
+            endDate = sdf.parse("2018-04-01 00:00");
 
             ApiResponse<List<MessageJson>> response = messagesApi.getList(startDate, endDate, start, limit, msisdn, direction);
 
