@@ -11,7 +11,7 @@ import com.interactuamovil.apps.contactosms.api.utils.JsonObject;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -66,7 +66,7 @@ class SendMessageToTagsRequestParams extends JsonObject {
     
     @JsonIgnore
     public String getTagsString() {
-        return getTags().stream().collect(Collectors.joining(","));
+        return StringUtils.join(getTags(),",");
     }
 
     /**

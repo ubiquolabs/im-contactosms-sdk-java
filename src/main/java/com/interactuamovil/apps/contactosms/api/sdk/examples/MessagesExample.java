@@ -13,7 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+import org.apache.commons.lang.StringUtils;
 
 @SuppressWarnings("ChainedMethodCall")
 class MessagesExample extends BaseExample {
@@ -112,7 +112,7 @@ class MessagesExample extends BaseExample {
                             m.getShortCode(),
                             m.getMsisdn(),
                             m.getMessage(),
-                            m.getTags() != null ? m.getTags().stream().collect(Collectors.joining(",")) : "",
+                            m.getTags() != null ? StringUtils.join(m.getTags(),",") : "",
                             sdf.format(m.getCreatedOn())
                     ));
                 }
