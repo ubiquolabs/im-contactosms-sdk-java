@@ -4,20 +4,16 @@
  */
 package com.interactuamovil.apps.contactosms.api.sdk;
 
-import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageJson;
-import com.interactuamovil.apps.contactosms.api.enums.MessageDirection;
 import com.interactuamovil.apps.contactosms.api.enums.RepeatInterval;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static junit.framework.Assert.assertTrue;
 import junit.framework.TestCase;
-import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -98,8 +94,8 @@ public class ScheduledMessagesTest extends TestCase {
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
-    */
-    /**/
+
+
     /**
      * Test of add method, of class ScheduledMessages.
      *

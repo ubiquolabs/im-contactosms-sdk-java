@@ -75,7 +75,6 @@ public class MessageJson extends JsonObject {
     private Integer smsSent;    
     @JsonProperty(value="sms_message", required = false)
     private Integer smsMessage;
-
     
     public MessageJson() {
     }
