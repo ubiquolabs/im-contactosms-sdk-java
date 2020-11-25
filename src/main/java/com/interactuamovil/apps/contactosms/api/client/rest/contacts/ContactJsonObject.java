@@ -58,6 +58,9 @@ public class ContactJsonObject extends JsonObject {
     @JsonProperty(value="profile_uid")
     private String profileUid;
 
+    @JsonProperty(value="monitoring")
+    private boolean monitoring;
+
     public static ContactJsonObject fromJson(String json) throws IOException {
         return JsonObject.fromJson(json, ContactJsonObject.class);        
     }    
@@ -286,5 +289,8 @@ public class ContactJsonObject extends JsonObject {
     public void setProfileUid(String profileUid) {
         this.profileUid = profileUid;
     }
-    
+
+    public boolean getMonitoring() { return monitoring; }
+
+    public void setMonitoring(boolean monitoring) { this.monitoring = monitoring; }
 }
