@@ -24,7 +24,7 @@ import java.util.List;
 public class MessageJson extends JsonObject {
     
     @JsonProperty(value="message_id")
-    private String messageId;
+    private Integer messageId;
     @JsonProperty(value="short_code")
     private String shortCode;
     @JsonProperty(value="type")
@@ -199,14 +199,14 @@ public class MessageJson extends JsonObject {
     /**
      * @return the messageId
      */
-    public String getMessageId() {
+    public Integer getMessageId() {
         return messageId;
     }
 
     /**
      * @param messageId the messageId to set
      */
-    public void setMessageId(String messageId) {
+    public void setMessageId(Integer messageId) {
         this.messageId = messageId;
     }
 
