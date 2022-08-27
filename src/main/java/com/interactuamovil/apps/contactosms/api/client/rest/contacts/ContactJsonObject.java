@@ -5,6 +5,7 @@
 package com.interactuamovil.apps.contactosms.api.client.rest.contacts;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.interactuamovil.apps.contactosms.api.enums.AddedFrom;
@@ -19,6 +20,7 @@ import java.util.List;
  * @author sergeiw
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ContactJsonObject extends JsonObject {
     
     @JsonProperty(value="msisdn")
@@ -266,7 +268,11 @@ public class ContactJsonObject extends JsonObject {
      * @return the phoneNumber
      */
     public String getPhoneNumber() {
-        return msisdn.substring(countryCode.length(), msisdn.length());        
+        try {
+            return msisdn.substring(countryCode.length(), msisdn.length());
+        } catch (Exception e){ // error on no msisdn
+            return null;
+        }
     }
 
     /**
