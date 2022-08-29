@@ -11,7 +11,8 @@ public enum AddedFrom {
     FILE_UPLOAD("FILE_UPLOAD"),
     API("API"),
     SUBSCRIPTION_REQUEST("SUBSCRIPTION_REQUEST"),
-    SMS("SMS"),;
+    SMS("SMS"),
+    IM_REACH_NOTIFICATION_API("IM_REACH_NOTIFICATION_API");
     
     
     
