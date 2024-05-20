@@ -4,9 +4,16 @@
  */
 package com.interactuamovil.apps.contactosms.api.sdk;
 
+import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageJson;
+import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
 import junit.framework.TestCase;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -46,9 +53,13 @@ public class MessagesTest extends TestCase {
             int limit = 50;
             String msisdn = "";
             Messages instance = new Messages(
-                        "1d4e705080edec039fe580dd26fd1927", 
-                        "0b9aa43039efacc16072a9774af72993",
-                        "https://mensajeriacorporativa.tigobusiness.hn/api/");
+                        // "1d4e705080edec039fe580dd26fd1927", 
+                        // "0b9aa43039efacc16072a9774af72993",
+                        // "https://mensajeriacorporativa.tigobusiness.hn/api/"
+                        "7lM4Tpt61lVdO8efRPG1CmBK4ZuMTrHy",
+                        "b1jIpCXpVIf5O5dScD2vtRTQVKLe82vq",
+                        "http://web01-ubiquo-csm-wwcg.dev.im.local/api/rest/"
+                        );
                         //"http://localhost:8088/api/");
             instance.setCertificatedValidationEnabled(false);
             ApiResponse<List<MessageJson>> expResult = null;
