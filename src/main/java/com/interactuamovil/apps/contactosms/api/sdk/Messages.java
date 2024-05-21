@@ -36,7 +36,37 @@ public class Messages extends Request {
      * @return The messages list queried
      */
     public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn) {
-        return getList(startDate, endDate, start, limit, msisdn, MessageDirection.ALL);
+        return getList(startDate, endDate, start, limit, msisdn, MessageDirection.ALL, false);
+    }
+
+    /**
+     * Gets log message list
+     *
+     * @param startDate The star date
+     * @param endDate The end date
+     * @param start the offset of the results
+     * @param limit the limit of the result list
+     * @param msisdn The msisdn
+     * @param MessageDirection The messages direction
+     * @return The messages list queried
+     */
+    public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn, MessageDirection direction) {
+        return getList(startDate, endDate, start, limit, msisdn, direction, false);
+    }
+
+    /**
+     * Gets log message list
+     *
+     * @param startDate The star date
+     * @param endDate The end date
+     * @param start the offset of the results
+     * @param limit the limit of the result list
+     * @param msisdn The msisdn
+     * @param deliveryStatusEnable enable delivery status on message response
+     * @return The messages list queried
+     */
+    public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn, boolean deliveryStatusEnable) {
+        return getList(startDate, endDate, start, limit, msisdn, MessageDirection.ALL, deliveryStatusEnable);
     }
 
 
@@ -50,7 +80,7 @@ public class Messages extends Request {
 	 * @param msisdn The msisdn
 	 * @return The messages list queried
 	 */
-    public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn, MessageDirection direction) {
+    public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn, MessageDirection direction, boolean deliveryStatusEnable) {
         Map<String, Serializable> urlParameters = new LinkedHashMap<String, Serializable>();
         ApiResponse<List<MessageJson>> response;
         List<MessageJson> messageResponse;
@@ -68,6 +98,8 @@ public class Messages extends Request {
             urlParameters.put("msisdn", msisdn);
         if (direction != null)
             urlParameters.put("direction", direction.name());
+        if (deliveryStatusEnable)
+            urlParameters.put("delivery_status_enable", deliveryStatusEnable.toString());
 
         try {
             response = doRequest("messages", "get", urlParameters, null, true);
