@@ -1,6 +1,6 @@
 package com.interactuamovil.apps.contactosms.api.sdk.examples;
 
-import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration2.Configuration;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;

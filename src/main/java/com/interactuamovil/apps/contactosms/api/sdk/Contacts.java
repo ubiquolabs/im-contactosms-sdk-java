@@ -7,8 +7,9 @@ import com.interactuamovil.apps.contactosms.api.enums.AddedFrom;
 import com.interactuamovil.apps.contactosms.api.enums.ContactStatus;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
 import com.interactuamovil.apps.contactosms.api.utils.JsonObjectCollection;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -20,7 +21,7 @@ import java.util.Map;
 
 public class Contacts extends Request {
 
-    private static final Logger logger = Logger.getLogger(Contacts.class);
+    private static final Logger logger = LoggerFactory.getLogger(Contacts.class);
 
     public Contacts(String apiKey, String secretKey, String apiUri) {
         super(apiKey, secretKey, apiUri);

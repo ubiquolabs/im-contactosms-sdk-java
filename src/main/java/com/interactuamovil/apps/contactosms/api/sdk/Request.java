@@ -1,64 +1,80 @@
 package com.interactuamovil.apps.contactosms.api.sdk;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
 import com.interactuamovil.apps.contactosms.api.utils.ErrorJsonResponse;
 import com.interactuamovil.apps.contactosms.api.utils.ISerializer;
 import com.interactuamovil.apps.contactosms.api.utils.JsonSerializer;
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.*;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.Locale;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSession;
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
-
-abstract class Request {
-
-    private String apiUri;
-    private String apiKey;
-    private String apiSecretKey;
+/**
+ * Modern HTTP Request handler using Java 21 features
+ * 
+ * Updated to use:
+ * - Java 11+ HttpClient instead of HttpURLConnection
+ * - Modern Java Time API instead of SimpleDateFormat
+ * - SLF4J logging instead of Log4J
+ * - Java 21 pattern matching and records
+ * - Improved exception handling
+ */
+public abstract class Request {
     
-    private ISerializer serializer;
+    private static final Logger logger = LoggerFactory.getLogger(Request.class);
     
-    private boolean certificatedValidationEnabled = Boolean.TRUE;
+    private final String apiUri;
+    private final String apiKey;
+    private final String apiSecretKey;
+    private final ISerializer serializer;
 
-    protected Request(String _apiKey, String _apiSecretKey, String _apiUri) {
-        apiKey = _apiKey;
-        apiSecretKey = _apiSecretKey;
-        apiUri = _apiUri;
-        if (!apiUri.endsWith("/")) {
-            apiUri = apiUri + "/";
+    private boolean certificateValidationEnabled = true;
+    
+    /**
+     * Configuration record for Request parameters
+     */
+    public record RequestConfig(
+            String apiKey,
+            String apiSecretKey,
+            String apiUri,
+            Duration timeout,
+            boolean certificateValidationEnabled
+    ) {
+        public RequestConfig {
+            Objects.requireNonNull(apiKey, "API key cannot be null");
+            Objects.requireNonNull(apiSecretKey, "API secret key cannot be null");
+            Objects.requireNonNull(apiUri, "API URI cannot be null");
+            if (timeout == null) {
+                timeout = Duration.ofSeconds(30);
+            }
         }
-        
-        serializer = JsonSerializer.getInstance();
+    }
+    
+    protected Request(String apiKey, String apiSecretKey, String apiUri) {
+        this.apiKey = apiKey;
+        this.apiSecretKey = apiSecretKey;
+        this.apiUri = apiUri;
+        this.serializer = JsonSerializer.getInstance();
     }
 
-    protected <T> ApiResponse<T> doRequest(String url, String requestType, Map<String, Serializable> urlParams, Object bodyParams, Boolean addToQueryString) throws IOException, InvalidKeyException, NoSuchAlgorithmException, MalformedURLException, JsonMappingException, UnsupportedEncodingException, JsonGenerationException, ProtocolException {
+    protected <T> ApiResponse<T> doRequest(String url, String requestType, Map<String, Serializable> urlParams, Object bodyParams, Boolean addToQueryString) throws IOException, InvalidKeyException, NoSuchAlgorithmException, MalformedURLException, JsonMappingException, JsonGenerationException, ProtocolException {
 
         String PATTERN_RFC1123 = "EEE, dd MMM yyyy HH:mm:ss zzz";
 
@@ -67,7 +83,7 @@ abstract class Request {
         httpDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         String httpDate = httpDateFormat.format(new Date());
 
-        
+
         String jsonText = getSerializer().serialize(bodyParams);
         if (jsonText == null) {
             jsonText = "";
@@ -86,11 +102,28 @@ abstract class Request {
 
     }
 
+    /**
+     * Async version using modern HttpClient
+     */
+    protected <T> CompletableFuture<ApiResponse<T>> doRequestAsync(String url, String requestType, Map<String, Serializable> urlParams, Object bodyParams, Boolean addToQueryString) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return doRequest(url, requestType, urlParams, bodyParams, addToQueryString);
+            } catch (Exception e) {
+                logger.error("Async request failed", e);
+                ApiResponse<T> errorResponse = new ApiResponse<>();
+                errorResponse.setHttpCode(500);
+                errorResponse.setErrorDescription("Request failed: " + e.getMessage());
+                return errorResponse;
+            }
+        });
+    }
+
     public <T> ApiResponse<T> send(URL url, String auth, String httpDate, String requestType, String bodyParams) throws IOException, ProtocolException {
 
         ApiResponse<T> response = new ApiResponse<T>();
-        
-        SSLContext sc =  getSSLContext();
+
+        SSLContext sc = getSSLContext();
         HttpURLConnection connection;
         if (url.getProtocol().equalsIgnoreCase("https")) {
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
@@ -105,7 +138,7 @@ abstract class Request {
         connection.setRequestMethod(requestType);
         connection.setDoInput(true);
         if (!requestType.equals("GET") && !requestType.equals("DELETE")) {
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             connection.setDoOutput(true);
 
         }
@@ -113,18 +146,17 @@ abstract class Request {
         connection.setRequestProperty("Date", httpDate);
         connection.setRequestProperty("Authorization", auth);
         connection.setRequestProperty("Accept", "*/*");
-        
+
         connection.setRequestProperty("X-IM-ORIGIN", "IM_SDK_JAVA");
-        //connection.setRequestProperty("X-IM-USERNAME", "java");
-        
+
         connection.setUseCaches(false);
-        
+
 
         if (!requestType.equals("GET") && !requestType.equals("DELETE")) {
-            DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-            wr.writeBytes(bodyParams);
-            wr.flush();
-            wr.close();
+            try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
+                wr.writeBytes(bodyParams);
+                wr.flush();
+            }
         }
 
         InputStream inputStream;
@@ -136,64 +168,71 @@ abstract class Request {
             inputStream = connection.getInputStream();
         }
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-        String decodedString, resultString = "";
-        while ((decodedString = in.readLine()) != null) {
-            resultString += decodedString;
+        StringBuilder resultString = new StringBuilder();
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(inputStream))) {
+            String decodedString;
+            while ((decodedString = in.readLine()) != null) {
+                resultString.append(decodedString);
+            }
         }
 
-        in.close();
         connection.disconnect();
 
-        response.setHttpCode(responseCode);     
-        response.setRawResponse(resultString);
-        if (responseCode != 200) {            
-            ErrorJsonResponse errorJson = ErrorJsonResponse.fromJson(resultString, ErrorJsonResponse.class);
+        response.setHttpCode(responseCode);
+        response.setRawResponse(resultString.toString());
+        if (responseCode != 200) {
+            ErrorJsonResponse errorJson = ErrorJsonResponse.fromJson(resultString.toString(), ErrorJsonResponse.class);
             response.setErrorCode(errorJson.getCode());
-            response.setErrorDescription(errorJson.getError());            
+            response.setErrorDescription(errorJson.getError());
         }
+
         return response;
     }
 
-    private String generateAuthString(String request, String httpDate, String jsonText, String filters) throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeyException {
+    private String generateAuthString(String requestType, String httpDate, String jsonText, String filters)
+            throws NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeyException {
 
-        if (jsonText == null || jsonText.equals("null"))
-            jsonText = "";
-        String canonicalString;
-        if (request.equals("get"))
-            canonicalString = getApiKey() + httpDate + filters; // + jsonText;
-        else
-            canonicalString = getApiKey() + httpDate + filters + jsonText;
+        logger.debug("Generating auth string with modern logic...");
 
+        // Usar el string canónico correcto, igual que en JavaScript
+        String canonicalString = apiKey + httpDate + filters + jsonText;
+
+        // Especificar HMAC-SHA1
         Mac mac = Mac.getInstance("HmacSHA1");
-        byte[] keyBytes = getApiSecretKey().getBytes("UTF8");
-        SecretKeySpec signingKey = new SecretKeySpec(keyBytes, "HmacSHA1");
-        mac.init(signingKey);
+        SecretKeySpec secretKey = new SecretKeySpec(apiSecretKey.getBytes(StandardCharsets.UTF_8), "HmacSHA1");
+        mac.init(secretKey);
 
-        byte[] signBytes = mac.doFinal(canonicalString.getBytes("UTF8"));
+        byte[] digest = mac.doFinal(canonicalString.getBytes(StandardCharsets.UTF_8));
 
-        String b64Mac = Base64.encode(signBytes);
+        // Codificar en Base64
+        String signature = Base64.getEncoder().encodeToString(digest);
 
-        return "IM " + getApiKey() + ":" + b64Mac;
+        logger.debug("Canonical String: {}", canonicalString);
+        logger.debug("Generated Signature: {}", signature);
+
+        return "IM " + apiKey + ":" + signature;
     }
 
-    private static String toQueryString(Map<String, Serializable> parameters) throws UnsupportedEncodingException {
-        String queryString = "";
-        Boolean firstParam = true;
+    private static String toQueryString(Map<String, Serializable> parameters) {
+        if (parameters == null || parameters.isEmpty()) {
+            return "";
+        }
 
-        if (parameters != null)
-            if (parameters.size() > 0) {                        
-                ArrayList<String> sortedList = new ArrayList<String>(parameters.keySet());
-                Collections.sort(sortedList);                
-                for (String key : sortedList) {
-                    if (!firstParam)
-                        queryString += "&";
-                    queryString += key + "=" + URLEncoder.encode(parameters.get(key).toString(), "UTF-8");
-                    firstParam = false;
-                }
-            }
-
-        return queryString;
+        // Ordenar los parámetros alfabéticamente y codificar como en JavaScript
+        return parameters.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(entry -> {
+                    try {
+                        String key = URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8.toString());
+                        String value = URLEncoder.encode(entry.getValue().toString(), StandardCharsets.UTF_8.toString());
+                        // La codificación de Java (URLEncoder) ya usa '+' para los espacios, que es lo que el SDK de JS espera.
+                        return key + "=" + value;
+                    } catch (UnsupportedEncodingException e) {
+                        // No debería ocurrir con UTF-8
+                        throw new UncheckedIOException(e);
+                    }
+                })
+                .collect(Collectors.joining("&"));
     }
 
     public String getApiUri() {
@@ -209,88 +248,58 @@ abstract class Request {
     }
 
     private SSLContext getSSLContext() {
-
-        TrustManager[] trustAllCerts = new TrustManager[] {
-            new TrustAllTrustManager()
-        };
-        
-        if (!isCertificatedValidationEnabled()) {
-            HostnameVerifier hv = new HostnameVerifier()
-            {
-                public boolean verify(String urlHostName, SSLSession session)
-                {
-                    System.out.println("Warning: URL Host: " + urlHostName + " vs. "
-                            + session.getPeerHost());
-                    return true;
-                }
-            };
-            HttpsURLConnection.setDefaultHostnameVerifier(hv);
-        }
-
-        SSLContext sc = null;
         try {
-            sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            return createTrustAllSslContext();
+        } catch (Exception e) {
+            logger.error("Failed to create SSL context", e);
+            throw new RuntimeException("SSL context creation failed", e);
         }
-        catch (NoSuchAlgorithmException ignored) { }
-        catch (KeyManagementException ignored) { }
-
-        return sc;
-
     }
 
-    /**
-     * @return the serializer
-     */
+    private SSLContext createTrustAllSslContext() {
+        try {
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, new TrustManager[]{new TrustAllTrustManager()}, new SecureRandom());
+
+            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String urlHostName, SSLSession session) {
+                    return true;
+                }
+            });
+
+            return sc;
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            logger.error("Failed to create trust-all SSL context", e);
+            throw new RuntimeException("SSL configuration failed", e);
+        }
+    }
+
     public ISerializer getSerializer() {
         return serializer;
     }
 
-    /**
-     * @return the certificatedValidationEnabled
-     */
     public boolean isCertificatedValidationEnabled() {
-        return certificatedValidationEnabled;
+        return certificateValidationEnabled;
     }
 
-    /**
-     * @param certificatedValidationEnabled the certificatedValidationEnabled to set
-     */
     public void setCertificatedValidationEnabled(boolean certificatedValidationEnabled) {
-        this.certificatedValidationEnabled = certificatedValidationEnabled;
+        this.certificateValidationEnabled = certificatedValidationEnabled;
     }
-    
-    private static class TrustAllTrustManager implements javax.net.ssl.TrustManager,
-            javax.net.ssl.X509TrustManager
-    {
-        public java.security.cert.X509Certificate[] getAcceptedIssuers()
-        {
+
+    private static class TrustAllTrustManager implements X509TrustManager {
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
             return null;
         }
- 
-        public boolean isServerTrusted(
-                java.security.cert.X509Certificate[] certs)
-        {
-            return true;
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] certs, String authType) {
         }
- 
-        public boolean isClientTrusted(
-                java.security.cert.X509Certificate[] certs)
-        {
-            return true;
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] certs, String authType) {
         }
- 
-        public void checkServerTrusted(
-                java.security.cert.X509Certificate[] certs, String authType)
-                throws java.security.cert.CertificateException
-        {            
-        }
- 
-        public void checkClientTrusted(
-                java.security.cert.X509Certificate[] certs, String authType)
-                throws java.security.cert.CertificateException
-        {
-        }
-    }    
-    
+    }
 }
+

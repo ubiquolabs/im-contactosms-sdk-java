@@ -11,9 +11,8 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
-
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -21,27 +20,13 @@ import org.apache.log4j.Logger;
  */
 public class JsonDateTimeSerializer extends JsonSerializer<Date> {
 
-    private static final Logger logger = Logger.getLogger(JsonDateTimeSerializer.class);
-    private static int offset = 0;
+    private static final Logger logger = LoggerFactory.getLogger(JsonDateTimeSerializer.class);
     
-    SimpleDateFormat dateFormat;
-
-
-    public JsonDateTimeSerializer(){
-        dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    }
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");        
     
     @Override
-    public void serialize(Date t, JsonGenerator jg, SerializerProvider sp) throws IOException, JsonProcessingException {
-//        System.out.print("asdf-" + offset + "-fdsa" + t);
-        t.setTime(t.getTime() + offset*3600000);
+    public void serialize(Date t, JsonGenerator jg, SerializerProvider sp) throws IOException, JsonProcessingException {        
         String sDate = dateFormat.format(t);        
         jg.writeString(sDate);
     }
-
-    public static void setOffset(int hours){
-        offset = hours;
-    }
-    
-    
 }

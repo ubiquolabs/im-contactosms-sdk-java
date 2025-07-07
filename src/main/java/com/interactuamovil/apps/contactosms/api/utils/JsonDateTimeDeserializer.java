@@ -5,14 +5,15 @@
 package com.interactuamovil.apps.contactosms.api.utils;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.apache.log4j.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -20,7 +21,7 @@ import org.apache.log4j.Logger;
  */
 public class JsonDateTimeDeserializer extends JsonDeserializer<Date> {
 
-    private static final Logger logger = Logger.getLogger(JsonDateTimeDeserializer.class);
+    private static final Logger logger = LoggerFactory.getLogger(JsonDateTimeDeserializer.class);
     
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");        
     

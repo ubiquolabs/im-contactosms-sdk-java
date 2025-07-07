@@ -4,17 +4,20 @@ import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageJson
 import com.interactuamovil.apps.contactosms.api.enums.MessageDirection;
 import com.interactuamovil.apps.contactosms.api.sdk.Messages;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
-import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import java.util.UUID;
 
+/**
+ * Modern Messages Example using Java 21 features
+ */
 @SuppressWarnings("ChainedMethodCall")
 class MessagesExample extends BaseExample {
 
@@ -22,13 +25,12 @@ class MessagesExample extends BaseExample {
     private String testContactMsisdn = null;
     private String testGroupSmsShortName = null;
 
-    protected MessagesExample(String _apiKey, String _apiSecretKey, String _apiUri, Configuration _config) {
-        super(_apiKey, _apiSecretKey, _apiUri, _config);
+    protected MessagesExample(String apiKey, String apiSecretKey, String apiUri, Configuration config) {
+        super(apiKey, apiSecretKey, apiUri, config);
     }
 
     @Override
     public void configure() {
-
         testMessage = getConfig().getString("test_message");
         testContactMsisdn = getConfig().getString("test_contact_msisdn");
         testGroupSmsShortName = getConfig().getString("test_group_sms_short_name");
@@ -44,120 +46,83 @@ class MessagesExample extends BaseExample {
         if (null == testGroupSmsShortName) {
             throw new AssertionError("Add test_group_sms_short_name configuration.");
         }
-
     }
 
     @Override   
     public void test() throws IOException, InvalidKeyException, NoSuchAlgorithmException {
 
-        Messages messagesApi = new Messages(
-            getApiKey(),
-            getApiSecretKey(),
-            getApiUri()
-        );
+        Messages messagesApi = new Messages(getApiKey(), getApiSecretKey(), getApiUri());
 
         testGetMessages(messagesApi);
-
-        // Test send message to single contact
         testSendToContact(messagesApi);
-
-        // Test send message to group
         testSendToGroup(messagesApi);
-
-        // Test adding scheduled message
-        //testAddingScheduledMessage(messagesApi);
-
-        // Test inbox messages
-        //testInboxMessages(messagesApi);
-
-    }
-
-    private void testInboxMessages(Messages messagesApi) {
-
-        //messagesApi.inbox();
-
-    }
-
-    private void testAddingScheduledMessage(Messages messagesApi) {
-
-        //messagesApi.addSchedule();
-
     }
 
     private void testGetMessages(Messages messagesApi) {
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date startDate = null;
-        Date endDate = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime startDate = LocalDateTime.parse("2015-01-01 00:00", formatter);
+        LocalDateTime endDate = LocalDateTime.parse("2017-01-01 00:00", formatter);
+        
         int start = 0;
         int limit = 10;
         String msisdn = null;
-        MessageDirection direction  = MessageDirection.MT;
 
         try {
-            startDate = sdf.parse("2015-01-01 00:00");
-            endDate = sdf.parse("2017-01-01 00:00");
-
-            ApiResponse<List<MessageJson>> response = messagesApi.getList(startDate, endDate, start, limit, msisdn, direction);
+            // Use modern MessageQuery with delivery status
+            Messages.MessageQuery query = new Messages.MessageQuery(
+                startDate, endDate, start, limit, msisdn, MessageDirection.MT, true
+            );
+            
+            ApiResponse<List<MessageJson>> response = messagesApi.getList(query);
 
             if (!response.isOk()) {
-                throw new AssertionError("Error sending message to existing contact: "
-                        + response.getErrorDescription());
+                throw new AssertionError("Error getting messages: " + response.getErrorDescription());
             } else {
                 for (MessageJson m : response.getResponse()) {
-                    System.out.println(String.format("msg: [%s] [%d] [%s] [%s] [%s] [%s] [%s] [%s]",
+                    System.out.printf("msg: [%s] [%d] [%s] [%s] [%s] [%s] [%s] [%s]%n",
                             m.getMessageDirection().name(),
                             m.getMessageTypeId(),
                             m.getClientMessageId(),
                             m.getShortCode(),
                             m.getMsisdn(),
                             m.getMessage(),
-                            m.getTags() != null ? StringUtils.join(m.getTags(),",") : "",
-                            sdf.format(m.getCreatedOn())
-                    ));
+                            m.getTags() != null ? StringUtils.join(m.getTags(), ",") : "",
+                            formatter.format(m.getCreatedOn().toInstant()
+                                    .atZone(java.time.ZoneId.systemDefault())
+                                    .toLocalDateTime())
+                    );
                 }
             }
-
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void testSendToContact(Messages messagesApi) {
+        // Use modern SendMessageRequest
+        String uniqueMessage = String.format("%s - %s", testMessage, UUID.randomUUID().toString().substring(0, 8));
+        Messages.SendMessageRequest request = Messages.SendMessageRequest.toContact(
+                uniqueMessage, "50252010101"
+        );
 
-        ApiResponse<MessageJson> response;
-        /*
-        response = messagesApi.sendToContact(
-            testContactMsisdn, testMessage, java.util.UUID.randomUUID().toString());
-
-        if (!response.isOk()) {
-            throw new AssertionError("Error sending message to existing contact: "
-                + response.getErrorDescription());
-        }*/
-
-        response = messagesApi.sendToContact(
-                "50252010101", testMessage, java.util.UUID.randomUUID().toString());
+        ApiResponse<MessageJson> response = messagesApi.sendToContact(request);
 
         if (!response.isOk()) {
-            throw new AssertionError("Error sending message to new contact: "
-                    + response.getErrorDescription());
+            throw new AssertionError("Error sending message to new contact: " + response.getErrorDescription());
         }
-
     }
 
     private void testSendToGroup(Messages messagesApi) {
-
-        ApiResponse<MessageJson> response = messagesApi.sendToGroups(
-            new String[]{"comida","dennis"},
-            testMessage,
-            java.util.UUID.randomUUID().toString()
+        // Use modern SendMessageRequest
+        String uniqueMessage = String.format("%s - %s", testMessage, UUID.randomUUID().toString().substring(0, 8));
+        Messages.SendMessageRequest request = Messages.SendMessageRequest.toGroups(
+                uniqueMessage, new String[]{"comida", "dennis"}
         );
 
+        ApiResponse<MessageJson> response = messagesApi.sendToGroups(request);
+
         if (!response.isOk()) {
-            throw new AssertionError("Error sending message to group: "
-                + response.getErrorDescription());
+            throw new AssertionError("Error sending message to group: " + response.getErrorDescription());
         }
-
     }
-
 }
