@@ -63,8 +63,10 @@ public class MessagesDeliveryStatusExample extends BaseExample {
             logger.info("Retrieved {} messages without delivery status", 
                        response.getResponse().size());
             response.getResponse().forEach(message -> 
-                    logger.info("Message ID: {}, Status: {}", 
-                               message.getMessageId(), message.getMessageStatus()));
+                    logger.info("Message ID: {}, Text: {}, Date: {}", 
+                               message.getMessageId(), 
+                               truncate(message.getMessage(), 30),
+                               message.getCreatedOn()));
         } else {
             logger.error("Error: {} - {}", response.getErrorCode(), response.getErrorDescription());
         }
@@ -82,8 +84,11 @@ public class MessagesDeliveryStatusExample extends BaseExample {
             logger.info("Retrieved {} messages with delivery status", 
                        response.getResponse().size());
             response.getResponse().forEach(message -> 
-                    logger.info("Message ID: {}, Status: {}", 
-                               message.getMessageId(), message.getMessageStatus()));
+                    logger.info("Message ID: {}, Status: {}, Text: {}, Date: {}", 
+                               message.getMessageId(), 
+                               message.getMessageStatus(),
+                               truncate(message.getMessage(), 30),
+                               message.getCreatedOn()));
         } else {
             logger.error("Error: {} - {}", response.getErrorCode(), response.getErrorDescription());
         }
@@ -101,8 +106,12 @@ public class MessagesDeliveryStatusExample extends BaseExample {
             logger.info("Retrieved {} messages with delivery status and specific filters", 
                        response.getResponse().size());
             response.getResponse().forEach(message -> 
-                    logger.info("Message ID: {}, Status: {}", 
-                               message.getMessageId(), message.getMessageStatus()));
+                    logger.info("Message ID: {}, Status: {}, Direction: {}, Text: {}, Date: {}", 
+                               message.getMessageId(), 
+                               message.getMessageStatus(),
+                               message.getMessageDirection(),
+                               truncate(message.getMessage(), 30),
+                               message.getCreatedOn()));
         } else {
             logger.error("Error: {} - {}", response.getErrorCode(), response.getErrorDescription());
         }
@@ -126,8 +135,11 @@ public class MessagesDeliveryStatusExample extends BaseExample {
                 logger.info("Retrieved {} messages with delivery status", 
                            response.getResponse().size());
                 response.getResponse().forEach(message -> 
-                        logger.info("Message ID: {}, Status: {}", 
-                                   message.getMessageId(), message.getMessageStatus()));
+                        logger.info("Message ID: {}, Status: {}, Text: {}, Date: {}", 
+                                   message.getMessageId(), 
+                                   message.getMessageStatus(),
+                                   truncate(message.getMessage(), 30),
+                                   message.getCreatedOn()));
             } else {
                 logger.error("Error: {} - {}", response.getErrorCode(), response.getErrorDescription());
             }
@@ -180,5 +192,15 @@ public class MessagesDeliveryStatusExample extends BaseExample {
             logger.info("Query builder approach returned {} messages", 
                        response2.getResponse().size());
         }
+    }
+    
+    private String truncate(String value, int length) {
+        if (value == null) {
+            return "";
+        }
+        if (value.length() > length) {
+            return value.substring(0, length);
+        }
+        return value;
     }
 } 

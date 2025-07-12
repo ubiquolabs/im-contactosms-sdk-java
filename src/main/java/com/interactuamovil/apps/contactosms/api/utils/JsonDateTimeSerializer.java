@@ -1,6 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * JsonDateTimeSerializer - Serializes Date objects to JSON format
+ * Updated to use modern date handling without timezone offset manipulation
  */
 package com.interactuamovil.apps.contactosms.api.utils;
 
@@ -15,18 +15,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Serializes Date objects to JSON format using ISO datetime format.
+ * 
+ * Note: This serializer no longer applies timezone offset adjustments.
+ * The API now handles timezone conversion server-side, so client-side
+ * offset manipulation is no longer necessary.
+ * 
  * @author sergeiw
  */
 public class JsonDateTimeSerializer extends JsonSerializer<Date> {
 
     private static final Logger logger = LoggerFactory.getLogger(JsonDateTimeSerializer.class);
     
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");        
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");        
     
     @Override
-    public void serialize(Date t, JsonGenerator jg, SerializerProvider sp) throws IOException, JsonProcessingException {        
-        String sDate = dateFormat.format(t);        
-        jg.writeString(sDate);
+    public void serialize(Date date, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) 
+            throws IOException, JsonProcessingException {        
+        String formattedDate = dateFormat.format(date);        
+        jsonGenerator.writeString(formattedDate);
     }
 }
