@@ -23,8 +23,8 @@ public class ModernMessagesExample extends BaseExample {
     private final String testMsisdn;
     private final String testTagName;
     
-    public ModernMessagesExample(Configuration config) {
-        super(config);
+    public ModernMessagesExample(String apiKey, String apiSecretKey, String apiUri, Configuration config) {
+        super(apiKey, apiSecretKey, apiUri, config);
         this.testMsisdn = config.getString("test_contact_msisdn", "50212345678");
         this.testTagName = config.getString("test_tag_name", "TestTag");
     }
