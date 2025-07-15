@@ -6,7 +6,7 @@
 
     <groupId>com.interactuamovil.apps.contactosms</groupId>
     <artifactId>im-contactosms-sdk-java</artifactId>
-    <version>4.2.3-SNAPSHOT</version>
+    <version>5.0.0</version>
     <packaging>jar</packaging>
 
     <name>im-contactosms-sdk-java</name>

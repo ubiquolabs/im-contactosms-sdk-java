@@ -110,12 +110,72 @@ public final class Messages extends Request {
     /**
      * Gets message list with modern query parameters including delivery status
      */
-    @SuppressWarnings("unchecked")
-    public ApiResponse<List<MessageJson>> getList(MessageQuery query) {
-        logger.debug("Getting message list with query: {}", query);
-        
-        var urlParameters = buildQueryParams(query);
-        
+    public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn) {
+        return getList(startDate, endDate, start, limit, msisdn, MessageDirection.ALL, false);
+    }
+
+    /**
+     * Gets log message list
+     *
+     * @param startDate The star date
+     * @param endDate The end date
+     * @param start the offset of the results
+     * @param limit the limit of the result list
+     * @param msisdn The msisdn
+     * @param MessageDirection The messages direction
+     * @return The messages list queried
+     */
+    public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn, MessageDirection direction) {
+        return getList(startDate, endDate, start, limit, msisdn, direction, false);
+    }
+
+    /**
+     * Gets log message list
+     *
+     * @param startDate The star date
+     * @param endDate The end date
+     * @param start the offset of the results
+     * @param limit the limit of the result list
+     * @param msisdn The msisdn
+     * @param deliveryStatusEnable enable delivery status on message response
+     * @return The messages list queried
+     */
+    public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn, boolean deliveryStatusEnable) {
+        return getList(startDate, endDate, start, limit, msisdn, MessageDirection.ALL, deliveryStatusEnable);
+    }
+
+
+	/**
+	 * Gets log message list
+	 *
+	 * @param startDate The star date
+	 * @param endDate The end date
+	 * @param start the offset of the results
+	 * @param limit the limit of the result list
+	 * @param msisdn The msisdn
+	 * @return The messages list queried
+	 */
+    public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn, MessageDirection direction, boolean deliveryStatusEnable) {
+        Map<String, Serializable> urlParameters = new LinkedHashMap<String, Serializable>();
+        ApiResponse<List<MessageJson>> response;
+        List<MessageJson> messageResponse;
+
+
+        if (!(startDate == null) && !(endDate == null)) {
+            urlParameters.put("start_date", getDateFormat(startDate));
+            urlParameters.put("end_date", getDateFormat(endDate));
+        }
+        if (start != -1)
+            urlParameters.put("start", start);
+        if (limit != -1)
+            urlParameters.put("limit", limit);
+        if (msisdn != null)
+            urlParameters.put("msisdn", msisdn);
+        if (direction != null)
+            urlParameters.put("direction", direction.name());
+        if (deliveryStatusEnable)
+            urlParameters.put("delivery_status_enable", deliveryStatusEnable.toString());
+
         try {
             var rawResponse = doRequest("messages", "get", urlParameters, null, true);
             var response = new ApiResponse<List<MessageJson>>();
