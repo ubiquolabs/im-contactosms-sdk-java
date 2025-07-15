@@ -106,7 +106,7 @@ class MessagesDeliveryStatusTest {
         // Given
         var startDate = LocalDateTime.now().minusDays(7);
         var endDate = LocalDateTime.now();
-        var msisdn = "50252017507";
+        var msisdn = "50212345678";
         
         // When
         var response1 = messages.getListWithDeliveryStatus(startDate, endDate, 0, 50, msisdn);

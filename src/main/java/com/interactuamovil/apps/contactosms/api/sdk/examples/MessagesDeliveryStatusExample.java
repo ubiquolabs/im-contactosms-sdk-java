@@ -78,7 +78,7 @@ public class MessagesDeliveryStatusExample extends BaseExample {
         var startDate = LocalDateTime.now().minusDays(7);
         var endDate = LocalDateTime.now();
         
-        var response = messages.getListWithDeliveryStatus(startDate, endDate, 0, 10, "50252017507");
+        var response = messages.getListWithDeliveryStatus(startDate, endDate, 0, 10, "50212345678");
         
         if (response.isOk() && response.getResponse() != null) {
             logger.info("Retrieved {} messages with delivery status", 
@@ -100,7 +100,7 @@ public class MessagesDeliveryStatusExample extends BaseExample {
         var startDate = LocalDateTime.now().minusDays(7);
         var endDate = LocalDateTime.now();
         
-        var response = messages.getListWithDeliveryStatus(startDate, endDate, 0, 10, "50252017507", MessageDirection.MT);
+        var response = messages.getListWithDeliveryStatus(startDate, endDate, 0, 10, "50212345678", MessageDirection.MT);
         
         if (response.isOk() && response.getResponse() != null) {
             logger.info("Retrieved {} messages with delivery status and specific filters", 
@@ -124,7 +124,7 @@ public class MessagesDeliveryStatusExample extends BaseExample {
         var endDate = LocalDateTime.now();
         
         var query = Messages.MessageQuery.ofWithDeliveryStatus(startDate, endDate, 0, 10)
-                .withMsisdn("50252017507")
+                .withMsisdn("50212345678")
                 .withDirection(MessageDirection.MT);
         
         var futureResponse = messages.getListAsync(query);
@@ -157,7 +157,7 @@ public class MessagesDeliveryStatusExample extends BaseExample {
         Messages.MessageQuery query = Messages.MessageQuery.ofWithDeliveryStatus(startDate, endDate)
                 .withDirection(MessageDirection.MT);
 
-        var response = messages.getListWithDeliveryStatus(startDate, endDate, 0, 10, "50252017507", MessageDirection.MT);
+        var response = messages.getListWithDeliveryStatus(startDate, endDate, 0, 10, "50212345678", MessageDirection.MT);
         
         if (response.isOk() && response.getResponse() != null) {
             logger.info("Found {} messages for MSISDN with delivery status", 

@@ -51,7 +51,7 @@ class MessagesTest {
     private static final String TEST_API_KEY = "test-api-key";
     private static final String TEST_SECRET_KEY = "test-secret-key";
     private static final String TEST_API_URI = "https://api.test.com/";
-    private static final String TEST_MSISDN = "50252017507";
+    private static final String TEST_MSISDN = "50212345678";
     private static final String TEST_MESSAGE = "Test message content";
     
     @Mock

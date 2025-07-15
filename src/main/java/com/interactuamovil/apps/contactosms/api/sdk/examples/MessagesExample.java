@@ -102,7 +102,7 @@ class MessagesExample extends BaseExample {
         // Use modern SendMessageRequest
         String uniqueMessage = String.format("%s - %s", testMessage, UUID.randomUUID().toString().substring(0, 8));
         Messages.SendMessageRequest request = Messages.SendMessageRequest.toContact(
-                uniqueMessage, "50252010101"
+                uniqueMessage, "50212345678"
         );
 
         ApiResponse<MessageJson> response = messagesApi.sendToContact(request);
