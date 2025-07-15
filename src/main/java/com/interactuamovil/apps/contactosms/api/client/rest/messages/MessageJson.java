@@ -33,6 +33,8 @@ public class MessageJson extends JsonObject {
     private MessageDirection messageDirection;
     @JsonProperty(value="status")
     private MessageStatus messageStatus;
+    @JsonProperty(value="delivery_status")
+    private String deliveryStatus;
     @JsonProperty(value="sent_from")
     private MessageSentFrom sentFrom;
     @JsonProperty(value="id")
@@ -264,6 +266,20 @@ public class MessageJson extends JsonObject {
      */
     public void setMessageStatus(MessageStatus messageStatus) {
         this.messageStatus = messageStatus;
+    }
+
+     /**
+     * @return the deliveryStatus
+     */
+    public String getDeliveryStatus() {
+        return deliveryStatus;
+    }
+
+    /**
+     * @param deliveryStatus the deliveryStatus to set
+     */
+    public void setDeliveryStatus(String deliveryStatus) {
+        this.deliveryStatus = deliveryStatus;
     }
 
     /**

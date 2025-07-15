@@ -4,9 +4,16 @@
  */
 package com.interactuamovil.apps.contactosms.api.sdk;
 
+import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageJson;
+import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
 import junit.framework.TestCase;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -38,18 +45,13 @@ public class MessagesTest extends TestCase {
      * Test of getList method, of class Messages.
      *
     public void testGetList() {
-        try {
-            System.out.println("getList");        
+       
             Date startDate = formatter.parse("2014-02-01 00:00:00");
             Date endDate = formatter.parse("2015-02-20 00:00:00");
             int start = 0;
             int limit = 50;
             String msisdn = "";
             Messages instance = new Messages(
-                        "1d4e705080edec039fe580dd26fd1927", 
-                        "0b9aa43039efacc16072a9774af72993",
-                        "https://mensajeriacorporativa.tigobusiness.hn/api/");
-                        //"http://localhost:8088/api/");
             instance.setCertificatedValidationEnabled(false);
             ApiResponse<List<MessageJson>> expResult = null;
             ApiResponse<List<MessageJson>> result = instance.getList(startDate, endDate, start, limit, msisdn);
