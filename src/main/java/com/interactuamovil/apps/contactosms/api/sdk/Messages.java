@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -156,10 +157,11 @@ public final class Messages extends Request {
 	 * @return The messages list queried
 	 */
     public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn, MessageDirection direction, boolean deliveryStatusEnable) {
-        Map<String, Serializable> urlParameters = new LinkedHashMap<String, Serializable>();
+        logger.debug("Getting message list with delivery status: {}", deliveryStatusEnable);
+        
+        var urlParameters = new LinkedHashMap<String, Serializable>();
         ApiResponse<List<MessageJson>> response;
         List<MessageJson> messageResponse;
-
 
         if (!(startDate == null) && !(endDate == null)) {
             urlParameters.put("start_date", getDateFormat(startDate));
@@ -174,7 +176,56 @@ public final class Messages extends Request {
         if (direction != null)
             urlParameters.put("direction", direction.name());
         if (deliveryStatusEnable)
-            urlParameters.put("delivery_status_enable", deliveryStatusEnable.toString());
+            urlParameters.put("delivery_status_enable", deliveryStatusEnable);
+
+        try {
+            var rawResponse = doRequest("messages", "get", urlParameters, null, true);
+            response = new ApiResponse<List<MessageJson>>();
+            
+            // Copy response metadata
+            response.setHttpCode(rawResponse.getHttpCode());
+            response.setErrorCode(rawResponse.getErrorCode());
+            response.setErrorDescription(rawResponse.getErrorDescription());
+            response.setRawResponse(rawResponse.getRawResponse());
+            
+            if (rawResponse.isOk()) {
+                var messageList = JsonObjectCollection.fromJson(
+                        rawResponse.getRawResponse(), 
+                        new TypeReference<List<MessageJson>>() {}
+                );
+                response.setResponse(messageList);
+                logger.debug("Successfully retrieved {} messages (delivery status: {})", 
+                           messageList.size(), deliveryStatusEnable);
+            }
+            return response;
+        } catch (Exception e) {
+            logger.error("Error getting message list", e);
+            return createErrorResponse("Failed to get message list: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Get message list using MessageQuery record
+     */
+    public ApiResponse<List<MessageJson>> getList(MessageQuery query) {
+        logger.debug("Getting message list with query: {}", query);
+        
+        var urlParameters = new LinkedHashMap<String, Serializable>();
+        
+        if (query.startDate() != null && query.endDate() != null) {
+            urlParameters.put("start_date", query.startDate().format(DATE_TIME_FORMATTER));
+            urlParameters.put("end_date", query.endDate().format(DATE_TIME_FORMATTER));
+        }
+        if (query.start() >= 0)
+            urlParameters.put("start", query.start());
+        if (query.limit() > 0)
+            urlParameters.put("limit", query.limit());
+        if (query.msisdn() != null)
+            urlParameters.put("msisdn", query.msisdn());
+        if (query.direction() != null)
+            urlParameters.put("direction", query.direction().name());
+        if (query.deliveryStatusEnabled())
+            urlParameters.put("delivery_status_enable", query.deliveryStatusEnabled());
 
         try {
             var rawResponse = doRequest("messages", "get", urlParameters, null, true);
@@ -381,6 +432,14 @@ public final class Messages extends Request {
         }
         
         return params;
+    }
+    
+    /**
+     * Get date format for API requests
+     */
+    private String getDateFormat(Date date) {
+        if (date == null) return null;
+        return DATE_TIME_FORMATTER.format(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
     }
     
     private <T> ApiResponse<T> createErrorResponse(String message) {

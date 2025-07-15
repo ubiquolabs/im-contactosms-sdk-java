@@ -71,16 +71,13 @@ public class MessageJson extends JsonObject {
     
     @JsonProperty(value="recipients")
     private List<MessageRecipientsJson> recipients;
-        
-    @JsonProperty(value="delivery_status", required = false)
-    private String deliveryStatus;
     
     /* LEGACY v2 */
     @JsonProperty(value="sms_sent", required = false)
     private Integer smsSent;    
     @JsonProperty(value="sms_message", required = false)
     private Integer smsMessage;
-    
+        
     public MessageJson() {
     }
 
@@ -451,14 +448,6 @@ public class MessageJson extends JsonObject {
      */
     public void setRecipients(List<MessageRecipientsJson> recipients) {
         this.recipients = recipients;
-    }
-
-    public String getDeliveryStatus() {
-        return deliveryStatus;
-    }
-
-    public void setDeliveryStatus(String deliveryStatus) {
-        this.deliveryStatus = deliveryStatus;
     }
     
 }
