@@ -10,8 +10,10 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import java.io.IOException;
 import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -19,7 +21,7 @@ import org.apache.log4j.Logger;
  */
 public class JsonTimeDeserializer extends JsonDeserializer<Time> {
 
-    private static final Logger logger = Logger.getLogger(JsonTimeSerializer.class);
+    private static final Logger logger = LoggerFactory.getLogger(JsonTimeDeserializer.class);
     
     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");        
 

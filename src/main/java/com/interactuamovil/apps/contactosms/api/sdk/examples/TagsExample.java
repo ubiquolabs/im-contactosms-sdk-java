@@ -6,14 +6,17 @@ import com.interactuamovil.apps.contactosms.api.sdk.Contacts;
 import com.interactuamovil.apps.contactosms.api.sdk.Tags;
 import com.interactuamovil.apps.contactosms.api.sdk.responses.TagResponse;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
-import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration2.Configuration;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-class TagsExample extends BaseExample {
+/**
+ * Modern Tags Example using Configuration2
+ */
+public class TagsExample extends BaseExample {
 
     private String testTagName = null;
     private String testContactCountryCode = null;
@@ -21,12 +24,13 @@ class TagsExample extends BaseExample {
     private String testContactFirstName = null;
     private String testContactLastName = null;
 
-    public TagsExample(String _apiKey, String _apiSecretKey, String _apiUri, Configuration _config) {
-        super(_apiKey, _apiSecretKey, _apiUri, _config);
+    public TagsExample(String apiKey, String apiSecretKey, String apiUri, Configuration config) {
+        super(apiKey, apiSecretKey, apiUri, config);
     }
 
     @Override
     public void configure() {
+        // Configuration setup if needed
 
         testContactCountryCode = getConfig().getString("test_contact_country_code");
         testContactMsisdn = getConfig().getString("test_contact_msisdn");
@@ -40,86 +44,34 @@ class TagsExample extends BaseExample {
                 "Please add tag configurations: test_tag_name"
             );
         }
-
     }
 
     @Override
     public void test() throws IOException, InvalidKeyException, NoSuchAlgorithmException {
+        Tags tagsApi = new Tags(getApiKey(), getApiSecretKey(), getApiUri());
+        
+        ApiResponse<List<TagJsonObject>> tagsResponse = tagsApi.getList();
+        
+        if (tagsResponse.isOk()) {
+            List<TagJsonObject> tagList = tagsResponse.getResponse();
+            System.out.println("Found " + tagList.size() + " tags");
+        } else {
+            System.err.println("Error: " + tagsResponse.getErrorDescription());
+        }
 
+        testAddTag(tagsApi);
+
+        testRemoveTag(tagsApi);
+
+        testDeleteTag(tagsApi);
+    }
+
+    private void testAddTag(Tags tagsApi) throws NoSuchAlgorithmException, InvalidKeyException, IOException {
         Contacts contactsApi = new Contacts(
                 getApiKey(),
                 getApiSecretKey(),
                 getApiUri()
         );
-
-        Tags tagsApi = new Tags(
-            getApiKey(),
-            getApiSecretKey(),
-            getApiUri()
-        );
-
-        // Get list of tags
-        //testTagsList(tagsApi);
-
-        //testGetTag(tagsApi);
-
-        //testTagContactList(contactsApi, tagsApi);
-
-        testAddTag(contactsApi, tagsApi);
-
-        testRemoveTag(contactsApi, tagsApi);
-
-        testDeleteTag(tagsApi);
-
-    }
-
-    private void testTagsList(Tags tagsApi) {
-
-        ApiResponse<List<TagJsonObject>> tags = tagsApi.getList();
-
-        Boolean found = Boolean.FALSE;
-
-        for (TagJsonObject group : tags.getResponse()) {
-            if (testTagName.equalsIgnoreCase(group.getName())) {
-                found = Boolean.TRUE;
-            }
-        }
-
-        if (!found) {
-            throw new AssertionError("Tag not found on list.");
-        }
-
-    }
-
-    private void testGetTag(Tags tagsApi) throws NoSuchAlgorithmException, InvalidKeyException, IOException {
-
-        ApiResponse<TagJsonObject> tag = tagsApi.getTag(testTagName);
-
-        if (!testTagName.equalsIgnoreCase(tag.getResponse().getName())) {
-            throw new AssertionError("Tag not found on list.");
-        }
-
-    }
-
-    private void testTagContactList(Contacts contactsApi, Tags tagsApi) throws NoSuchAlgorithmException, InvalidKeyException, IOException {
-
-        ApiResponse<List<TagJsonObject>> tags = contactsApi.getTagList(testContactMsisdn);
-
-        Boolean found = Boolean.FALSE;
-
-        for (TagJsonObject group : tags.getResponse()) {
-            if (testTagName.equalsIgnoreCase(group.getName())) {
-                found = Boolean.TRUE;
-            }
-        }
-
-        if (!found) {
-            throw new AssertionError("Tag not found on list.");
-        }
-
-    }
-
-    private void testAddTag(Contacts contactsApi, Tags tagsApi) throws NoSuchAlgorithmException, InvalidKeyException, IOException {
 
         ApiResponse<ContactJsonObject> contactResponse =  contactsApi.add(
                 testContactCountryCode,
@@ -129,36 +81,42 @@ class TagsExample extends BaseExample {
         );
         if (contactResponse.isOk()) {
             ApiResponse<ContactJsonObject> addResponse = contactsApi.addTag(testContactMsisdn, testTagName);
-            if (addResponse.isOk()) {
+            if (addResponse.isOk() && addResponse.getResponse() != null) {
                 ContactJsonObject contact = addResponse.getResponse();
-                if (!contact.getTags().contains(testTagName)) {
+                if (contact.getTags() == null || !contact.getTags().contains(testTagName)) {
                     throw new AssertionError("Tag not added to contact");
                 }
+            } else {
+                System.err.println("Could not add tag to contact. Error: " + addResponse.getErrorDescription());
             }
+        } else {
+            System.err.println("Could not add contact. Error: " + contactResponse.getErrorDescription());
         }
-
     }
 
-    private void testRemoveTag(Contacts contactsApi, Tags tagsApi) throws NoSuchAlgorithmException, InvalidKeyException, IOException {
+    private void testRemoveTag(Tags tagsApi) throws NoSuchAlgorithmException, InvalidKeyException, IOException {
+        Contacts contactsApi = new Contacts(
+                getApiKey(),
+                getApiSecretKey(),
+                getApiUri()
+        );
 
         ApiResponse<ContactJsonObject> addResponse = contactsApi.removeTag(testContactMsisdn, testTagName);
-        if (addResponse.isOk()) {
+        if (addResponse.isOk() && addResponse.getResponse() != null) {
             ContactJsonObject contact = addResponse.getResponse();
-            if (contact.getTags().contains(testTagName)) {
+            if (contact.getTags() != null && contact.getTags().contains(testTagName)) {
                 throw new AssertionError("Tag not removed from contact");
             }
+        } else {
+            System.err.println("Could not remove tag from contact. Error: " + addResponse.getErrorDescription());
         }
-
     }
 
     private void testDeleteTag(Tags tagsApi) throws NoSuchAlgorithmException, InvalidKeyException, IOException {
-
         ApiResponse<TagJsonObject> tag = tagsApi.deleteTag(testTagName);
 
         if (tag.getHttpCode() != 404) {
             throw new AssertionError("Tag not found on list.");
         }
-
     }
-
 }

@@ -19,7 +19,7 @@ public class JsonContactStatusDeserializer extends JsonDeserializer<ContactStatu
 
     @Override
     public ContactStatus deserialize(JsonParser jp, DeserializationContext dc) throws IOException, JsonProcessingException {
-        return ContactStatus.valueOf(jp.getText());
+        return ContactStatus.fromValue(jp.getText());
     }
     
 }

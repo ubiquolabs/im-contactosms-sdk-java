@@ -11,7 +11,7 @@ import com.interactuamovil.apps.contactosms.api.utils.JsonObject;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *

@@ -6,34 +6,110 @@ import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageReci
 import com.interactuamovil.apps.contactosms.api.enums.MessageDirection;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
 import com.interactuamovil.apps.contactosms.api.utils.JsonObjectCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
-public class Messages extends Request {
+/**
+ * Modern Messages API client using Java 21 features
+ * 
+ * Updated to use:
+ * - Java Time API instead of Date/SimpleDateFormat
+ * - SLF4J logging instead of Log4J
+ * - Records for data transfer
+ * - Pattern matching and modern Java constructs
+ * - Async operations with CompletableFuture
+ * - Added delivery_status_enable parameter
+ */
+public final class Messages extends Request {
+    
+    private static final Logger logger = LoggerFactory.getLogger(Messages.class);
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    
+    /**
+     * Message query parameters record
+     */
+    public record MessageQuery(
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            int start,
+            int limit,
+            String msisdn,
+            MessageDirection direction,
+            boolean deliveryStatusEnabled
+    ) {
+        public MessageQuery {
+            if (start < 0) start = 0;
+            if (limit < 0) limit = 50;
+            if (limit > 1000) limit = 1000; // Reasonable limit
+        }
+        
+        public static MessageQuery of(LocalDateTime startDate, LocalDateTime endDate) {
+            return new MessageQuery(startDate, endDate, 0, 50, null, MessageDirection.ALL, false);
+        }
+        
+        public static MessageQuery ofWithDeliveryStatus(LocalDateTime startDate, LocalDateTime endDate) {
+            return new MessageQuery(startDate, endDate, 0, 50, null, MessageDirection.ALL, true);
+        }
+        
+        public static MessageQuery ofWithDeliveryStatus(LocalDateTime startDate, LocalDateTime endDate, 
+                                                        int start, int limit) {
+            return new MessageQuery(startDate, endDate, start, limit, null, MessageDirection.ALL, true);
+        }
+        
+        public MessageQuery withDeliveryStatus(boolean enabled) {
+            return new MessageQuery(startDate, endDate, start, limit, msisdn, direction, enabled);
+        }
+        
+        public MessageQuery withPagination(int start, int limit) {
+            return new MessageQuery(startDate, endDate, start, limit, msisdn, direction, deliveryStatusEnabled);
+        }
+        
+        public MessageQuery withMsisdn(String msisdn) {
+            return new MessageQuery(startDate, endDate, start, limit, msisdn, direction, deliveryStatusEnabled);
+        }
+        
+        public MessageQuery withDirection(MessageDirection direction) {
+            return new MessageQuery(startDate, endDate, start, limit, msisdn, direction, deliveryStatusEnabled);
+        }
+    }
+    
+    /**
+     * Send message request record
+     */
+    public record SendMessageRequest(
+            String message,
+            String messageId,
+            Optional<String> msisdn,
+            Optional<String[]> tagNames
+    ) {
+        public SendMessageRequest {
+            if (message == null || message.isBlank()) {
+                throw new IllegalArgumentException("Message cannot be null or blank");
+            }
+        }
+        
+        public static SendMessageRequest toContact(String message, String msisdn) {
+            return new SendMessageRequest(message, null, Optional.of(msisdn), Optional.empty());
+        }
+        
+        public static SendMessageRequest toGroups(String message, String[] tagNames) {
+            return new SendMessageRequest(message, null, Optional.empty(), Optional.of(tagNames));
+        }
+    }
+    
     public Messages(String apiKey, String secretKey, String apiUri) {
         super(apiKey, secretKey, apiUri);
     }
-
-    private String getDateFormat(Date d) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return formatter.format(d);
-    }
-
+    
     /**
-     * Gets log message list
-     *
-     * @param startDate The star date
-     * @param endDate The end date
-     * @param start the offset of the results
-     * @param limit the limit of the result list
-     * @param msisdn The msisdn
-     * @return The messages list queried
+     * Gets message list with modern query parameters including delivery status
      */
     public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn) {
         return getList(startDate, endDate, start, limit, msisdn, MessageDirection.ALL, false);
@@ -81,10 +157,11 @@ public class Messages extends Request {
 	 * @return The messages list queried
 	 */
     public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn, MessageDirection direction, boolean deliveryStatusEnable) {
-        Map<String, Serializable> urlParameters = new LinkedHashMap<String, Serializable>();
+        logger.debug("Getting message list with delivery status: {}", deliveryStatusEnable);
+        
+        var urlParameters = new LinkedHashMap<String, Serializable>();
         ApiResponse<List<MessageJson>> response;
         List<MessageJson> messageResponse;
-
 
         if (!(startDate == null) && !(endDate == null)) {
             urlParameters.put("start_date", getDateFormat(startDate));
@@ -99,266 +176,276 @@ public class Messages extends Request {
         if (direction != null)
             urlParameters.put("direction", direction.name());
         if (deliveryStatusEnable)
-            urlParameters.put("delivery_status_enable", deliveryStatusEnable.toString());
+            urlParameters.put("delivery_status_enable", deliveryStatusEnable);
 
         try {
-            response = doRequest("messages", "get", urlParameters, null, true);
-            if (response.isOk()) {
-                messageResponse = JsonObjectCollection.fromJson(response.getRawResponse(), new TypeReference<List<MessageJson>>() {});                
-                response.setResponse(messageResponse);
-            }            
-        } catch (Exception e) {
+            var rawResponse = doRequest("messages", "get", urlParameters, null, true);
             response = new ApiResponse<List<MessageJson>>();
-            response.setErrorCode(-1);
-            response.setErrorDescription(e.getMessage());
-        }
-        return response;
-    }
-
-    /**
-     * Sends a message to a group array list
-     *
-     * @param tagNames The tag names
-	 * @param message The message
-	 * @return The message just sent
-     */
-    public ApiResponse<MessageJson> sendToGroups(String[] tagNames, String message, String messageId) {
-        Map<String, Serializable> params = new LinkedHashMap<String, Serializable>();
-        ApiResponse<MessageJson> response;
-        MessageJson messageResponse;
-
-        params.put("tags", tagNames);
-        params.put("message", message);
-        params.put("id", messageId);
-
-        try {
-            response = doRequest("messages/send", "post", null, params, false);
-            if (response.isOk()) {
-                messageResponse = MessageJson.fromJson(response.getRawResponse());
-                response.setResponse(messageResponse);
+            
+            // Copy response metadata
+            response.setHttpCode(rawResponse.getHttpCode());
+            response.setErrorCode(rawResponse.getErrorCode());
+            response.setErrorDescription(rawResponse.getErrorDescription());
+            response.setRawResponse(rawResponse.getRawResponse());
+            
+            if (rawResponse.isOk()) {
+                var messageList = JsonObjectCollection.fromJson(
+                        rawResponse.getRawResponse(), 
+                        new TypeReference<List<MessageJson>>() {}
+                );
+                response.setResponse(messageList);
+                logger.debug("Successfully retrieved {} messages (delivery status: {})", 
+                           messageList.size(), deliveryStatusEnable);
             }
+            return response;
         } catch (Exception e) {
-            response = new ApiResponse<MessageJson>();
-            response.setErrorCode(-1);
-            response.setErrorDescription(e.getMessage());
+            logger.error("Error getting message list", e);
+            return createErrorResponse("Failed to get message list: " + e.getMessage());
         }
-        return response;
     }
-
+    
     /**
-     * Sends a message to a specific contact
-     *
-     * @param msisdn The msisdn to send
-     * @param message The text message
-     * @return The message just sent
+     * Get message list using MessageQuery record
      */
-    public ApiResponse<MessageJson> sendToContact(String msisdn, String message) {
-        return sendToContact(msisdn, message, null);
-    }
-
-
-    /**
-     * Sends a message to a contact
-     * @param msisdn The msisdn
-     * @param message The text message
-     * @param messageId The message Id
-     * @return The message just sent
-     */
-    public ApiResponse<MessageJson> sendToContact(String msisdn, String message, String messageId) {
-        Map<String, Serializable> params = new LinkedHashMap<String, Serializable>();
-        ApiResponse<MessageJson> response;
-        MessageJson messageResponse;
-
-        params.put("msisdn", msisdn);
-        params.put("message", message);
-        if (messageId != null) {
-            params.put("id", messageId);
+    public ApiResponse<List<MessageJson>> getList(MessageQuery query) {
+        logger.debug("Getting message list with query: {}", query);
+        
+        var urlParameters = new LinkedHashMap<String, Serializable>();
+        
+        if (query.startDate() != null && query.endDate() != null) {
+            urlParameters.put("start_date", query.startDate().format(DATE_TIME_FORMATTER));
+            urlParameters.put("end_date", query.endDate().format(DATE_TIME_FORMATTER));
         }
+        if (query.start() >= 0)
+            urlParameters.put("start", query.start());
+        if (query.limit() > 0)
+            urlParameters.put("limit", query.limit());
+        if (query.msisdn() != null)
+            urlParameters.put("msisdn", query.msisdn());
+        if (query.direction() != null)
+            urlParameters.put("direction", query.direction().name());
+        if (query.deliveryStatusEnabled())
+            urlParameters.put("delivery_status_enable", query.deliveryStatusEnabled());
 
         try {
-            response = doRequest("messages/send_to_contact", "post", null, params, false);
-            if (response.isOk()) {
-                messageResponse = MessageJson.fromJson(response.getRawResponse());            
-                response.setResponse(messageResponse);
+            var rawResponse = doRequest("messages", "get", urlParameters, null, true);
+            var response = new ApiResponse<List<MessageJson>>();
+            
+            // Copy response metadata
+            response.setHttpCode(rawResponse.getHttpCode());
+            response.setErrorCode(rawResponse.getErrorCode());
+            response.setErrorDescription(rawResponse.getErrorDescription());
+            response.setRawResponse(rawResponse.getRawResponse());
+            
+            if (rawResponse.isOk()) {
+                var messageList = JsonObjectCollection.fromJson(
+                        rawResponse.getRawResponse(), 
+                        new TypeReference<List<MessageJson>>() {}
+                );
+                response.setResponse(messageList);
+                logger.debug("Successfully retrieved {} messages (delivery status: {})", 
+                           messageList.size(), query.deliveryStatusEnabled());
             }
+            return response;
         } catch (Exception e) {
-            response = new ApiResponse<MessageJson>();
-            response.setErrorCode(-1);
-            response.setErrorDescription(e.getMessage());
+            logger.error("Error getting message list", e);
+            return createErrorResponse("Failed to get message list: " + e.getMessage());
         }
-        return response;
     }
-
-
+    
     /**
-     * Gets detailed information of the recipients' delivery status given a message
-     * @param messageId The message Id returned by the sendToContact/sendToGroups endpoint
-     * @param page The page. starts with 1.
-     * @param limit The limit of the result set.
-     * @return A list of recipients and their status.
+     * Convenience method with LocalDateTime parameters
      */
-    public ApiResponse<List<MessageRecipientsJson>> getMessageRecipientsList(int messageId, int page, int limit) {
-        Map<String, Serializable> urlParams = new HashMap<String, Serializable>(3);
-        urlParams.put("message_id", messageId);
-        urlParams.put("page", page);
-        urlParams.put("limit", limit);
-        ApiResponse<List<MessageRecipientsJson>> response;
-        try {
-            response =
-                    doRequest("messages/%s/recipients", "get", urlParams, null, true);
-        } catch (Exception e) {
-            response = new ApiResponse<List<MessageRecipientsJson>>();
-            response.setErrorCode(-1);
-            response.setErrorDescription(e.getMessage());
-        }
-        return response;
+    public ApiResponse<List<MessageJson>> getList(LocalDateTime startDate, LocalDateTime endDate, 
+                                                  int start, int limit, String msisdn) {
+        return getList(new MessageQuery(startDate, endDate, start, limit, msisdn, MessageDirection.ALL, false));
     }
-
+    
     /**
-     * Gets schedule messsages
-     *
-     * @return
-     *
-    public ListResponse<ScheduleMessageResponse> getSchedule() {
-        ListResponse<ScheduleMessageResponse> response = new ListResponse<ScheduleMessageResponse>();
-        List<ScheduleMessageResponse> messageResponse;
-
-        try {
-            String serverResponse = doRequest("messages/scheduled", "get", null, null, false);
-            ObjectMapper mapper = new ObjectMapper();
-
-            messageResponse = mapper.readValue(serverResponse, List.class);
-            response.setResult(messageResponse);
-        } catch (Exception e) {
-            response.setHasError(true);
-            response.setErrorMessage(e.getMessage());
-        }
-        return response;
+     * Convenience method with delivery status enabled
+     */
+    public ApiResponse<List<MessageJson>> getListWithDeliveryStatus(LocalDateTime startDate, LocalDateTime endDate, 
+                                                                   int start, int limit, String msisdn) {
+        return getList(new MessageQuery(startDate, endDate, start, limit, msisdn, MessageDirection.ALL, true));
     }
-
+    
     /**
-     * Removes a schedule messsage
-     *
-     * @param messageId
-     * @return
-     *
-    public Response<ActionMessageResponse> deleteSchedule(int messageId) {
-        Response<ActionMessageResponse> response = new Response<ActionMessageResponse>();
-        Map<String, Serializable> params = new LinkedHashMap<String, Serializable>();
-        ActionMessageResponse messageResponse;
-
-        params.put("message_id", messageId);
-
-        try {
-            String serverResponse = doRequest("messages/scheduled", "delete", null, params, false);
-            ObjectMapper mapper = new ObjectMapper();
-
-            messageResponse = mapper.readValue(serverResponse, ActionMessageResponse.class);
-            response.setResult(messageResponse);
-        } catch (Exception e) {
-            response.setError(true);
-            response.setErrorMessage(e.getMessage());
-        }
-        return response;
+     * Convenience method with delivery status and direction
+     */
+    public ApiResponse<List<MessageJson>> getListWithDeliveryStatus(LocalDateTime startDate, LocalDateTime endDate, 
+                                                                   int start, int limit, String msisdn, 
+                                                                   MessageDirection direction) {
+        return getList(new MessageQuery(startDate, endDate, start, limit, msisdn, direction, true));
     }
-
+    
     /**
-     * Adds a new schedule messsage
-     *
-     * @param startDate
-     * @param endDate
-     * @param message
-     * @param time
-     * @param frequency
-     * @param groups
-     * @return
-     *
-    public ApiResponse<ScheduledMessageJson> addSchedule(Date startDate, Date endDate, String eventName, String message, String time, String frequency, String repeatDays, String[] groups) {
-        Map<String, Serializable> params = new LinkedHashMap<String, Serializable>();
-        ApiResponse<ScheduledMessageJson> response = new ApiResponse<ScheduledMessageJson>();
-        ScheduledMessageJson messageResponse;
-
-        params.put("event_name", eventName);
-        params.put("start_date", getDateFormat(startDate));
-        params.put("end_date", getDateFormat(endDate));
-        params.put("message", message);
-        params.put("execution_time", time);
-        params.put("repeat_interval", frequency);
-        params.put("repeat_days", repeatDays);
-        params.put("groups", groups);
-
-        try {
-            String serverResponse = doRequest("messages/scheduled", "post", null, params, false);
-            messageResponse = ScheduledMessageJson.fromJson(serverResponse);
-            response.setRawResponse(serverResponse);
-            response.setResponse(messageResponse);            
-        } catch (Exception e) {
-            response.setErrorCode(-1);
-            response.setErrorDescription(e.getMessage());
-        }
-        return response;
+     * Async version of getList
+     */
+    public CompletableFuture<ApiResponse<List<MessageJson>>> getListAsync(MessageQuery query) {
+        return doRequestAsync("messages", "get", buildQueryParams(query), null, true);
     }
-
+    
     /**
-     * Gets the inbox messages
-     *
-     * @param startDate
-     * @param endDate
-     * @param start
-     * @param limit
-     * @param msisdn
-     * @param status
-     * @return
-     *
-    public ListResponse<InboxMessageResponse> inbox(Date startDate, Date endDate, int start, int limit, String msisdn, int status) {
-        ListResponse<InboxMessageResponse> response = new ListResponse<InboxMessageResponse>();
-        Map<String, Serializable> params = new LinkedHashMap<String, Serializable>();
-        List<InboxMessageResponse> messageResponse;
-        int _status = decodeStatus(status);
-
-        if (!(startDate == null || endDate == null)) {
-            params.put("start_date", getDateFormat(startDate));
-            params.put("end_date", getDateFormat(endDate));
+     * Send message to contact using modern pattern
+     */
+    public ApiResponse<MessageJson> sendToContact(SendMessageRequest request) {
+        logger.debug("Sending message to contact: {}", request.msisdn().orElse("unknown"));
+        
+        if (request.msisdn().isEmpty()) {
+            throw new IllegalArgumentException("MSISDN is required for contact messages");
         }
-        if (start >= 0)
-            params.put("start", start);
-        if (limit >= 0)
-            params.put("limit", limit);
-        if (!(msisdn == null) && msisdn.length() > 3)
-            params.put("msisdn", msisdn);
-        if (_status > -1)
-            params.put("status", _status);
-
+        
+        var params = new LinkedHashMap<String, Serializable>();
+        params.put("msisdn", request.msisdn().get());
+        params.put("message", request.message());
+        
+        Optional.ofNullable(request.messageId())
+                .ifPresent(id -> params.put("id", id));
+        
+        return sendMessage("messages/send_to_contact", params);
+    }
+    
+    /**
+     * Send message to groups using modern pattern
+     */
+    public ApiResponse<MessageJson> sendToGroups(SendMessageRequest request) {
+        logger.debug("Sending message to groups: {}", Arrays.toString(request.tagNames().orElse(new String[0])));
+        
+        if (request.tagNames().isEmpty()) {
+            throw new IllegalArgumentException("Tag names are required for group messages");
+        }
+        
+        var params = new LinkedHashMap<String, Serializable>();
+        params.put("tags", request.tagNames().get());
+        params.put("message", request.message());
+        
+        Optional.ofNullable(request.messageId())
+                .ifPresent(id -> params.put("id", id));
+        
+        return sendMessage("messages/send", params);
+    }
+    
+    /**
+     * Async send to contact
+     */
+    public CompletableFuture<ApiResponse<MessageJson>> sendToContactAsync(SendMessageRequest request) {
+        return CompletableFuture.supplyAsync(() -> sendToContact(request));
+    }
+    
+    /**
+     * Async send to groups
+     */
+    public CompletableFuture<ApiResponse<MessageJson>> sendToGroupsAsync(SendMessageRequest request) {
+        return CompletableFuture.supplyAsync(() -> sendToGroups(request));
+    }
+    
+    /**
+     * Get message recipients with modern pagination
+     */
+    @SuppressWarnings("unchecked")
+    public ApiResponse<List<MessageRecipientsJson>> getMessageRecipients(int messageId, int page, int limit) {
+        logger.debug("Getting message recipients for messageId: {}, page: {}, limit: {}", messageId, page, limit);
+        
+        var validatedPage = Math.max(1, page);
+        var validatedLimit = Math.clamp(limit, 1, 1000);
+        
+        var urlParams = Map.of(
+                "message_id", messageId,
+                "page", validatedPage,
+                "limit", validatedLimit
+        );
+        
         try {
-            String serverResponse = doRequest("messages/messages_inbox", "get", params, null, true);
-            ObjectMapper mapper = new ObjectMapper();
-
-            messageResponse = mapper.readValue(serverResponse, List.class);
-            response.setResult(messageResponse);
+            var rawResponse = doRequest("messages/%s/recipients".formatted(messageId), "get", 
+                                      new LinkedHashMap<>(urlParams), null, true);
+            
+            var response = new ApiResponse<List<MessageRecipientsJson>>();
+            
+            // Copy response metadata - USAR getHttpCode() NO getStatus()
+            response.setHttpCode(rawResponse.getHttpCode());
+            response.setErrorCode(rawResponse.getErrorCode());
+            response.setErrorDescription(rawResponse.getErrorDescription());
+            response.setRawResponse(rawResponse.getRawResponse());
+            
+            if (rawResponse.isOk()) {
+                var recipients = JsonObjectCollection.fromJson(
+                        rawResponse.getRawResponse(), 
+                        new TypeReference<List<MessageRecipientsJson>>() {}
+                );
+                response.setResponse(recipients);
+                logger.debug("Successfully retrieved {} message recipients", recipients.size());
+            }
+            return response;
         } catch (Exception e) {
-            response.setHasError(true);
-            response.setErrorMessage(e.getMessage());
+            logger.error("Error getting message recipients", e);
+            return createErrorResponse("Failed to get message recipients: " + e.getMessage());
         }
+    }
+    
+    // Private helper methods
+    @SuppressWarnings("unchecked")
+    private ApiResponse<MessageJson> sendMessage(String endpoint, Map<String, Serializable> params) {
+        try {
+            var rawResponse = doRequest(endpoint, "post", null, params, false);
+            var response = new ApiResponse<MessageJson>();
+            
+            // Copy response metadata - USAR getHttpCode() NO getStatus()
+            response.setHttpCode(rawResponse.getHttpCode());
+            response.setErrorCode(rawResponse.getErrorCode());
+            response.setErrorDescription(rawResponse.getErrorDescription());
+            response.setRawResponse(rawResponse.getRawResponse());
+            
+            if (rawResponse.isOk()) {
+                var messageResponse = MessageJson.fromJson(rawResponse.getRawResponse());
+                response.setResponse(messageResponse);
+                logger.debug("Successfully sent message");
+            }
+            return response;
+        } catch (Exception e) {
+            logger.error("Error sending message", e);
+            return createErrorResponse("Failed to send message: " + e.getMessage());
+        }
+    }
+    
+    private Map<String, Serializable> buildQueryParams(MessageQuery query) {
+        var params = new LinkedHashMap<String, Serializable>();
+        
+        Optional.ofNullable(query.startDate())
+                .ifPresent(date -> params.put("start_date", DATE_TIME_FORMATTER.format(date)));
+        
+        Optional.ofNullable(query.endDate())
+                .ifPresent(date -> params.put("end_date", DATE_TIME_FORMATTER.format(date)));
+        
+        if (query.start() > 0) params.put("start", query.start());
+        if (query.limit() > 0) params.put("limit", query.limit());
+        
+        Optional.ofNullable(query.msisdn())
+                .filter(msisdn -> !msisdn.isBlank())
+                .ifPresent(msisdn -> params.put("msisdn", msisdn));
+        
+        Optional.ofNullable(query.direction())
+                .ifPresent(direction -> params.put("direction", direction.name()));
+        
+        // Add delivery_status_enable parameter
+        if (query.deliveryStatusEnabled()) {
+            params.put("delivery_status_enable", "true");
+        }
+        
+        return params;
+    }
+    
+    /**
+     * Get date format for API requests
+     */
+    private String getDateFormat(Date date) {
+        if (date == null) return null;
+        return DATE_TIME_FORMATTER.format(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+    }
+    
+    private <T> ApiResponse<T> createErrorResponse(String message) {
+        var response = new ApiResponse<T>();
+        response.setErrorCode(-1);
+        response.setErrorDescription(message);
         return response;
     }
-
-    private int decodeStatus(int type) {
-        int result;
-
-        switch (type) {
-            case 0:
-                result = 0;
-                break;
-            case 1:
-                result = 1;
-                break;
-            case 2:
-                result = 2;
-                break;
-            default:
-                result = -1;
-        }
-        return result;
-    }
-    */
 }

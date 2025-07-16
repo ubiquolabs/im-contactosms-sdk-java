@@ -12,9 +12,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.IOException;
-import java.text.DateFormat;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
  */
 public class JsonSerializer implements ISerializer {
     
-    private static final Logger logger = Logger.getLogger(JsonSerializer.class);
+    private static final Logger logger = LoggerFactory.getLogger(JsonSerializer.class);
     
     private static JsonFactory jsonFactory;
     private static ObjectMapper objectMapper;
@@ -31,11 +31,9 @@ public class JsonSerializer implements ISerializer {
 
     static {
         objectMapper = new ObjectMapper()
-            .disable(SerializationFeature.WRITE_NULL_MAP_VALUES)
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, Boolean.TRUE)
-            .configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, Boolean.TRUE)
-            .configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
+            .configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, Boolean.TRUE);
         
         jsonFactory = new JsonFactory(); 
                 
@@ -49,19 +47,16 @@ public class JsonSerializer implements ISerializer {
 
     @Override
     public String serialize(Object o) throws IOException {
-        //StringWriter sw = new StringWriter();
         try {
             if (o == null)
                 return "";
 
-            //JsonGenerator jg = jsonFactory.createJsonGenerator(sw);
-            //jg.useDefaultPrettyPrinter();
-            //return objectMapper.writeValueAsString(this);
             String s = objectMapper.writeValueAsString(o);
-            logger.trace(String.format("%s:Json: %s", o.getClass().getCanonicalName(), s));
+            logger.debug("{}:Json: {}", o.getClass().getCanonicalName(), s);
             return s;
-        } finally {
-            //sw.close();
+        } catch (Exception e) {
+            logger.error("Serialization failed", e);
+            throw e;
         }
     }
     
@@ -83,6 +78,4 @@ public class JsonSerializer implements ISerializer {
     public <T> T deserialize(String eventString, TypeReference<T> type) throws IOException {
         return objectMapper.readValue(eventString, type);
     }
-    
-    
 }
