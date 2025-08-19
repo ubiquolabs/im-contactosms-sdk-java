@@ -35,6 +35,9 @@ public class JsonSerializer implements ISerializer {
             .configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, Boolean.TRUE)
             .configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, Boolean.TRUE);
         
+        // Configure to NOT escape non-ASCII characters (like Python's ensure_ascii=False)
+        objectMapper.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, false);
+        
         jsonFactory = new JsonFactory(); 
                 
     }
@@ -51,9 +54,12 @@ public class JsonSerializer implements ISerializer {
             if (o == null)
                 return "";
 
-            String s = objectMapper.writeValueAsString(o);
-            logger.debug("{}:Json: {}", o.getClass().getCanonicalName(), s);
-            return s;
+            // Use Jackson ObjectMapper consistently (like Python's json.dumps with ensure_ascii=False)
+            // This approach is more reliable than manual StringBuilder serialization
+            String jsonString = objectMapper.writeValueAsString(o);
+            
+            logger.debug("{}:Json: {}", o.getClass().getCanonicalName(), jsonString);
+            return jsonString;
         } catch (Exception e) {
             logger.error("Serialization failed", e);
             throw e;

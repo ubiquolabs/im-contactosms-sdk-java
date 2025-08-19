@@ -160,7 +160,7 @@ public class ModernMessagesExample extends BaseExample {
         try {
             // Modern way using Records - CORRECTED to use factory method
             var messageRequest = Messages.SendMessageRequest.toContact(
-                testMessage + " - Modern Java 21 SDK Test",
+                "Hola",
                 testMsisdn
             );
             

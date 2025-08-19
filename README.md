@@ -7,11 +7,13 @@ A modern, feature-rich Java SDK for interacting with the SMS API service. Built 
 - **Complete Contact Management**: Create, read, update, delete contacts with custom fields
 - **Advanced Message Handling**: Send to individuals, groups, tags, and bulk messaging
 - **Tag Management**: Create, manage, and organize contacts with tags
+- **UTF-8 Full Support**: Perfect handling of special characters (¡¿áéíóú, emojis, symbols) compatible with JavaScript and Python SDKs
 - **Modern Java Patterns**: Records, Optional, CompletableFuture, and Java Time API
 - **Robust Error Handling**: Comprehensive validation and error reporting
 - **Async Support**: Non-blocking operations with CompletableFuture
 - **Type Safety**: Strong typing with generics and modern Java features
 - **Easy Integration**: Simple setup and intuitive API design
+- **Cross-SDK Compatibility**: Consistent behavior with JavaScript and Python SDKs
 
 ## 📋 Requirements
 
@@ -71,12 +73,12 @@ if (account.isOk()) {
 }
 ```
 
-### Send a Message
+### Send a Message with UTF-8 Support
 
 ```java
-// Send to a specific contact using modern pattern
+// Send messages with perfect UTF-8 character support
 var request = Messages.SendMessageRequest.toContact(
-    "Hello from Java SDK v5.0! 🚀", 
+    "¡Hola desde Java SDK! ¿Se ven correctamente los caracteres especiales? 🚀", 
     "50212345678"
 );
 
@@ -88,6 +90,27 @@ if (response.isOk()) {
 } else {
     System.err.println("Failed to send message: " + response.getErrorDescription());
 }
+```
+
+### UTF-8 Character Examples
+
+The SDK now perfectly handles all UTF-8 characters, just like JavaScript and Python:
+
+```java
+// Spanish characters
+"¡Hola! ¿Cómo estás? Adiós"
+
+// Accented letters
+"Café, niño, corazón, piñata"
+
+// Symbols and currency
+"Precio: €50, £40, ¥100, $30"
+
+// Emojis and Unicode
+"¡Excelente! 🎉 ✨ 🚀 ⭐"
+
+// Mathematical symbols
+"Infinito: ∞, Plus/Minus: ±, Square root: √"
 ```
 
 ### Create a Contact
@@ -292,7 +315,24 @@ ApiResponse<TagJsonObject> response = tags.updateTag("vip", updates);
 ApiResponse<TagJsonObject> response = tags.deleteTag("vip");
 ```
 
-## 🧪 Examples
+## 🧪 Testing and Examples
+
+### Quick Test (Recommended for UTF-8 Testing)
+
+Test the SDK with real message sending, including UTF-8 character support:
+
+```bash
+# Quick test with UTF-8 character examples
+mvn exec:java -Dexec.mainClass="QuickTest" -q
+
+# This will test:
+# - Account connection
+# - Contact retrieval  
+# - Message sending with special characters: ¡¿áéíóú
+# - Modern Java features
+```
+
+### Run Example Classes
 
 Run the included examples to see the SDK in action:
 
@@ -305,6 +345,20 @@ mvn exec:java -Dexec.mainClass="com.interactuamovil.apps.contactosms.api.sdk.exa
 mvn exec:java -Dexec.mainClass="com.interactuamovil.apps.contactosms.api.sdk.examples.ContactsExample"
 mvn exec:java -Dexec.mainClass="com.interactuamovil.apps.contactosms.api.sdk.examples.AccountsExample"
 ```
+
+### Test UTF-8 Encoding Compatibility
+
+Verify that UTF-8 characters work exactly like JavaScript and Python SDKs:
+
+```bash
+# Test UTF-8 encoding (comprehensive test)
+mvn exec:java -Dexec.mainClass="EncodingTest" -q
+
+# Test modern messaging features
+mvn exec:java -Dexec.mainClass="com.interactuamovil.apps.contactosms.api.sdk.examples.ModernMessagesExample"
+```
+
+> **💡 Tip**: The `QuickTest` class is perfect for verifying that your API credentials work and that UTF-8 characters are sent and received correctly, just like in the JavaScript and Python SDKs.
 
 ## 🔧 Dependencies
 
@@ -339,6 +393,30 @@ The SDK requires the following dependencies:
     </dependency>
 </dependencies>
 ```
+
+## 🌍 UTF-8 and Cross-SDK Compatibility
+
+This Java SDK now provides **perfect UTF-8 character handling**, matching the behavior of other SDKs:
+
+### ✅ What Works Perfectly
+- **Spanish characters**: `¡¿` (inverted punctuation)
+- **Accented letters**: `áéíóú ñÑ`
+- **Currency symbols**: `€¢£¥`
+- **Mathematical symbols**: `∞±√`
+- **Emojis**: `🚀🎉💻`
+- **All Unicode characters**
+
+### 🔧 Technical Implementation
+- **JSON Serialization**: Uses Jackson with `ESCAPE_NON_ASCII=false` (equivalent to Python's `ensure_ascii=False`)
+- **HTTP Encoding**: All requests use `StandardCharsets.UTF_8` explicitly
+- **Headers**: Proper `Content-Type: application/json; charset=UTF-8`
+- **Signature Generation**: UTF-8 encoding for HMAC-SHA1 canonical strings
+
+### 🤝 Cross-SDK Compatibility
+The Java SDK now generates identical:
+- **HTTP signatures** as JavaScript and Python SDKs
+- **JSON payloads** without character escaping
+- **API requests** with consistent UTF-8 encoding
 
 ## 🚀 Modern Java Features
 
@@ -399,9 +477,21 @@ This SDK is licensed under the MIT License.
 ## 🆘 Support
 
 For support and questions:
-- Check the examples in the `examples` package
-- Review the test cases for usage patterns
-- Contact the development team
+- **Quick Start**: Run `mvn exec:java -Dexec.mainClass="QuickTest" -q` to test your setup
+- **UTF-8 Issues**: Verify character handling with the examples in this README
+- **Examples**: Check the comprehensive examples in the `examples` package
+- **Test Cases**: Review the test cases for usage patterns
+- **JavaScript/Python Compatibility**: All three SDKs now handle UTF-8 identically
+- Contact the development team for additional support
+
+### 🔧 Troubleshooting UTF-8
+
+If you experience character encoding issues:
+
+1. **Test First**: Run `QuickTest` to verify your setup
+2. **Check Logs**: Enable debug logging to see HTTP request/response details
+3. **Verify Credentials**: Ensure your API credentials are correctly configured
+4. **Compare with JavaScript/Python**: The behavior should be identical across all SDKs
 
 ---
 
