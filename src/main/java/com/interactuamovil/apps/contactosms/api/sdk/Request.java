@@ -152,7 +152,7 @@ public abstract class Request {
         connection.setRequestProperty("Authorization", auth);
         connection.setRequestProperty("Accept", "*/*");
 
-        connection.setRequestProperty("X-IM-ORIGIN", "IM_SDK_JAVA_V4");
+        connection.setRequestProperty("X-IM-ORIGIN", "IM_SDK_JAVA");
         
         // 🔍 DEBUG LOGS - Request Details
         logger.debug("📤 HTTP Request Details:");
@@ -160,7 +160,7 @@ public abstract class Request {
         logger.debug("   Method: {}", requestType);
         logger.debug("   Date: {}", httpDate);
         logger.debug("   Authorization: {}", auth);
-        logger.debug("   X-IM-ORIGIN: {}", "IM_SDK_JAVA_V4");
+        logger.debug("   X-IM-ORIGIN: {}", "IM_SDK_JAVA");
         logger.debug("   Body: {}", bodyParams);
 
         connection.setUseCaches(false);
