@@ -321,6 +321,11 @@
                         <configuration>
                             <mainClass>com.interactuamovil.apps.contactosms.api.sdk.examples.AllExamplesRunner</mainClass>
                             <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                            <options>
+                                <option>-Dfile.encoding=UTF-8</option>
+                                <option>-Dsun.jnu.encoding=UTF-8</option>
+                                <option>-Dconsole.encoding=UTF-8</option>
+                            </options>
                         </configuration>
                     </plugin>
                 </plugins>

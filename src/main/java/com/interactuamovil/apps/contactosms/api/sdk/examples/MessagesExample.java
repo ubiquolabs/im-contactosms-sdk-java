@@ -31,7 +31,7 @@ class MessagesExample extends BaseExample {
 
     @Override
     public void configure() {
-        testMessage = getConfig().getString("test_message");
+        testMessage = "¡Hola desde Java SDK! ¿Te llegó el mensaje a tu celular?";
         testContactMsisdn = getConfig().getString("test_contact_msisdn");
         testGroupSmsShortName = getConfig().getString("test_group_sms_short_name");
 
@@ -60,8 +60,8 @@ class MessagesExample extends BaseExample {
 
     private void testGetMessages(Messages messagesApi) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime startDate = LocalDateTime.parse("2015-01-01 00:00", formatter);
-        LocalDateTime endDate = LocalDateTime.parse("2017-01-01 00:00", formatter);
+        LocalDateTime startDate = LocalDateTime.parse("2025-01-01 00:00", formatter);
+        LocalDateTime endDate = LocalDateTime.parse("2025-01-01 00:00", formatter);
         
         int start = 0;
         int limit = 10;
@@ -102,7 +102,7 @@ class MessagesExample extends BaseExample {
         // Use modern SendMessageRequest
         String uniqueMessage = String.format("%s - %s", testMessage, UUID.randomUUID().toString().substring(0, 8));
         Messages.SendMessageRequest request = Messages.SendMessageRequest.toContact(
-                uniqueMessage, "50212345678"
+                uniqueMessage, "50259890846"
         );
 
         ApiResponse<MessageJson> response = messagesApi.sendToContact(request);

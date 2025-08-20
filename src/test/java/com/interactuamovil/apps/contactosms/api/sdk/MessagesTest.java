@@ -48,11 +48,11 @@ import static org.mockito.Mockito.*;
 @DisplayName("Messages API - Modern Tests")
 class MessagesTest {
     
-    private static final String TEST_API_KEY = "test-api-key";
-    private static final String TEST_SECRET_KEY = "test-secret-key";
-    private static final String TEST_API_URI = "https://api.test.com/";
+    private static final String TEST_API_KEY = "api_key";
+    private static final String TEST_SECRET_KEY = "api_secret_key";
+    private static final String TEST_API_URI = "api_url";
     private static final String TEST_MSISDN = "50212345678";
-    private static final String TEST_MESSAGE = "Test message content";
+    private static final String TEST_MESSAGE = "¡Test message con caracteres especiales! ¿Se ven correctamente?";
     
     @Mock
     private Messages messages;

@@ -96,7 +96,9 @@ public final class Messages extends Request {
         }
         
         public static SendMessageRequest toContact(String message, String msisdn) {
-            return new SendMessageRequest(message, null, Optional.of(msisdn), Optional.empty());
+            // Generate ID like JavaScript SDK (timestamp in milliseconds)
+            String messageId = String.valueOf(System.currentTimeMillis());
+            return new SendMessageRequest(message, messageId, Optional.of(msisdn), Optional.empty());
         }
         
         public static SendMessageRequest toGroups(String message, String[] tagNames) {

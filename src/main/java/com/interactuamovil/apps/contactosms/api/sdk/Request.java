@@ -48,23 +48,28 @@ public abstract class Request {
     private boolean certificateValidationEnabled = true;
     
     /**
-     * Configuration record for Request parameters
+     * Configuration class for Request parameters
      */
-    public record RequestConfig(
-            String apiKey,
-            String apiSecretKey,
-            String apiUri,
-            Duration timeout,
-            boolean certificateValidationEnabled
-    ) {
-        public RequestConfig {
-            Objects.requireNonNull(apiKey, "API key cannot be null");
-            Objects.requireNonNull(apiSecretKey, "API secret key cannot be null");
-            Objects.requireNonNull(apiUri, "API URI cannot be null");
-            if (timeout == null) {
-                timeout = Duration.ofSeconds(30);
-            }
+    public static class RequestConfig {
+        private final String apiKey;
+        private final String apiSecretKey;
+        private final String apiUri;
+        private final Duration timeout;
+        private final boolean certificateValidationEnabled;
+        
+        public RequestConfig(String apiKey, String apiSecretKey, String apiUri, Duration timeout, boolean certificateValidationEnabled) {
+            this.apiKey = Objects.requireNonNull(apiKey, "API key cannot be null");
+            this.apiSecretKey = Objects.requireNonNull(apiSecretKey, "API secret key cannot be null");
+            this.apiUri = Objects.requireNonNull(apiUri, "API URI cannot be null");
+            this.timeout = timeout != null ? timeout : Duration.ofSeconds(30);
+            this.certificateValidationEnabled = certificateValidationEnabled;
         }
+        
+        public String apiKey() { return apiKey; }
+        public String apiSecretKey() { return apiSecretKey; }
+        public String apiUri() { return apiUri; }
+        public Duration timeout() { return timeout; }
+        public boolean certificateValidationEnabled() { return certificateValidationEnabled; }
     }
     
     protected Request(String apiKey, String apiSecretKey, String apiUri) {
@@ -142,34 +147,51 @@ public abstract class Request {
             connection.setDoOutput(true);
 
         }
-        connection.setRequestProperty("Content-Length", "" + Integer.toString(bodyParams.getBytes().length));
+        connection.setRequestProperty("Content-Length", "" + Integer.toString(bodyParams.getBytes(StandardCharsets.UTF_8).length));
         connection.setRequestProperty("Date", httpDate);
         connection.setRequestProperty("Authorization", auth);
         connection.setRequestProperty("Accept", "*/*");
 
         connection.setRequestProperty("X-IM-ORIGIN", "IM_SDK_JAVA");
+        
+        // 🔍 DEBUG LOGS - Request Details
+        logger.debug("📤 HTTP Request Details:");
+        logger.debug("   URL: {}", url);
+        logger.debug("   Method: {}", requestType);
+        logger.debug("   Date: {}", httpDate);
+        logger.debug("   Authorization: {}", auth);
+        logger.debug("   X-IM-ORIGIN: {}", "IM_SDK_JAVA");
+        logger.debug("   Body: {}", bodyParams);
 
         connection.setUseCaches(false);
 
 
         if (!requestType.equals("GET") && !requestType.equals("DELETE")) {
-            try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
-                wr.writeBytes(bodyParams);
+            try (OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8);
+                 BufferedWriter wr = new BufferedWriter(osw)) {
+                wr.write(bodyParams);
                 wr.flush();
             }
         }
 
         InputStream inputStream;
         Integer responseCode = connection.getResponseCode();
+        
+        // 🔍 DEBUG LOGS - Response Details
+        logger.debug("📥 HTTP Response Details:");
+        logger.debug("   Response Code: {}", responseCode);
+        logger.debug("   Response Message: {}", connection.getResponseMessage());
 
         if (responseCode != 200) {
             inputStream = connection.getErrorStream();
+            logger.debug("   Using Error Stream (non-200 response)");
         } else {
             inputStream = connection.getInputStream();
+            logger.debug("   Using Success Stream (200 response)");
         }
 
         StringBuilder resultString = new StringBuilder();
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(inputStream))) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             String decodedString;
             while ((decodedString = in.readLine()) != null) {
                 resultString.append(decodedString);
@@ -180,7 +202,12 @@ public abstract class Request {
 
         response.setHttpCode(responseCode);
         response.setRawResponse(resultString.toString());
+        
+        // 🔍 DEBUG LOGS - Raw Response
+        logger.debug("📋 Raw Response Body: {}", resultString.toString());
+        
         if (responseCode != 200) {
+            logger.debug("❌ ERROR Response - Parsing error details...");
             ErrorJsonResponse errorJson = ErrorJsonResponse.fromJson(resultString.toString(), ErrorJsonResponse.class);
             response.setErrorCode(errorJson.getCode());
             response.setErrorDescription(errorJson.getError());
@@ -209,6 +236,14 @@ public abstract class Request {
 
         logger.debug("Canonical String: {}", canonicalString);
         logger.debug("Generated Signature: {}", signature);
+        
+        // 🔍 COMPARISON WITH JAVASCRIPT - Break down canonical string components
+        logger.debug("🔍 Canonical String Breakdown:");
+        logger.debug("   API Key: {}", apiKey);
+        logger.debug("   Date: {}", httpDate);
+        logger.debug("   Filters: {}", filters);
+        logger.debug("   JSON Text: {}", jsonText);
+        logger.debug("   Combined: {}{}{}{}", apiKey, httpDate, filters, jsonText);
 
         return "IM " + apiKey + ":" + signature;
     }

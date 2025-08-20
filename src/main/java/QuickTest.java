@@ -74,15 +74,37 @@ public class QuickTest {
                 System.out.println("   ❌ Fluent API error: " + fluentResponse.getErrorDescription());
             }
             
+            // Test 4: Envío de mensaje con caracteres especiales
+            System.out.println("\n🔤 Test 4: Sending message with special characters (encoding test)");
+            String testMessage = "¡Hola desde Java SDK! ¿Te llegó el mensaje?";
+            String testMsisdn = config.getString("test_contact_msisdn");
+            
+            System.out.println("   Message: " + testMessage);
+            System.out.println("   To: " + testMsisdn);
+            
+            try {
+                var sendRequest = Messages.SendMessageRequest.toContact(testMessage, testMsisdn);
+                var sendResult = messages.sendToContact(sendRequest);
+                if (sendResult.isOk()) {
+                    System.out.println("   ✅ Message sent successfully!");
+                    System.out.println("   📱 Message ID: " + sendResult.getResponse().getMessageId());
+                } else {
+                    System.out.println("   ❌ Send error: " + sendResult.getErrorDescription());
+                }
+            } catch (Exception sendEx) {
+                System.out.println("   ❌ Send exception: " + sendEx.getMessage());
+            }
+            
         } catch (Exception e) {
             System.err.println("❌ Exception: " + e.getMessage());
             e.printStackTrace();
         }
         
         System.out.println("\n🎯 Summary:");
-        System.out.println("   - delivery_status_enable parameter implemented ✅");
-        System.out.println("   - Java 21 Records working ✅");
-        System.out.println("   - Fluent API functional ✅");
-        System.out.println("   - Modern SDK ready for production ✅");
+        System.out.println("   - delivery_status_enable parameter implemented");
+        System.out.println("   - Java 21 Records working");
+        System.out.println("   - Fluent API functional");
+        System.out.println("   - UTF-8 encoding test completed");
+        System.out.println("   - Modern SDK ready for production");
     }
 } 
