@@ -2,11 +2,12 @@
 
 A modern, feature-rich Java SDK for interacting with the SMS API service. Built with Java 21 and modern patterns, this SDK provides easy-to-use methods for managing contacts, sending messages, and handling tags with enhanced functionality and improved error handling.
 
-## 🚀 Features
+## Features
 
 - **Complete Contact Management**: Create, read, update, delete contacts with custom fields
 - **Advanced Message Handling**: Send to individuals, groups, tags, and bulk messaging
 - **Tag Management**: Create, manage, and organize contacts with tags
+- **Shortlink Management**: Create, list, update shortlinks with statistics
 - **UTF-8 Full Support**: Perfect handling of special characters (¡¿áéíóú, emojis, symbols) compatible with JavaScript and Python SDKs
 - **Modern Java Patterns**: Records, Optional, CompletableFuture, and Java Time API
 - **Robust Error Handling**: Comprehensive validation and error reporting
@@ -15,12 +16,28 @@ A modern, feature-rich Java SDK for interacting with the SMS API service. Built 
 - **Easy Integration**: Simple setup and intuitive API design
 - **Cross-SDK Compatibility**: Consistent behavior with JavaScript and Python SDKs
 
-## 📋 Requirements
+## Rate Limits
+
+The API has rate limits to ensure fair usage:
+
+- **Shortlinks**: Maximum of 10 shortlinks created per minute per account (default)
+- When you exceed the limit, you'll receive a 403 error with code `42900`
+- **For inquiries or requests to increase the limit**: Please contact Technical Support directly through their support channels
+
+Example error response:
+```json
+{
+  "code": 42900,
+  "error": "Ha excedido el límite de solicitudes. Intente nuevamente más tarde"
+}
+```
+
+## Requirements
 
 - Java 21 or higher
 - Maven 3.6+ or Gradle 7.0+
 
-## ️ Installation
+## Installation
 
 ### Maven
 
@@ -40,7 +57,7 @@ Add the JAR to your project dependencies:
 2. Add it to your project's classpath
 3. Include required dependencies (see Dependencies section)
 
-## ⚙️ Configuration
+## Configuration
 
 Create a configuration file or use environment variables for your API credentials:
 
@@ -51,7 +68,7 @@ API_SECRET=your_api_secret_here
 API_URI=https://your-api-url.com/api/v4/
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Basic Usage
 
@@ -78,7 +95,7 @@ if (account.isOk()) {
 ```java
 // Send messages with perfect UTF-8 character support
 var request = Messages.SendMessageRequest.toContact(
-    "¡Hola desde Java SDK! ¿Se ven correctamente los caracteres especiales? 🚀", 
+    "¡Hola desde Java SDK! ¿Se ven correctamente los caracteres especiales?", 
     "50212345678"
 );
 
@@ -107,7 +124,7 @@ The SDK now perfectly handles all UTF-8 characters, just like JavaScript and Pyt
 "Precio: €50, £40, ¥100, $30"
 
 // Emojis and Unicode
-"¡Excelente! 🎉 ✨ 🚀 ⭐"
+"¡Excelente!"
 
 // Mathematical symbols
 "Infinito: ∞, Plus/Minus: ±, Square root: √"
@@ -315,7 +332,160 @@ ApiResponse<TagJsonObject> response = tags.updateTag("vip", updates);
 ApiResponse<TagJsonObject> response = tags.deleteTag("vip");
 ```
 
-## 🧪 Testing and Examples
+### Shortlinks
+
+#### List Shortlinks
+
+```java
+import com.interactuamovil.apps.contactosms.api.sdk.Shortlinks;
+
+Shortlinks shortlinks = new Shortlinks(API_KEY, API_SECRET, API_URI);
+
+// List all shortlinks
+ApiResponse<List<ShortlinkJsonObject>> response = shortlinks.getList();
+
+// List with filters
+ApiResponse<List<ShortlinkJsonObject>> response = shortlinks.getList(
+    "2024-01-01",  // start_date
+    "2024-12-31",  // end_date
+    10,            // limit
+    0,             // offset
+    null           // id
+);
+
+if (response.isOk()) {
+    response.getResponse().forEach(shortlink -> 
+        System.out.println("Shortlink: " + shortlink.getShortUrl())
+    );
+}
+```
+
+#### Get Shortlink by ID
+
+```java
+ApiResponse<ShortlinkJsonObject> response = shortlinks.getById("abc123");
+
+if (response.isOk()) {
+    ShortlinkJsonObject shortlink = response.getResponse();
+    System.out.println("Short URL: " + shortlink.getShortUrl());
+    System.out.println("Long URL: " + shortlink.getLongUrl());
+    System.out.println("Visits: " + shortlink.getVisits());
+}
+```
+
+#### Create Shortlink
+
+```java
+// Create with all parameters
+ApiResponse<ShortlinkJsonObject> response = shortlinks.create(
+    "https://www.example.com/very-long-url",
+    "My Shortlink Name",
+    "ACTIVE"
+);
+
+// Create with just URL (defaults to ACTIVE)
+ApiResponse<ShortlinkJsonObject> response = shortlinks.create(
+    "https://www.example.com/very-long-url"
+);
+
+if (response.isOk()) {
+    ShortlinkJsonObject shortlink = response.getResponse();
+    System.out.println("Created: " + shortlink.getShortUrl());
+}
+```
+
+#### Update Shortlink Status
+
+```java
+ApiResponse<ShortlinkJsonObject> response = shortlinks.updateStatus(
+    "abc123",      // shortlink ID
+    "INACTIVE"     // new status
+);
+
+if (response.isOk()) {
+    System.out.println("Status updated successfully");
+}
+```
+
+## API Response Examples
+
+### Create Shortlink - Success
+```json
+{
+  "url_id": "123ABC",
+  "short_url": "https://shorturl-pais.com/123ABC",
+  "long_url": "https://www.example.com/very-long-url",
+  "name": "Example Shortlink",
+  "status": "ACTIVE",
+  "account_uid": "abcde12345678kklm"
+}
+```
+
+### List Shortlinks - Success
+```json
+{
+  "success": true,
+  "message": "Shortlinks retrieved successfully",
+  "data": [
+    {
+      "_id": "123ABC",
+      "account_uid": "abcde12345678kklm",
+      "name": "Example Shortlink",
+      "status": "ACTIVE",
+      "base_url": "https://shorturl-pais.com/",
+      "short_url": "https://shorturl-pais.com/123ABC",
+      "long_url": "https://www.example.com/long-url-here",
+      "visits": 0,
+      "unique_visits": 0,
+      "preview_visits": 0,
+      "created_by": "SHORTLINK_API",
+      "reference_type": "SHORT_LINK",
+      "expiration": false,
+      "expiration_date": null,
+      "created_on": 1735689600000
+    }
+  ],
+  "account_id": 12345
+}
+```
+
+### Get Shortlink by ID - Success
+```json
+{
+  "success": true,
+  "message": "Shortlink found",
+  "account_id": 12345,
+  "url_id": "123ABC",
+  "short_url": "https://shorturl-pais.com/123ABC",
+  "long_url": "https://www.example.com/long-url-with-parameters",
+  "name": "Example Shortlink",
+  "status": "ACTIVE",
+  "visits": 0,
+  "unique_visits": 0,
+  "preview_visits": 0,
+  "created_by": "SHORTLINK_API",
+  "created_on": 1735689600000
+}
+```
+
+### Get Shortlink by ID - Not Found
+```json
+{
+  "success": false,
+  "message": "Shortlink not found"
+}
+```
+
+### Rate Limit Exceeded
+When you create too many shortlinks in a short time window (default: 10 per minute per account):
+```json
+{
+  "code": 42900,
+  "error": "Ha excedido el límite de solicitudes. Intente nuevamente más tarde"
+}
+```
+
+## Testing and Examples
 
 ### Quick Test (Recommended for UTF-8 Testing)
 
@@ -344,6 +514,7 @@ mvn exec:java -Dexec.mainClass="com.interactuamovil.apps.contactosms.api.sdk.exa
 mvn exec:java -Dexec.mainClass="com.interactuamovil.apps.contactosms.api.sdk.examples.MessagesExample"
 mvn exec:java -Dexec.mainClass="com.interactuamovil.apps.contactosms.api.sdk.examples.ContactsExample"
 mvn exec:java -Dexec.mainClass="com.interactuamovil.apps.contactosms.api.sdk.examples.AccountsExample"
+mvn exec:java -Dexec.mainClass="com.interactuamovil.apps.contactosms.api.sdk.examples.ShortlinksExample"
 ```
 
 ### Test UTF-8 Encoding Compatibility
@@ -358,9 +529,9 @@ mvn exec:java -Dexec.mainClass="EncodingTest" -q
 mvn exec:java -Dexec.mainClass="com.interactuamovil.apps.contactosms.api.sdk.examples.ModernMessagesExample"
 ```
 
-> **💡 Tip**: The `QuickTest` class is perfect for verifying that your API credentials work and that UTF-8 characters are sent and received correctly, just like in the JavaScript and Python SDKs.
+The `QuickTest` class is perfect for verifying that your API credentials work and that UTF-8 characters are sent and received correctly, just like in the JavaScript and Python SDKs.
 
-## 🔧 Dependencies
+## Dependencies
 
 The SDK requires the following dependencies:
 
@@ -394,31 +565,30 @@ The SDK requires the following dependencies:
 </dependencies>
 ```
 
-## 🌍 UTF-8 and Cross-SDK Compatibility
+## UTF-8 and Cross-SDK Compatibility
 
 This Java SDK now provides **perfect UTF-8 character handling**, matching the behavior of other SDKs:
 
-### ✅ What Works Perfectly
+### What Works Perfectly
 - **Spanish characters**: `¡¿` (inverted punctuation)
 - **Accented letters**: `áéíóú ñÑ`
 - **Currency symbols**: `€¢£¥`
 - **Mathematical symbols**: `∞±√`
-- **Emojis**: `🚀🎉💻`
 - **All Unicode characters**
 
-### 🔧 Technical Implementation
+### Technical Implementation
 - **JSON Serialization**: Uses Jackson with `ESCAPE_NON_ASCII=false` (equivalent to Python's `ensure_ascii=False`)
 - **HTTP Encoding**: All requests use `StandardCharsets.UTF_8` explicitly
 - **Headers**: Proper `Content-Type: application/json; charset=UTF-8`
 - **Signature Generation**: UTF-8 encoding for HMAC-SHA1 canonical strings
 
-### 🤝 Cross-SDK Compatibility
+### Cross-SDK Compatibility
 The Java SDK now generates identical:
 - **HTTP signatures** as JavaScript and Python SDKs
 - **JSON payloads** without character escaping
 - **API requests** with consistent UTF-8 encoding
 
-## 🚀 Modern Java Features
+## Modern Java Features
 
 This SDK leverages modern Java features:
 
@@ -430,7 +600,7 @@ This SDK leverages modern Java features:
 - **Text Blocks**: Multi-line strings
 - **Var**: Type inference
 
-## 🔍 Error Handling
+## Error Handling
 
 The SDK provides comprehensive error handling:
 
@@ -449,7 +619,7 @@ if (response.isOk()) {
 }
 ```
 
-## 📝 Logging
+## Logging
 
 The SDK uses SLF4J for logging. Configure your logging framework:
 
@@ -462,7 +632,7 @@ The SDK uses SLF4J for logging. Configure your logging framework:
 </dependency>
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -474,7 +644,7 @@ The SDK uses SLF4J for logging. Configure your logging framework:
 
 This SDK is licensed under the MIT License.
 
-## 🆘 Support
+## Support
 
 For support and questions:
 - **Quick Start**: Run `mvn exec:java -Dexec.mainClass="QuickTest" -q` to test your setup
@@ -484,7 +654,7 @@ For support and questions:
 - **JavaScript/Python Compatibility**: All three SDKs now handle UTF-8 identically
 - Contact the development team for additional support
 
-### 🔧 Troubleshooting UTF-8
+### Troubleshooting UTF-8
 
 If you experience character encoding issues:
 
@@ -495,4 +665,4 @@ If you experience character encoding issues:
 
 ---
 
-**Built with ❤️ for modern Java development**
+Built for modern Java development
