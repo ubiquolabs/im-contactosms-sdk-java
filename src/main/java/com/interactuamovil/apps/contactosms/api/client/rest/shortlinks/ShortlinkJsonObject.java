@@ -49,6 +49,9 @@ public class ShortlinkJsonObject extends JsonObject {
     @JsonProperty(value = "created_on")
     private Long createdOn;
     
+    @JsonProperty(value = "alias")
+    private String alias;
+
     @JsonProperty(value = "reference_type")
     private String referenceType;
     
@@ -80,7 +83,7 @@ public class ShortlinkJsonObject extends JsonObject {
     }
 
     public String getUrlId() {
-        return urlId;
+        return urlId != null ? urlId : id;
     }
 
     public void setUrlId(String urlId) {
@@ -181,6 +184,14 @@ public class ShortlinkJsonObject extends JsonObject {
 
     public void setCreatedOn(Long createdOn) {
         this.createdOn = createdOn;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     public String getReferenceType() {

@@ -95,7 +95,7 @@ public abstract class Request {
         }
 
         String filters = toQueryString(urlParams);
-        if (addToQueryString) {
+        if (addToQueryString && filters != null && !filters.isEmpty()) {
             url += '?' + filters;
         }
 
