@@ -23,44 +23,44 @@ public class QuickTest {
             String API_SECRET = config.getString("api_secret_key");
             String API_URL = config.getString("api_url");
             
-            System.out.println("🔍 Testing delivery_status_enable parameter");
-            System.out.println("=" .repeat(50));
+            System.out.println("Testing delivery_status_enable parameter");
+            System.out.println(repeatString("=", 50));
             
             Messages messages = new Messages(API_KEY, API_SECRET, API_URL);
             
-            var startDate = LocalDateTime.now().minusDays(7);
-            var endDate = LocalDateTime.now();
+            LocalDateTime startDate = LocalDateTime.now().minusDays(7);
+            LocalDateTime endDate = LocalDateTime.now();
             
             // Test 1: SIN delivery status
-            System.out.println("\n📋 Test 1: Messages WITHOUT delivery_status_enable");
-            var queryWithout = Messages.MessageQuery.of(startDate, endDate);
+            System.out.println("\nTest 1: Messages WITHOUT delivery_status_enable");
+            Messages.MessageQuery queryWithout = Messages.MessageQuery.of(startDate, endDate);
             System.out.println("   Query delivery status enabled: " + queryWithout.deliveryStatusEnabled());
             
             ApiResponse<List<MessageJson>> responseWithout = messages.getList(queryWithout);
             System.out.println("   HTTP Code: " + responseWithout.getHttpCode());
             if (responseWithout.isOk()) {
-                System.out.println("   ✅ Messages retrieved: " + responseWithout.getResponse().size());
+                System.out.println("   Messages retrieved: " + responseWithout.getResponse().size());
             } else {
-                System.out.println("   ❌ Error: " + responseWithout.getErrorDescription());
+                System.out.println("   Error: " + responseWithout.getErrorDescription());
             }
             
             // Test 2: CON delivery status
-            System.out.println("\n🆕 Test 2: Messages WITH delivery_status_enable");
-            var queryWith = Messages.MessageQuery.ofWithDeliveryStatus(startDate, endDate);
+            System.out.println("\nTest 2: Messages WITH delivery_status_enable");
+            Messages.MessageQuery queryWith = Messages.MessageQuery.ofWithDeliveryStatus(startDate, endDate);
             System.out.println("   Query delivery status enabled: " + queryWith.deliveryStatusEnabled());
             
             ApiResponse<List<MessageJson>> responseWith = messages.getList(queryWith);
             System.out.println("   HTTP Code: " + responseWith.getHttpCode());
             if (responseWith.isOk()) {
-                System.out.println("   ✅ Messages retrieved: " + responseWith.getResponse().size());
-                System.out.println("   📊 The request should include 'delivery_status_enable=true' parameter");
+                System.out.println("   Messages retrieved: " + responseWith.getResponse().size());
+                System.out.println("   The request should include 'delivery_status_enable=true' parameter");
             } else {
-                System.out.println("   ❌ Error: " + responseWith.getErrorDescription());
+                System.out.println("   Error: " + responseWith.getErrorDescription());
             }
             
             // Test 3: Fluent API
-            System.out.println("\n🔗 Test 3: Fluent API with delivery status");
-            var fluentQuery = Messages.MessageQuery.of(startDate, endDate)
+            System.out.println("\nTest 3: Fluent API with delivery status");
+            Messages.MessageQuery fluentQuery = Messages.MessageQuery.of(startDate, endDate)
                     .withDeliveryStatus(true)
                     .withPagination(0, 5);
             
@@ -69,13 +69,13 @@ public class QuickTest {
             
             ApiResponse<List<MessageJson>> fluentResponse = messages.getList(fluentQuery);
             if (fluentResponse.isOk()) {
-                System.out.println("   ✅ Fluent API works: " + fluentResponse.getResponse().size() + " messages");
+                System.out.println("   Fluent API works: " + fluentResponse.getResponse().size() + " messages");
             } else {
-                System.out.println("   ❌ Fluent API error: " + fluentResponse.getErrorDescription());
+                System.out.println("   Fluent API error: " + fluentResponse.getErrorDescription());
             }
             
             // Test 4: Envío de mensaje con caracteres especiales
-            System.out.println("\n🔤 Test 4: Sending message with special characters (encoding test)");
+            System.out.println("\nTest 4: Sending message with special characters (encoding test)");
             String testMessage = "¡Hola desde Java SDK! ¿Te llegó el mensaje?";
             String testMsisdn = config.getString("test_contact_msisdn");
             
@@ -83,28 +83,39 @@ public class QuickTest {
             System.out.println("   To: " + testMsisdn);
             
             try {
-                var sendRequest = Messages.SendMessageRequest.toContact(testMessage, testMsisdn);
-                var sendResult = messages.sendToContact(sendRequest);
+                Messages.SendMessageRequest sendRequest = Messages.SendMessageRequest.toContact(testMessage, testMsisdn);
+                ApiResponse<MessageJson> sendResult = messages.sendToContact(sendRequest);
                 if (sendResult.isOk()) {
-                    System.out.println("   ✅ Message sent successfully!");
-                    System.out.println("   📱 Message ID: " + sendResult.getResponse().getMessageId());
+                    System.out.println("   Message sent successfully!");
+                    System.out.println("   Message ID: " + sendResult.getResponse().getMessageId());
                 } else {
-                    System.out.println("   ❌ Send error: " + sendResult.getErrorDescription());
+                    System.out.println("   Send error: " + sendResult.getErrorDescription());
                 }
             } catch (Exception sendEx) {
-                System.out.println("   ❌ Send exception: " + sendEx.getMessage());
+                System.out.println("   Send exception: " + sendEx.getMessage());
             }
             
         } catch (Exception e) {
-            System.err.println("❌ Exception: " + e.getMessage());
+            System.err.println("Exception: " + e.getMessage());
             e.printStackTrace();
         }
         
-        System.out.println("\n🎯 Summary:");
+        System.out.println("\nSummary:");
         System.out.println("   - delivery_status_enable parameter implemented");
         System.out.println("   - Java 21 Records working");
         System.out.println("   - Fluent API functional");
         System.out.println("   - UTF-8 encoding test completed");
         System.out.println("   - Modern SDK ready for production");
+    }
+    
+    private static String repeatString(String str, int count) {
+        if (count <= 0) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < count; i++) {
+            sb.append(str);
+        }
+        return sb.toString();
     }
 } 

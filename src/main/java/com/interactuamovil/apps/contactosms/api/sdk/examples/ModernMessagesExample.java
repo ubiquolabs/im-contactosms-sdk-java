@@ -39,7 +39,7 @@ public class ModernMessagesExample extends BaseExample {
         System.out.println("? Testing Modern Messages API with Java 21 features");
         System.out.println("============================================================");
 
-        var messagesApi = new Messages(getApiKey(), getApiSecretKey(), getApiUri());
+        Messages messagesApi = new Messages(getApiKey(), getApiSecretKey(), getApiUri());
 
         // Run tests
         testMessagesWithoutDeliveryStatus(messagesApi);
@@ -51,14 +51,14 @@ public class ModernMessagesExample extends BaseExample {
 
     private void testMessagesWithoutDeliveryStatus(Messages messagesApi) {
         System.out.println("\n\uD83D\uDCCB Test 1: Messages WITHOUT delivery status");
-        System.out.println("-".repeat(40));
+        System.out.println(repeatString("-", 40));
         
         try {
-            var startDate = LocalDateTime.now().minusDays(7);
-            var endDate = LocalDateTime.now();
+            LocalDateTime startDate = LocalDateTime.now().minusDays(7);
+            LocalDateTime endDate = LocalDateTime.now();
             
             // Traditional query without delivery status
-            var query = Messages.MessageQuery.of(startDate, endDate);
+            Messages.MessageQuery query = Messages.MessageQuery.of(startDate, endDate);
             ApiResponse<List<MessageJson>> response = messagesApi.getList(query);
             
             if (response.isOk() && response.getResponse() != null) {
@@ -82,14 +82,14 @@ public class ModernMessagesExample extends BaseExample {
      */
     private void testMessagesWithDeliveryStatus(Messages messages) {
         System.out.println("\n\uD83C\uDD95 Test 2: Messages WITH delivery status (NEW!)");
-        System.out.println("-".repeat(40));
+        System.out.println(repeatString("-", 40));
         
         try {
-            var startDate = LocalDateTime.now().minusDays(7);
-            var endDate = LocalDateTime.now();
+            LocalDateTime startDate = LocalDateTime.now().minusDays(7);
+            LocalDateTime endDate = LocalDateTime.now();
             
             // NEW: Query WITH delivery status enabled
-            var queryWithDelivery = Messages.MessageQuery.ofWithDeliveryStatus(startDate, endDate);
+            Messages.MessageQuery queryWithDelivery = Messages.MessageQuery.ofWithDeliveryStatus(startDate, endDate);
             ApiResponse<List<MessageJson>> response = messages.getList(queryWithDelivery);
             
             if (response.isOk() && response.getResponse() != null) {
@@ -118,12 +118,12 @@ public class ModernMessagesExample extends BaseExample {
      */
     private void testAsyncMessages(Messages messages) {
         System.out.println("\n⚡ Test 3: Async Messages (Java 21 CompletableFuture)");
-        System.out.println("-".repeat(40));
+        System.out.println(repeatString("-", 40));
         
         try {
-            var startDate = LocalDateTime.now().minusDays(1);
-            var endDate = LocalDateTime.now();
-            var query = Messages.MessageQuery.ofWithDeliveryStatus(startDate, endDate, 0, 10);
+            LocalDateTime startDate = LocalDateTime.now().minusDays(1);
+            LocalDateTime endDate = LocalDateTime.now();
+            Messages.MessageQuery query = Messages.MessageQuery.ofWithDeliveryStatus(startDate, endDate, 0, 10);
             
             // Async call
             CompletableFuture<ApiResponse<List<MessageJson>>> future = messages.getListAsync(query);
@@ -155,11 +155,11 @@ public class ModernMessagesExample extends BaseExample {
      */
     private void testModernMessageSending(Messages messages, String testMsisdn, String testMessage) {
         System.out.println("\n\uD83D\uDCE4 Test 4: Modern Record-based Message Sending");
-        System.out.println("-".repeat(40));
+        System.out.println(repeatString("-", 40));
         
         try {
             // Modern way using Records - CORRECTED to use factory method
-            var messageRequest = Messages.SendMessageRequest.toContact(
+            Messages.SendMessageRequest messageRequest = Messages.SendMessageRequest.toContact(
                 "Hola",
                 testMsisdn
             );
@@ -188,14 +188,14 @@ public class ModernMessagesExample extends BaseExample {
      */
     private void testFluentAPI(Messages messages) {
         System.out.println("\n\uD83D\uDD17 Test 5: Fluent API with Method Chaining");
-        System.out.println("-".repeat(40));
+        System.out.println(repeatString("-", 40));
         
         try {
-            var startDate = LocalDateTime.now().minusDays(3);
-            var endDate = LocalDateTime.now();
+            LocalDateTime startDate = LocalDateTime.now().minusDays(3);
+            LocalDateTime endDate = LocalDateTime.now();
             
             // Fluent API using Record methods
-            var fluentQuery = Messages.MessageQuery.of(startDate, endDate)
+            Messages.MessageQuery fluentQuery = Messages.MessageQuery.of(startDate, endDate)
                     .withDeliveryStatus(true)
                     .withPagination(0, 5)
                     .withDirection(MessageDirection.MT);
@@ -223,5 +223,16 @@ public class ModernMessagesExample extends BaseExample {
             return value.substring(0, length);
         }
         return value;
+    }
+    
+    private static String repeatString(String str, int count) {
+        if (count <= 0) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < count; i++) {
+            sb.append(str);
+        }
+        return sb.toString();
     }
 } 

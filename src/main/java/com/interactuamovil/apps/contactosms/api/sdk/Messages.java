@@ -5,6 +5,7 @@ import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageJson
 import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageRecipientsJson;
 import com.interactuamovil.apps.contactosms.api.enums.MessageDirection;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
+import com.interactuamovil.apps.contactosms.api.utils.JavaVersionDetector;
 import com.interactuamovil.apps.contactosms.api.utils.JsonObjectCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,22 +34,37 @@ public final class Messages extends Request {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     
     /**
-     * Message query parameters record
+     * Message query parameters class (Java 8 compatible)
      */
-    public record MessageQuery(
-            LocalDateTime startDate,
-            LocalDateTime endDate,
-            int start,
-            int limit,
-            String msisdn,
-            MessageDirection direction,
-            boolean deliveryStatusEnabled
-    ) {
-        public MessageQuery {
-            if (start < 0) start = 0;
-            if (limit < 0) limit = 50;
-            if (limit > 1000) limit = 1000; // Reasonable limit
+    public static final class MessageQuery {
+        private final LocalDateTime startDate;
+        private final LocalDateTime endDate;
+        private final int start;
+        private final int limit;
+        private final String msisdn;
+        private final MessageDirection direction;
+        private final boolean deliveryStatusEnabled;
+        
+        public MessageQuery(LocalDateTime startDate, LocalDateTime endDate, int start, int limit, 
+                           String msisdn, MessageDirection direction, boolean deliveryStatusEnabled) {
+            int validatedStart = start < 0 ? 0 : start;
+            int validatedLimit = limit < 0 ? 50 : (limit > 1000 ? 1000 : limit);
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.start = validatedStart;
+            this.limit = validatedLimit;
+            this.msisdn = msisdn;
+            this.direction = direction;
+            this.deliveryStatusEnabled = deliveryStatusEnabled;
         }
+        
+        public LocalDateTime startDate() { return startDate; }
+        public LocalDateTime endDate() { return endDate; }
+        public int start() { return start; }
+        public int limit() { return limit; }
+        public String msisdn() { return msisdn; }
+        public MessageDirection direction() { return direction; }
+        public boolean deliveryStatusEnabled() { return deliveryStatusEnabled; }
         
         public static MessageQuery of(LocalDateTime startDate, LocalDateTime endDate) {
             return new MessageQuery(startDate, endDate, 0, 50, null, MessageDirection.ALL, false);
@@ -81,33 +97,110 @@ public final class Messages extends Request {
     }
     
     /**
-     * Send message request record
+     * Send message request class (Java 8 compatible)
      */
-    public record SendMessageRequest(
-            String message,
-            String messageId,
-            Optional<String> msisdn,
-            Optional<String[]> tagNames
-    ) {
-        public SendMessageRequest {
-            if (message == null || message.isBlank()) {
+    public static final class SendMessageRequest {
+        private final String message;
+        private final String messageId;
+        private final Optional<String> msisdn;
+        private final Optional<String[]> tagNames;
+        
+        public SendMessageRequest(String message, String messageId, Optional<String> msisdn, Optional<String[]> tagNames) {
+            if (message == null || isBlank(message)) {
                 throw new IllegalArgumentException("Message cannot be null or blank");
             }
+            this.message = message;
+            this.messageId = messageId;
+            this.msisdn = msisdn;
+            this.tagNames = tagNames;
         }
         
+        public String message() { return message; }
+        public String messageId() { return messageId; }
+        public Optional<String> msisdn() { return msisdn; }
+        public Optional<String[]> tagNames() { return tagNames; }
+        
         public static SendMessageRequest toContact(String message, String msisdn) {
-            // Generate ID like JavaScript SDK (timestamp in milliseconds)
             String messageId = String.valueOf(System.currentTimeMillis());
-            return new SendMessageRequest(message, messageId, Optional.of(msisdn), Optional.empty());
+            return new SendMessageRequest(message, messageId, Optional.of(msisdn), Optional.<String[]>empty());
         }
         
         public static SendMessageRequest toGroups(String message, String[] tagNames) {
-            return new SendMessageRequest(message, null, Optional.empty(), Optional.of(tagNames));
+            return new SendMessageRequest(message, null, Optional.<String>empty(), Optional.of(tagNames));
         }
     }
     
     public Messages(String apiKey, String secretKey, String apiUri) {
         super(apiKey, secretKey, apiUri);
+    }
+    
+    private static boolean isBlank(String str) {
+        if (str == null) {
+            return true;
+        }
+        if (JavaVersionDetector.isJava11OrHigher()) {
+            try {
+                java.lang.reflect.Method isBlankMethod = String.class.getMethod("isBlank");
+                return (Boolean) isBlankMethod.invoke(str);
+            } catch (Exception e) {
+                return str.trim().isEmpty();
+            }
+        } else {
+            return str.trim().isEmpty();
+        }
+    }
+    
+    private static int clamp(int value, int min, int max) {
+        if (JavaVersionDetector.isJava21OrHigher()) {
+            try {
+                java.lang.reflect.Method clampMethod = Math.class.getMethod("clamp", int.class, int.class, int.class);
+                return (Integer) clampMethod.invoke(null, value, min, max);
+            } catch (Exception e) {
+                return Math.max(min, Math.min(max, value));
+            }
+        } else {
+            return Math.max(min, Math.min(max, value));
+        }
+    }
+    
+    private static <K, V> Map<K, V> createMap(Object... keyValuePairs) {
+        if (keyValuePairs.length % 2 != 0) {
+            throw new IllegalArgumentException("Key-value pairs must be even");
+        }
+        if (JavaVersionDetector.isJava9OrHigher()) {
+            try {
+                java.lang.reflect.Method ofMethod = Map.class.getMethod("of", Object[].class);
+                @SuppressWarnings("unchecked")
+                Map<K, V> result = (Map<K, V>) ofMethod.invoke(null, (Object) keyValuePairs);
+                return result;
+            } catch (Exception e) {
+                return createMapFallback(keyValuePairs);
+            }
+        } else {
+            return createMapFallback(keyValuePairs);
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private static <K, V> Map<K, V> createMapFallback(Object... keyValuePairs) {
+        Map<K, V> map = new LinkedHashMap<K, V>();
+        for (int i = 0; i < keyValuePairs.length; i += 2) {
+            map.put((K) keyValuePairs[i], (V) keyValuePairs[i + 1]);
+        }
+        return Collections.unmodifiableMap(map);
+    }
+    
+    private static String formatString(String format, Object... args) {
+        if (JavaVersionDetector.isJava15OrHigher()) {
+            try {
+                java.lang.reflect.Method formattedMethod = String.class.getMethod("formatted", Object[].class);
+                return (String) formattedMethod.invoke(format, (Object) args);
+            } catch (Exception e) {
+                return String.format(format, args);
+            }
+        } else {
+            return String.format(format, args);
+        }
     }
     
     /**
@@ -161,7 +254,7 @@ public final class Messages extends Request {
     public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn, MessageDirection direction, boolean deliveryStatusEnable) {
         logger.debug("Getting message list with delivery status: {}", deliveryStatusEnable);
         
-        var urlParameters = new LinkedHashMap<String, Serializable>();
+        LinkedHashMap<String, Serializable> urlParameters = new LinkedHashMap<String, Serializable>();
         ApiResponse<List<MessageJson>> response;
         List<MessageJson> messageResponse;
 
@@ -181,7 +274,7 @@ public final class Messages extends Request {
             urlParameters.put("delivery_status_enable", deliveryStatusEnable);
 
         try {
-            var rawResponse = doRequest("messages", "get", urlParameters, null, true);
+            ApiResponse<?> rawResponse = doRequest("messages", "get", urlParameters, null, true);
             response = new ApiResponse<List<MessageJson>>();
             
             // Copy response metadata
@@ -191,7 +284,7 @@ public final class Messages extends Request {
             response.setRawResponse(rawResponse.getRawResponse());
             
             if (rawResponse.isOk()) {
-                var messageList = JsonObjectCollection.fromJson(
+                List<MessageJson> messageList = JsonObjectCollection.fromJson(
                         rawResponse.getRawResponse(), 
                         new TypeReference<List<MessageJson>>() {}
                 );
@@ -212,7 +305,7 @@ public final class Messages extends Request {
     public ApiResponse<List<MessageJson>> getList(MessageQuery query) {
         logger.debug("Getting message list with query: {}", query);
         
-        var urlParameters = new LinkedHashMap<String, Serializable>();
+        LinkedHashMap<String, Serializable> urlParameters = new LinkedHashMap<String, Serializable>();
         
         if (query.startDate() != null && query.endDate() != null) {
             urlParameters.put("start_date", query.startDate().format(DATE_TIME_FORMATTER));
@@ -230,8 +323,8 @@ public final class Messages extends Request {
             urlParameters.put("delivery_status_enable", query.deliveryStatusEnabled());
 
         try {
-            var rawResponse = doRequest("messages", "get", urlParameters, null, true);
-            var response = new ApiResponse<List<MessageJson>>();
+            ApiResponse<?> rawResponse = doRequest("messages", "get", urlParameters, null, true);
+            ApiResponse<List<MessageJson>> response = new ApiResponse<List<MessageJson>>();
             
             // Copy response metadata
             response.setHttpCode(rawResponse.getHttpCode());
@@ -240,7 +333,7 @@ public final class Messages extends Request {
             response.setRawResponse(rawResponse.getRawResponse());
             
             if (rawResponse.isOk()) {
-                var messageList = JsonObjectCollection.fromJson(
+                List<MessageJson> messageList = JsonObjectCollection.fromJson(
                         rawResponse.getRawResponse(), 
                         new TypeReference<List<MessageJson>>() {}
                 );
@@ -293,11 +386,11 @@ public final class Messages extends Request {
     public ApiResponse<MessageJson> sendToContact(SendMessageRequest request) {
         logger.debug("Sending message to contact: {}", request.msisdn().orElse("unknown"));
         
-        if (request.msisdn().isEmpty()) {
+        if (!request.msisdn().isPresent()) {
             throw new IllegalArgumentException("MSISDN is required for contact messages");
         }
         
-        var params = new LinkedHashMap<String, Serializable>();
+        LinkedHashMap<String, Serializable> params = new LinkedHashMap<String, Serializable>();
         params.put("msisdn", request.msisdn().get());
         params.put("message", request.message());
         
@@ -313,11 +406,11 @@ public final class Messages extends Request {
     public ApiResponse<MessageJson> sendToGroups(SendMessageRequest request) {
         logger.debug("Sending message to groups: {}", Arrays.toString(request.tagNames().orElse(new String[0])));
         
-        if (request.tagNames().isEmpty()) {
+        if (!request.tagNames().isPresent()) {
             throw new IllegalArgumentException("Tag names are required for group messages");
         }
         
-        var params = new LinkedHashMap<String, Serializable>();
+        LinkedHashMap<String, Serializable> params = new LinkedHashMap<String, Serializable>();
         params.put("tags", request.tagNames().get());
         params.put("message", request.message());
         
@@ -348,20 +441,19 @@ public final class Messages extends Request {
     public ApiResponse<List<MessageRecipientsJson>> getMessageRecipients(int messageId, int page, int limit) {
         logger.debug("Getting message recipients for messageId: {}, page: {}, limit: {}", messageId, page, limit);
         
-        var validatedPage = Math.max(1, page);
-        var validatedLimit = Math.clamp(limit, 1, 1000);
+        int validatedPage = Math.max(1, page);
+        int validatedLimit = clamp(limit, 1, 1000);
         
-        var urlParams = Map.of(
-                "message_id", messageId,
-                "page", validatedPage,
-                "limit", validatedLimit
-        );
+        LinkedHashMap<String, Serializable> urlParams = new LinkedHashMap<String, Serializable>();
+        urlParams.put("message_id", messageId);
+        urlParams.put("page", validatedPage);
+        urlParams.put("limit", validatedLimit);
         
         try {
-            var rawResponse = doRequest("messages/%s/recipients".formatted(messageId), "get", 
-                                      new LinkedHashMap<>(urlParams), null, true);
+            ApiResponse<?> rawResponse = doRequest(formatString("messages/%s/recipients", messageId), "get", 
+                                      urlParams, null, true);
             
-            var response = new ApiResponse<List<MessageRecipientsJson>>();
+            ApiResponse<List<MessageRecipientsJson>> response = new ApiResponse<List<MessageRecipientsJson>>();
             
             // Copy response metadata - USAR getHttpCode() NO getStatus()
             response.setHttpCode(rawResponse.getHttpCode());
@@ -370,7 +462,7 @@ public final class Messages extends Request {
             response.setRawResponse(rawResponse.getRawResponse());
             
             if (rawResponse.isOk()) {
-                var recipients = JsonObjectCollection.fromJson(
+                List<MessageRecipientsJson> recipients = JsonObjectCollection.fromJson(
                         rawResponse.getRawResponse(), 
                         new TypeReference<List<MessageRecipientsJson>>() {}
                 );
@@ -388,8 +480,8 @@ public final class Messages extends Request {
     @SuppressWarnings("unchecked")
     private ApiResponse<MessageJson> sendMessage(String endpoint, Map<String, Serializable> params) {
         try {
-            var rawResponse = doRequest(endpoint, "post", null, params, false);
-            var response = new ApiResponse<MessageJson>();
+            ApiResponse<?> rawResponse = doRequest(endpoint, "post", null, params, false);
+            ApiResponse<MessageJson> response = new ApiResponse<MessageJson>();
             
             // Copy response metadata - USAR getHttpCode() NO getStatus()
             response.setHttpCode(rawResponse.getHttpCode());
@@ -398,7 +490,7 @@ public final class Messages extends Request {
             response.setRawResponse(rawResponse.getRawResponse());
             
             if (rawResponse.isOk()) {
-                var messageResponse = MessageJson.fromJson(rawResponse.getRawResponse());
+                MessageJson messageResponse = MessageJson.fromJson(rawResponse.getRawResponse());
                 response.setResponse(messageResponse);
                 logger.debug("Successfully sent message");
             }
@@ -410,7 +502,7 @@ public final class Messages extends Request {
     }
     
     private Map<String, Serializable> buildQueryParams(MessageQuery query) {
-        var params = new LinkedHashMap<String, Serializable>();
+        LinkedHashMap<String, Serializable> params = new LinkedHashMap<String, Serializable>();
         
         Optional.ofNullable(query.startDate())
                 .ifPresent(date -> params.put("start_date", DATE_TIME_FORMATTER.format(date)));
@@ -422,7 +514,7 @@ public final class Messages extends Request {
         if (query.limit() > 0) params.put("limit", query.limit());
         
         Optional.ofNullable(query.msisdn())
-                .filter(msisdn -> !msisdn.isBlank())
+                .filter(msisdn -> !isBlank(msisdn))
                 .ifPresent(msisdn -> params.put("msisdn", msisdn));
         
         Optional.ofNullable(query.direction())
@@ -445,7 +537,7 @@ public final class Messages extends Request {
     }
     
     private <T> ApiResponse<T> createErrorResponse(String message) {
-        var response = new ApiResponse<T>();
+        ApiResponse<T> response = new ApiResponse<T>();
         response.setErrorCode(-1);
         response.setErrorDescription(message);
         return response;

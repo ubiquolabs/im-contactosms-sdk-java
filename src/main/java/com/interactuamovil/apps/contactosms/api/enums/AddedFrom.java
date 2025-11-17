@@ -54,32 +54,55 @@ public enum AddedFrom {
      * Check if this source is automated
      */
     public boolean isAutomated() {
-        return switch (this) {
-            case FILE_UPLOAD, API, IM_REACH_NOTIFICATION_API -> true;
-            case WEB_FORM, SUBSCRIPTION_REQUEST, SMS -> false;
-        };
+        switch (this) {
+            case FILE_UPLOAD:
+            case API:
+            case IM_REACH_NOTIFICATION_API:
+                return true;
+            case WEB_FORM:
+            case SUBSCRIPTION_REQUEST:
+            case SMS:
+                return false;
+            default:
+                return false;
+        }
     }
     
     /**
      * Check if this source is user-initiated
      */
     public boolean isUserInitiated() {
-        return switch (this) {
-            case WEB_FORM, SUBSCRIPTION_REQUEST, SMS -> true;
-            case FILE_UPLOAD, API, IM_REACH_NOTIFICATION_API -> false;
-        };
+        switch (this) {
+            case WEB_FORM:
+            case SUBSCRIPTION_REQUEST:
+            case SMS:
+                return true;
+            case FILE_UPLOAD:
+            case API:
+            case IM_REACH_NOTIFICATION_API:
+                return false;
+            default:
+                return false;
+        }
     }
     
     /**
      * Get the trust level for this source
      */
     public TrustLevel getTrustLevel() {
-        return switch (this) {
-            case WEB_FORM, SUBSCRIPTION_REQUEST -> TrustLevel.HIGH;
-            case SMS -> TrustLevel.MEDIUM;
-            case API, IM_REACH_NOTIFICATION_API -> TrustLevel.MEDIUM;
-            case FILE_UPLOAD -> TrustLevel.LOW;
-        };
+        switch (this) {
+            case WEB_FORM:
+            case SUBSCRIPTION_REQUEST:
+                return TrustLevel.HIGH;
+            case SMS:
+            case API:
+            case IM_REACH_NOTIFICATION_API:
+                return TrustLevel.MEDIUM;
+            case FILE_UPLOAD:
+                return TrustLevel.LOW;
+            default:
+                return TrustLevel.LOW;
+        }
     }
     
     /**

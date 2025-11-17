@@ -8,19 +8,17 @@ import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageJson
 import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageRecipientsJson;
 import com.interactuamovil.apps.contactosms.api.enums.MessageDirection;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
+import com.interactuamovil.apps.contactosms.api.utils.TestProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,8 +26,6 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Modern unit tests for Messages class using JUnit 5
@@ -43,19 +39,15 @@ import static org.mockito.Mockito.*;
  * - Nested test classes
  * - Modern record-based testing
  */
-@ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DisplayName("Messages API - Modern Tests")
 class MessagesTest {
     
-    private static final String TEST_API_KEY = "api_key";
-    private static final String TEST_SECRET_KEY = "api_secret_key";
-    private static final String TEST_API_URI = "api_url";
-    private static final String TEST_MSISDN = "50212345678";
+    private static final String TEST_API_KEY = TestProperties.getApiKey();
+    private static final String TEST_SECRET_KEY = TestProperties.getApiSecretKey();
+    private static final String TEST_API_URI = TestProperties.getApiUrl();
+    private static final String TEST_MSISDN = TestProperties.getTestMsisdn();
     private static final String TEST_MESSAGE = "¡Test message con caracteres especiales! ¿Se ven correctamente?";
-    
-    @Mock
-    private Messages messages;
     
     private Messages realMessages;
     
@@ -72,11 +64,11 @@ class MessagesTest {
         @DisplayName("Should create message query with date range")
         void shouldCreateMessageQueryWithDateRange() {
             // Given
-            var startDate = LocalDateTime.now().minusDays(7);
-            var endDate = LocalDateTime.now();
+            LocalDateTime startDate = LocalDateTime.now().minusDays(7);
+            LocalDateTime endDate = LocalDateTime.now();
             
             // When
-            var query = Messages.MessageQuery.of(startDate, endDate);
+            Messages.MessageQuery query = Messages.MessageQuery.of(startDate, endDate);
             
             // Then
             assertThat(query.startDate()).isEqualTo(startDate);
@@ -91,11 +83,11 @@ class MessagesTest {
         @DisplayName("Should create message query with custom parameters")
         void shouldCreateMessageQueryWithCustomParameters() {
             // Given
-            var startDate = LocalDateTime.now().minusDays(7);
-            var endDate = LocalDateTime.now();
+            LocalDateTime startDate = LocalDateTime.now().minusDays(7);
+            LocalDateTime endDate = LocalDateTime.now();
             
             // When
-            var query = new Messages.MessageQuery(
+            Messages.MessageQuery query = new Messages.MessageQuery(
                     startDate, endDate, 10, 100, TEST_MSISDN, MessageDirection.MO, false
             );
             
@@ -112,7 +104,7 @@ class MessagesTest {
         @DisplayName("Should validate and correct negative values")
         void shouldValidateAndCorrectNegativeValues() {
             // When
-            var query = new Messages.MessageQuery(
+            Messages.MessageQuery query = new Messages.MessageQuery(
                     null, null, -5, -10, null, null, false
             );
             
@@ -125,7 +117,7 @@ class MessagesTest {
         @DisplayName("Should limit maximum query limit")
         void shouldLimitMaximumQueryLimit() {
             // When
-            var query = new Messages.MessageQuery(
+            Messages.MessageQuery query = new Messages.MessageQuery(
                     null, null, 0, 2000, null, null, false
             );
             
@@ -142,13 +134,13 @@ class MessagesTest {
         @DisplayName("Should create send message request for contact")
         void shouldCreateSendMessageRequestForContact() {
             // When
-            var request = Messages.SendMessageRequest.toContact(TEST_MESSAGE, TEST_MSISDN);
+            Messages.SendMessageRequest request = Messages.SendMessageRequest.toContact(TEST_MESSAGE, TEST_MSISDN);
             
             // Then
             assertThat(request.message()).isEqualTo(TEST_MESSAGE);
             assertThat(request.msisdn()).hasValue(TEST_MSISDN);
             assertThat(request.tagNames()).isEmpty();
-            assertThat(request.messageId()).isNull();
+            assertThat(request.messageId()).isNotNull(); // messageId is auto-generated by toContact()
         }
         
         @Test
@@ -158,7 +150,7 @@ class MessagesTest {
             String[] tagNames = {"tag1", "tag2"};
             
             // When
-            var request = Messages.SendMessageRequest.toGroups(TEST_MESSAGE, tagNames);
+            Messages.SendMessageRequest request = Messages.SendMessageRequest.toGroups(TEST_MESSAGE, tagNames);
             
             // Then
             assertThat(request.message()).isEqualTo(TEST_MESSAGE);
@@ -199,13 +191,13 @@ class MessagesTest {
         @DisplayName("Should get message list with query")
         void shouldGetMessageListWithQuery() {
             // Given
-            var query = Messages.MessageQuery.of(
+            Messages.MessageQuery query = Messages.MessageQuery.of(
                     LocalDateTime.now().minusDays(7), 
                     LocalDateTime.now()
             );
             
             // When
-            var response = realMessages.getList(query);
+            ApiResponse<List<MessageJson>> response = realMessages.getList(query);
             
             // Then
             assertThat(response).isNotNull();
@@ -216,11 +208,11 @@ class MessagesTest {
         @DisplayName("Should get message list with LocalDateTime parameters")
         void shouldGetMessageListWithLocalDateTimeParameters() {
             // Given
-            var startDate = LocalDateTime.now().minusDays(7);
-            var endDate = LocalDateTime.now();
+            LocalDateTime startDate = LocalDateTime.now().minusDays(7);
+            LocalDateTime endDate = LocalDateTime.now();
             
             // When
-            var response = realMessages.getList(startDate, endDate, 0, 50, TEST_MSISDN);
+            ApiResponse<List<MessageJson>> response = realMessages.getList(startDate, endDate, 0, 50, TEST_MSISDN);
             
             // Then
             assertThat(response).isNotNull();
@@ -230,10 +222,10 @@ class MessagesTest {
         @DisplayName("Should send message to contact")
         void shouldSendMessageToContact() {
             // Given
-            var request = Messages.SendMessageRequest.toContact(TEST_MESSAGE, TEST_MSISDN);
+            Messages.SendMessageRequest request = Messages.SendMessageRequest.toContact(TEST_MESSAGE, TEST_MSISDN);
             
             // When
-            var response = realMessages.sendToContact(request);
+            ApiResponse<MessageJson> response = realMessages.sendToContact(request);
             
             // Then
             assertThat(response).isNotNull();
@@ -243,10 +235,10 @@ class MessagesTest {
         @DisplayName("Should send message to groups")
         void shouldSendMessageToGroups() {
             // Given
-            var request = Messages.SendMessageRequest.toGroups(TEST_MESSAGE, new String[]{"tag1", "tag2"});
+            Messages.SendMessageRequest request = Messages.SendMessageRequest.toGroups(TEST_MESSAGE, new String[]{"tag1", "tag2"});
             
             // When
-            var response = realMessages.sendToGroups(request);
+            ApiResponse<MessageJson> response = realMessages.sendToGroups(request);
             
             // Then
             assertThat(response).isNotNull();
@@ -256,7 +248,7 @@ class MessagesTest {
         @DisplayName("Should validate send to contact request")
         void shouldValidateSendToContactRequest() {
             // Given
-            var request = Messages.SendMessageRequest.toGroups(TEST_MESSAGE, new String[]{"tag1"});
+            Messages.SendMessageRequest request = Messages.SendMessageRequest.toGroups(TEST_MESSAGE, new String[]{"tag1"});
             
             // When/Then
             assertThatThrownBy(() -> realMessages.sendToContact(request))
@@ -268,7 +260,7 @@ class MessagesTest {
         @DisplayName("Should validate send to groups request")
         void shouldValidateSendToGroupsRequest() {
             // Given
-            var request = Messages.SendMessageRequest.toContact(TEST_MESSAGE, TEST_MSISDN);
+            Messages.SendMessageRequest request = Messages.SendMessageRequest.toContact(TEST_MESSAGE, TEST_MSISDN);
             
             // When/Then
             assertThatThrownBy(() -> realMessages.sendToGroups(request))
@@ -285,7 +277,7 @@ class MessagesTest {
             int page = 1;
             
             // When
-            var response = realMessages.getMessageRecipients(messageId, page, limit);
+            ApiResponse<List<MessageRecipientsJson>> response = realMessages.getMessageRecipients(messageId, page, limit);
             
             // Then
             assertThat(response).isNotNull();
@@ -298,7 +290,7 @@ class MessagesTest {
             int messageId = 123;
             
             // When
-            var response = realMessages.getMessageRecipients(messageId, -1, 2000);
+            ApiResponse<List<MessageRecipientsJson>> response = realMessages.getMessageRecipients(messageId, -1, 2000);
             
             // Then
             assertThat(response).isNotNull();
@@ -316,7 +308,7 @@ class MessagesTest {
         @DisplayName("Should execute async getList operation")
         void shouldExecuteAsyncGetListOperation() {
             // Given
-            var query = Messages.MessageQuery.of(
+            Messages.MessageQuery query = Messages.MessageQuery.of(
                     LocalDateTime.now().minusDays(7), 
                     LocalDateTime.now()
             );
@@ -328,7 +320,7 @@ class MessagesTest {
             // Then
             assertThat(future).isNotNull();
             assertThatNoException().isThrownBy(() -> {
-                var response = future.get();
+                ApiResponse<List<MessageJson>> response = future.get();
                 assertThat(response).isNotNull();
             });
         }
@@ -337,7 +329,7 @@ class MessagesTest {
         @DisplayName("Should execute async send to contact operation")
         void shouldExecuteAsyncSendToContactOperation() {
             // Given
-            var request = Messages.SendMessageRequest.toContact(TEST_MESSAGE, TEST_MSISDN);
+            Messages.SendMessageRequest request = Messages.SendMessageRequest.toContact(TEST_MESSAGE, TEST_MSISDN);
             
             // When
             CompletableFuture<ApiResponse<MessageJson>> future = 
@@ -346,7 +338,7 @@ class MessagesTest {
             // Then
             assertThat(future).isNotNull();
             assertThatNoException().isThrownBy(() -> {
-                var response = future.get();
+                ApiResponse<MessageJson> response = future.get();
                 assertThat(response).isNotNull();
             });
         }
@@ -355,7 +347,7 @@ class MessagesTest {
         @DisplayName("Should execute async send to groups operation")
         void shouldExecuteAsyncSendToGroupsOperation() {
             // Given
-            var request = Messages.SendMessageRequest.toGroups(TEST_MESSAGE, new String[]{"tag1"});
+            Messages.SendMessageRequest request = Messages.SendMessageRequest.toGroups(TEST_MESSAGE, new String[]{"tag1"});
             
             // When
             CompletableFuture<ApiResponse<MessageJson>> future = 
@@ -364,7 +356,7 @@ class MessagesTest {
             // Then
             assertThat(future).isNotNull();
             assertThatNoException().isThrownBy(() -> {
-                var response = future.get();
+                ApiResponse<MessageJson> response = future.get();
                 assertThat(response).isNotNull();
             });
         }
@@ -374,7 +366,7 @@ class MessagesTest {
     @DisplayName("Should create messages instance with valid parameters")
     void shouldCreateMessagesInstanceWithValidParameters() {
         // When
-        var messages = new Messages(TEST_API_KEY, TEST_SECRET_KEY, TEST_API_URI);
+        Messages messages = new Messages(TEST_API_KEY, TEST_SECRET_KEY, TEST_API_URI);
         
         // Then
         assertThat(messages).isNotNull();

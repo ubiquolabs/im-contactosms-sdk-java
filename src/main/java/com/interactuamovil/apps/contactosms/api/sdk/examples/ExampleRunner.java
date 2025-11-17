@@ -9,20 +9,38 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 public final class ExampleRunner {
 
-    private static final List<String> SUPPORTED = List.of(
-        "accounts",
-        "contacts",
-        "tags",
-        "messages",
-        "messages-delivery-status",
-        "modern-messages",
-        "shortlinks"
-    );
+    private static final List<String> SUPPORTED = createSupportedList();
+    
+    private static List<String> createSupportedList() {
+        if (com.interactuamovil.apps.contactosms.api.utils.JavaVersionDetector.isJava9OrHigher()) {
+            try {
+                java.lang.reflect.Method ofMethod = java.util.List.class.getMethod("of", Object[].class);
+                @SuppressWarnings("unchecked")
+                List<String> result = (List<String>) ofMethod.invoke(null, (Object) new Object[]{
+                    "accounts", "contacts", "tags", "messages", "messages-delivery-status", 
+                    "modern-messages", "shortlinks"
+                });
+                return result;
+            } catch (Exception e) {
+                return createSupportedListFallback();
+            }
+        } else {
+            return createSupportedListFallback();
+        }
+    }
+    
+    private static List<String> createSupportedListFallback() {
+        return Collections.unmodifiableList(Arrays.asList(
+            "accounts", "contacts", "tags", "messages", "messages-delivery-status", 
+            "modern-messages", "shortlinks"
+        ));
+    }
 
     private ExampleRunner() {
     }

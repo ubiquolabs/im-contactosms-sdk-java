@@ -3,6 +3,7 @@ package com.interactuamovil.apps.contactosms.api.sdk.examples;
 import com.interactuamovil.apps.contactosms.api.client.rest.shortlinks.ShortlinkJsonObject;
 import com.interactuamovil.apps.contactosms.api.sdk.Shortlinks;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
+import com.interactuamovil.apps.contactosms.api.utils.JavaVersionDetector;
 import org.apache.commons.configuration2.Configuration;
 
 import java.io.IOException;
@@ -90,7 +91,7 @@ public class ShortlinksExample extends BaseExample {
         
         ApiResponse<ShortlinkJsonObject> response = shortlinksApi.create(longUrlValue, nameValue, aliasValue, statusValue);
         
-        if (response.isOk()) {
+        if (response.isOk() && response.getResponse() != null) {
             ShortlinkJsonObject shortlink = response.getResponse();
             System.out.println("Success! Created shortlink:");
             System.out.println("  ID: " + (shortlink.getUrlId() != null ? shortlink.getUrlId() : shortlink.getId()));
@@ -100,8 +101,13 @@ public class ShortlinksExample extends BaseExample {
             System.out.println("  Long URL: " + shortlink.getLongUrl());
             System.out.println("  Status: " + shortlink.getStatus());
         } else {
-            System.err.println("Error creating shortlink: " + response.getErrorDescription());
-            System.err.println("Error code: " + response.getErrorCode());
+            System.err.println("Error creating shortlink: " + (response.getErrorDescription() != null ? response.getErrorDescription() : "Unknown error"));
+            if (response.getErrorCode() != null) {
+                System.err.println("Error code: " + response.getErrorCode());
+            }
+            if (response.getHttpCode() > 0) {
+                System.err.println("HTTP Code: " + response.getHttpCode());
+            }
         }
         System.out.println();
     }
@@ -131,7 +137,7 @@ public class ShortlinksExample extends BaseExample {
         System.out.println("3. Testing Get Shortlink by ID");
         System.out.println("-------------------------------");
 
-        if (idOverride != null && !idOverride.isBlank()) {
+        if (idOverride != null && !isBlank(idOverride)) {
             ApiResponse<ShortlinkJsonObject> response = shortlinksApi.getById(idOverride);
             if (response.isOk()) {
                 printShortlink(response.getResponse());
@@ -281,18 +287,43 @@ public class ShortlinksExample extends BaseExample {
         return ShortlinkCommands.from(args);
     }
 
-    private record ShortlinkCommands(
-        String command,
-        String id,
-        String status,
-        String alias,
-        String longUrl,
-        String name,
-        String startDate,
-        String endDate,
-        Integer limit,
-        Integer offset
-    ) {
+    private static final class ShortlinkCommands {
+        private final String command;
+        private final String id;
+        private final String status;
+        private final String alias;
+        private final String longUrl;
+        private final String name;
+        private final String startDate;
+        private final String endDate;
+        private final Integer limit;
+        private final Integer offset;
+        
+        public ShortlinkCommands(String command, String id, String status, String alias, 
+                               String longUrl, String name, String startDate, String endDate, 
+                               Integer limit, Integer offset) {
+            this.command = command;
+            this.id = id;
+            this.status = status;
+            this.alias = alias;
+            this.longUrl = longUrl;
+            this.name = name;
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.limit = limit;
+            this.offset = offset;
+        }
+        
+        public String command() { return command; }
+        public String id() { return id; }
+        public String status() { return status; }
+        public String alias() { return alias; }
+        public String longUrl() { return longUrl; }
+        public String name() { return name; }
+        public String startDate() { return startDate; }
+        public String endDate() { return endDate; }
+        public Integer limit() { return limit; }
+        public Integer offset() { return offset; }
 
         static ShortlinkCommands defaultCommand() {
             return new ShortlinkCommands("default", null, null, null, null, null, null, null, 10, null);
@@ -382,8 +413,24 @@ public class ShortlinksExample extends BaseExample {
         }
     }
 
+    private static boolean isBlank(String str) {
+        if (str == null) {
+            return true;
+        }
+        if (JavaVersionDetector.isJava11OrHigher()) {
+            try {
+                java.lang.reflect.Method isBlankMethod = String.class.getMethod("isBlank");
+                return (Boolean) isBlankMethod.invoke(str);
+            } catch (Exception e) {
+                return str.trim().isEmpty();
+            }
+        } else {
+            return str.trim().isEmpty();
+        }
+    }
+    
     private void require(String value, String message) {
-        if (value == null || value.isBlank()) {
+        if (value == null || isBlank(value)) {
             throw new IllegalArgumentException(message);
         }
     }

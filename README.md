@@ -1,6 +1,6 @@
 # Java SMS API SDK v5.0.0
 
-A modern, feature-rich Java SDK for interacting with the SMS API service. Built with Java 21 and modern patterns, this SDK provides easy-to-use methods for managing contacts, sending messages, and handling tags with enhanced functionality and improved error handling.
+A modern, feature-rich Java SDK for interacting with the SMS API service. Built with support for both Java 8 and Java 21, this SDK provides easy-to-use methods for managing contacts, sending messages, and handling tags with enhanced functionality and improved error handling. The SDK automatically detects the Java runtime version and uses modern features when available.
 
 ## Features
 
@@ -34,8 +34,36 @@ Example error response:
 
 ## Requirements
 
-- Java 21 or higher
+- **Java 8 or Java 21** (both versions supported)
 - Maven 3.6+ or Gradle 7.0+
+
+### Java Version Support
+
+This SDK supports both **Java 8** and **Java 21**. The code is designed to compile and run on either version:
+
+- **Java 8**: Full compatibility with legacy systems
+- **Java 21**: Modern Java features with enhanced performance
+
+To switch between Java versions, modify the `pom.xml`:
+
+```xml
+<properties>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <maven.compiler.release>21</maven.compiler.release>
+</properties>
+```
+
+Or for Java 8:
+```xml
+<properties>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+    <maven.compiler.release>8</maven.compiler.release>
+</properties>
+```
+
+The SDK uses runtime detection to leverage modern Java features (Java 9+, 11+, 14+, 15+, 21+) when available, while maintaining compatibility with Java 8.
 
 ## Installation
 

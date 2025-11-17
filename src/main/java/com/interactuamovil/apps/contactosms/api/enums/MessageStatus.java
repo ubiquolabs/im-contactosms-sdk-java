@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -31,26 +33,15 @@ public enum MessageStatus {
     ERROR("ERROR", "Message delivery failed", StatusCategory.ERROR);
     
     /**
-     * Sealed interface for status categories
+     * Interface for status categories (Java 8 compatible)
      */
-    public sealed interface StatusCategory 
-            permits StatusCategory.PendingCategory, StatusCategory.ProcessingCategory, 
-                    StatusCategory.ReadyCategory, StatusCategory.SentCategory, 
-                    StatusCategory.DeliveredCategory, StatusCategory.ErrorCategory {
-        
-        record PendingCategory() implements StatusCategory {}
-        record ProcessingCategory() implements StatusCategory {}
-        record ReadyCategory() implements StatusCategory {}
-        record SentCategory() implements StatusCategory {}
-        record DeliveredCategory() implements StatusCategory {}
-        record ErrorCategory() implements StatusCategory {}
-        
-        StatusCategory PENDING = new PendingCategory();
-        StatusCategory PROCESSING = new ProcessingCategory();
-        StatusCategory READY = new ReadyCategory();
-        StatusCategory SENT = new SentCategory();
-        StatusCategory DELIVERED = new DeliveredCategory();
-        StatusCategory ERROR = new ErrorCategory();
+    public interface StatusCategory {
+        StatusCategory PENDING = new StatusCategory() {};
+        StatusCategory PROCESSING = new StatusCategory() {};
+        StatusCategory READY = new StatusCategory() {};
+        StatusCategory SENT = new StatusCategory() {};
+        StatusCategory DELIVERED = new StatusCategory() {};
+        StatusCategory ERROR = new StatusCategory() {};
     }
     
     private final String value;
@@ -80,30 +71,66 @@ public enum MessageStatus {
      * Check if message is in a final state
      */
     public boolean isFinal() {
-        return switch (this) {
-            case READ, REPLIED, FORWARDED, ERROR -> true;
-            case WAITING_UPLOAD, PENDING, PROCESSING, READY, SENT, UNREAD -> false;
-        };
+        switch (this) {
+            case READ:
+            case REPLIED:
+            case FORWARDED:
+            case ERROR:
+                return true;
+            case WAITING_UPLOAD:
+            case PENDING:
+            case PROCESSING:
+            case READY:
+            case SENT:
+            case UNREAD:
+                return false;
+            default:
+                return false;
+        }
     }
     
     /**
      * Check if message delivery was successful
      */
     public boolean isDelivered() {
-        return switch (this) {
-            case SENT, UNREAD, READ, REPLIED, FORWARDED -> true;
-            case WAITING_UPLOAD, PENDING, PROCESSING, READY, ERROR -> false;
-        };
+        switch (this) {
+            case SENT:
+            case UNREAD:
+            case READ:
+            case REPLIED:
+            case FORWARDED:
+                return true;
+            case WAITING_UPLOAD:
+            case PENDING:
+            case PROCESSING:
+            case READY:
+            case ERROR:
+                return false;
+            default:
+                return false;
+        }
     }
     
     /**
      * Check if message has been read by recipient
      */
     public boolean isRead() {
-        return switch (this) {
-            case READ, REPLIED, FORWARDED -> true;
-            case WAITING_UPLOAD, PENDING, PROCESSING, READY, SENT, UNREAD, ERROR -> false;
-        };
+        switch (this) {
+            case READ:
+            case REPLIED:
+            case FORWARDED:
+                return true;
+            case WAITING_UPLOAD:
+            case PENDING:
+            case PROCESSING:
+            case READY:
+            case SENT:
+            case UNREAD:
+            case ERROR:
+                return false;
+            default:
+                return false;
+        }
     }
     
     /**
@@ -117,16 +144,36 @@ public enum MessageStatus {
      * Get the next possible statuses in the workflow
      */
     public Set<MessageStatus> getNextPossibleStatuses() {
-        return switch (this) {
-            case WAITING_UPLOAD -> Set.of(PENDING, ERROR);
-            case PENDING -> Set.of(PROCESSING, ERROR);
-            case PROCESSING -> Set.of(READY, ERROR);
-            case READY -> Set.of(SENT, ERROR);
-            case SENT -> Set.of(UNREAD, ERROR);
-            case UNREAD -> Set.of(READ, ERROR);
-            case READ -> Set.of(REPLIED, FORWARDED);
-            case REPLIED, FORWARDED, ERROR -> Set.of(); // Final states
-        };
+        switch (this) {
+            case WAITING_UPLOAD:
+                return createSet(PENDING, ERROR);
+            case PENDING:
+                return createSet(PROCESSING, ERROR);
+            case PROCESSING:
+                return createSet(READY, ERROR);
+            case READY:
+                return createSet(SENT, ERROR);
+            case SENT:
+                return createSet(UNREAD, ERROR);
+            case UNREAD:
+                return createSet(READ, ERROR);
+            case READ:
+                return createSet(REPLIED, FORWARDED);
+            case REPLIED:
+            case FORWARDED:
+            case ERROR:
+                return Collections.emptySet();
+            default:
+                return Collections.emptySet();
+        }
+    }
+    
+    private static Set<MessageStatus> createSet(MessageStatus... statuses) {
+        Set<MessageStatus> set = new HashSet<MessageStatus>();
+        for (MessageStatus status : statuses) {
+            set.add(status);
+        }
+        return Collections.unmodifiableSet(set);
     }
     
     /**

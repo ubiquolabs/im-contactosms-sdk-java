@@ -210,7 +210,7 @@ public abstract class Request {
             logger.debug("❌ ERROR Response - Parsing error details...");
             ErrorJsonResponse errorJson = ErrorJsonResponse.fromJson(resultString.toString(), ErrorJsonResponse.class);
             response.setErrorCode(errorJson.getCode());
-            response.setErrorDescription(errorJson.getError());
+            response.setErrorDescription(errorJson.getErrorMessage());
         }
 
         return response;

@@ -29,7 +29,7 @@ public class MessagesDeliveryStatusExample extends BaseExample {
 
     @Override
     public void test() {
-        var messages = new Messages(getApiKey(), getApiSecretKey(), getApiUri());
+        Messages messages = new Messages(getApiKey(), getApiSecretKey(), getApiUri());
         
         // Example 1: Get messages WITHOUT delivery status
         runExample1(messages);
@@ -51,13 +51,13 @@ public class MessagesDeliveryStatusExample extends BaseExample {
     private void runExample1(Messages messages) {
         logger.info("=== Example 1: Messages WITHOUT delivery status ===");
         
-        var startDate = LocalDateTime.now().minusDays(7);
-        var endDate = LocalDateTime.now();
+        LocalDateTime startDate = LocalDateTime.now().minusDays(7);
+        LocalDateTime endDate = LocalDateTime.now();
         
-        var query = Messages.MessageQuery.of(startDate, endDate)
+        Messages.MessageQuery query = Messages.MessageQuery.of(startDate, endDate)
                 .withPagination(0, 10);
         
-        var response = messages.getList(query);
+        ApiResponse<List<MessageJson>> response = messages.getList(query);
         
         if (response.isOk() && response.getResponse() != null) {
             logger.info("Retrieved {} messages without delivery status", 
@@ -75,10 +75,10 @@ public class MessagesDeliveryStatusExample extends BaseExample {
     private void runExample2(Messages messages) {
         logger.info("=== Example 2: Messages WITH delivery status ===");
         
-        var startDate = LocalDateTime.now().minusDays(7);
-        var endDate = LocalDateTime.now();
+        LocalDateTime startDate = LocalDateTime.now().minusDays(7);
+        LocalDateTime endDate = LocalDateTime.now();
         
-        var response = messages.getListWithDeliveryStatus(startDate, endDate, 0, 10, "50212345678");
+        ApiResponse<List<MessageJson>> response = messages.getListWithDeliveryStatus(startDate, endDate, 0, 10, "50212345678");
         
         if (response.isOk() && response.getResponse() != null) {
             logger.info("Retrieved {} messages with delivery status", 
@@ -97,10 +97,10 @@ public class MessagesDeliveryStatusExample extends BaseExample {
     private void runExample3(Messages messages) {
         logger.info("=== Example 3: Messages with delivery status and specific filters ===");
         
-        var startDate = LocalDateTime.now().minusDays(7);
-        var endDate = LocalDateTime.now();
+        LocalDateTime startDate = LocalDateTime.now().minusDays(7);
+        LocalDateTime endDate = LocalDateTime.now();
         
-        var response = messages.getListWithDeliveryStatus(startDate, endDate, 0, 10, "50212345678", MessageDirection.MT);
+        ApiResponse<List<MessageJson>> response = messages.getListWithDeliveryStatus(startDate, endDate, 0, 10, "50212345678", MessageDirection.MT);
         
         if (response.isOk() && response.getResponse() != null) {
             logger.info("Retrieved {} messages with delivery status and specific filters", 
@@ -120,17 +120,17 @@ public class MessagesDeliveryStatusExample extends BaseExample {
     private void runExample4Async(Messages messages) {
         logger.info("=== Example 4: Async request with delivery status ===");
         
-        var startDate = LocalDateTime.now().minusDays(7);
-        var endDate = LocalDateTime.now();
+        LocalDateTime startDate = LocalDateTime.now().minusDays(7);
+        LocalDateTime endDate = LocalDateTime.now();
         
-        var query = Messages.MessageQuery.ofWithDeliveryStatus(startDate, endDate, 0, 10)
+        Messages.MessageQuery query = Messages.MessageQuery.ofWithDeliveryStatus(startDate, endDate, 0, 10)
                 .withMsisdn("50212345678")
                 .withDirection(MessageDirection.MT);
         
-        var futureResponse = messages.getListAsync(query);
+        java.util.concurrent.CompletableFuture<ApiResponse<List<MessageJson>>> futureResponse = messages.getListAsync(query);
         
         try {
-            var response = futureResponse.get();
+            ApiResponse<List<MessageJson>> response = futureResponse.get();
             if (response.isOk() && response.getResponse() != null) {
                 logger.info("Retrieved {} messages with delivery status", 
                            response.getResponse().size());
@@ -151,13 +151,13 @@ public class MessagesDeliveryStatusExample extends BaseExample {
     private void testDeliveryStatusByMsisdn(Messages messages) {
         logger.info("=== Test: Delivery status by MSISDN ===");
         
-        var startDate = LocalDateTime.now().minusDays(7);
-        var endDate = LocalDateTime.now();
+        LocalDateTime startDate = LocalDateTime.now().minusDays(7);
+        LocalDateTime endDate = LocalDateTime.now();
         
         Messages.MessageQuery query = Messages.MessageQuery.ofWithDeliveryStatus(startDate, endDate)
                 .withDirection(MessageDirection.MT);
 
-        var response = messages.getListWithDeliveryStatus(startDate, endDate, 0, 10, "50212345678", MessageDirection.MT);
+        ApiResponse<List<MessageJson>> response = messages.getListWithDeliveryStatus(startDate, endDate, 0, 10, "50212345678", MessageDirection.MT);
         
         if (response.isOk() && response.getResponse() != null) {
             logger.info("Found {} messages for MSISDN with delivery status", 
@@ -170,8 +170,8 @@ public class MessagesDeliveryStatusExample extends BaseExample {
     private void testDeliveryStatusList(Messages messages) {
         logger.info("=== Test: Delivery status list ===");
         
-        var startDate = LocalDateTime.now().minusDays(7);
-        var endDate = LocalDateTime.now();
+        LocalDateTime startDate = LocalDateTime.now().minusDays(7);
+        LocalDateTime endDate = LocalDateTime.now();
         
         ApiResponse<List<MessageJson>> response = messages.getListWithDeliveryStatus(startDate, endDate, 0, 10, null);
         
@@ -187,7 +187,7 @@ public class MessagesDeliveryStatusExample extends BaseExample {
                 .withDirection(MessageDirection.MT)
                 .withPagination(0, 10);
         
-        var response2 = messages.getList(query2);
+        ApiResponse<List<MessageJson>> response2 = messages.getList(query2);
         if (response2.isOk() && response2.getResponse() != null) {
             logger.info("Query builder approach returned {} messages", 
                        response2.getResponse().size());

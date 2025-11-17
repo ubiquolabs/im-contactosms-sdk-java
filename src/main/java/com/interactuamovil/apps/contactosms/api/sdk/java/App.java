@@ -27,22 +27,31 @@ public final class App {
         logger.info("Java Version: {}", System.getProperty("java.version"));
         logger.info("SDK Version: 4.2.3-SNAPSHOT");
         
-        // Modern Java 21 text block for welcome message
-        String welcomeMessage = """
-                ===================================
-                IM ContactoSMS SDK Java - v4.2.3
-                Modern Java 21 Implementation
-                ===================================
-                """;
+        String welcomeMessage = "===================================\n" +
+                "IM ContactoSMS SDK Java - v4.2.3\n" +
+                "Modern Java 21 Implementation\n" +
+                "===================================\n";
         
         System.out.println(welcomeMessage);
+        System.out.println("Starting IM ContactoSMS SDK Java Application");
+        System.out.println("Java Version: " + System.getProperty("java.version"));
+        System.out.println("SDK Version: 4.2.3-SNAPSHOT");
         
-        // Example of Java 21 pattern matching (when available)
-        String status = switch (args.length) {
-            case 0 -> "No arguments provided - running in default mode";
-            case 1 -> "Single argument: " + args[0];
-            default -> "Multiple arguments provided: " + String.join(", ", args);
-        };
+        String status;
+        switch (args.length) {
+            case 0:
+                status = "No arguments provided - running in default mode";
+                break;
+            case 1:
+                status = "Single argument: " + args[0];
+                break;
+            default:
+                status = "Multiple arguments provided: " + String.join(", ", args);
+                break;
+        }
+        
+        System.out.println("Application status: " + status);
+        System.out.println("IM ContactoSMS SDK Java Application initialized successfully");
         
         logger.info("Application status: {}", status);
         logger.info("IM ContactoSMS SDK Java Application initialized successfully");

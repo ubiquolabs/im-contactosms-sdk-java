@@ -4,14 +4,20 @@
  */
 package com.interactuamovil.apps.contactosms.api.utils;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  *
  * @author sergeiw
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ErrorJsonResponse extends JsonObject {
     
     private Integer code;
     private String error;
+    private String message;
+    private Boolean success;
 
     public ErrorJsonResponse() {
     }
@@ -24,8 +30,6 @@ public class ErrorJsonResponse extends JsonObject {
     public static ErrorJsonResponse create(Integer code, String error) {
         return new ErrorJsonResponse(code, error);
     }
-    
-    
     
     /**
      * @return the code
@@ -55,5 +59,45 @@ public class ErrorJsonResponse extends JsonObject {
         this.error = error;
     }
     
+    /**
+     * @return the message (alternative to error field)
+     */
+    public String getMessage() {
+        return message;
+    }
+
+    /**
+     * @param message the message to set
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
     
+    /**
+     * @return the success flag
+     */
+    public Boolean getSuccess() {
+        return success;
+    }
+
+    /**
+     * @param success the success to set
+     */
+    public void setSuccess(Boolean success) {
+        this.success = success;
+    }
+    
+    /**
+     * Gets the error message, checking both 'error' and 'message' fields
+     * @return the error message
+     */
+    public String getErrorMessage() {
+        if (error != null && !error.isEmpty()) {
+            return error;
+        }
+        if (message != null && !message.isEmpty()) {
+            return message;
+        }
+        return "Unknown error";
+    }
 }

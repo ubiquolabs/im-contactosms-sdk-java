@@ -3,6 +3,7 @@ package com.interactuamovil.apps.contactosms.api.sdk;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.interactuamovil.apps.contactosms.api.client.rest.shortlinks.ShortlinkJsonObject;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
+import com.interactuamovil.apps.contactosms.api.utils.JavaVersionDetector;
 import com.interactuamovil.apps.contactosms.api.utils.JsonObjectCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,37 @@ public class Shortlinks extends Request {
     public Shortlinks(String apiKey, String secretKey, String apiUri) {
         super(apiKey, secretKey, apiUri);
     }
+    
+    private static boolean isBlank(String str) {
+        if (str == null) {
+            return true;
+        }
+        if (JavaVersionDetector.isJava11OrHigher()) {
+            try {
+                java.lang.reflect.Method isBlankMethod = String.class.getMethod("isBlank");
+                return (Boolean) isBlankMethod.invoke(str);
+            } catch (Exception e) {
+                return str.trim().isEmpty();
+            }
+        } else {
+            return str.trim().isEmpty();
+        }
+    }
+    
+    private static <T> List<T> createList(T element) {
+        if (JavaVersionDetector.isJava9OrHigher()) {
+            try {
+                java.lang.reflect.Method ofMethod = java.util.List.class.getMethod("of", Object[].class);
+                @SuppressWarnings("unchecked")
+                List<T> result = (List<T>) ofMethod.invoke(null, (Object) new Object[]{element});
+                return result;
+            } catch (Exception e) {
+                return Collections.singletonList(element);
+            }
+        } else {
+            return Collections.singletonList(element);
+        }
+    }
 
     /**
      * Create a new shortlink
@@ -87,7 +119,7 @@ public class Shortlinks extends Request {
             response = doRequest("short_link", "post", null, bodyParams, false);
             if (response.isOk()) {
                 String raw = response.getRawResponse();
-                if (raw != null && !raw.isBlank()) {
+                if (raw != null && !isBlank(raw)) {
                     ShortlinkJsonObject shortlink = parseShortlink(raw);
                     if (shortlink != null) {
                         response.setResponse(shortlink);
@@ -200,12 +232,12 @@ public class Shortlinks extends Request {
                             );
                         } else {
                             ShortlinkJsonObject single = parseShortlink(rawResponse);
-                            shortlinkResponse = single != null ? List.of(single) : Collections.emptyList();
+                            shortlinkResponse = single != null ? createList(single) : Collections.emptyList();
                         }
                     } catch (Exception e) {
                         ShortlinkJsonObject single = parseShortlink(rawResponse);
                         if (single != null) {
-                            shortlinkResponse = List.of(single);
+                            shortlinkResponse = createList(single);
                         } else {
                             shortlinkResponse = JsonObjectCollection.fromJson(rawResponse, new TypeReference<List<ShortlinkJsonObject>>() {});
                         }
@@ -288,7 +320,7 @@ public class Shortlinks extends Request {
             response = doRequest(resource, "put", filters, body, true);
             if (response.isOk()) {
                 String raw = response.getRawResponse();
-                if (raw != null && !raw.isBlank()) {
+                if (raw != null && !isBlank(raw)) {
                     ShortlinkJsonObject shortlink = parseShortlink(raw);
                     if (shortlink != null) {
                         response.setResponse(shortlink);
@@ -336,7 +368,7 @@ public class Shortlinks extends Request {
 
     private ShortlinkJsonObject parseShortlink(String raw) {
         try {
-            if (raw == null || raw.isBlank()) {
+            if (raw == null || isBlank(raw)) {
                 return null;
             }
             if (raw.trim().startsWith("{") && raw.contains("\"message\"")) {
