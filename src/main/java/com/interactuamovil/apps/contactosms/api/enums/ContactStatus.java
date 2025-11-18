@@ -45,31 +45,52 @@ public enum ContactStatus {
      * Check if this status represents an active contact
      */
     public boolean isActive() {
-        return switch (this) {
-            case SUBSCRIBED, CONFIRMED -> true;
-            case PENDING, CANCELLED, INVITED -> false;
-        };
+        switch (this) {
+            case SUBSCRIBED:
+            case CONFIRMED:
+                return true;
+            case PENDING:
+            case CANCELLED:
+            case INVITED:
+                return false;
+            default:
+                return false;
+        }
     }
     
     /**
      * Check if this status allows message sending
      */
     public boolean canReceiveMessages() {
-        return switch (this) {
-            case SUBSCRIBED, CONFIRMED -> true;
-            case PENDING, CANCELLED, INVITED -> false;
-        };
+        switch (this) {
+            case SUBSCRIBED:
+            case CONFIRMED:
+                return true;
+            case PENDING:
+            case CANCELLED:
+            case INVITED:
+                return false;
+            default:
+                return false;
+        }
     }
     
     /**
      * Get the next logical status in the workflow
      */
     public Optional<ContactStatus> getNextStatus() {
-        return switch (this) {
-            case PENDING -> Optional.of(CONFIRMED);
-            case INVITED -> Optional.of(SUBSCRIBED);
-            case SUBSCRIBED, CONFIRMED, CANCELLED -> Optional.empty();
-        };
+        switch (this) {
+            case PENDING:
+                return Optional.of(CONFIRMED);
+            case INVITED:
+                return Optional.of(SUBSCRIBED);
+            case SUBSCRIBED:
+            case CONFIRMED:
+            case CANCELLED:
+                return Optional.empty();
+            default:
+                return Optional.empty();
+        }
     }
     
     /**

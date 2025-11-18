@@ -2,6 +2,7 @@ package com.interactuamovil.apps.contactosms.api.sdk;
 
 import com.interactuamovil.apps.contactosms.api.sdk.responses.AccountResponse;
 import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
+import com.interactuamovil.apps.contactosms.api.utils.TestProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,9 +19,9 @@ import static org.mockito.Mockito.when;
 @DisplayName("Accounts API Tests")
 class AccountsTest {
 
-    private static final String TEST_API_KEY = "test-api-key";
-    private static final String TEST_SECRET_KEY = "test-secret-key";
-    private static final String TEST_API_URI = "https://api.test.com/";
+    private static final String TEST_API_KEY = TestProperties.getApiKey();
+    private static final String TEST_SECRET_KEY = TestProperties.getApiSecretKey();
+    private static final String TEST_API_URI = TestProperties.getApiUrl();
 
     private Accounts accounts;
 

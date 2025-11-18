@@ -39,6 +39,11 @@ abstract class BaseExample {
     public abstract void test()
         throws IOException, InvalidKeyException, NoSuchAlgorithmException;
 
+    public void test(String... args)
+        throws IOException, InvalidKeyException, NoSuchAlgorithmException {
+        test();
+    }
+
     public Configuration getConfig() {
         return config;
     }

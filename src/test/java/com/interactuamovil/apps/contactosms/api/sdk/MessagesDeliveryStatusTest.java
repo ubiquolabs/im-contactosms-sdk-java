@@ -1,6 +1,9 @@
 package com.interactuamovil.apps.contactosms.api.sdk;
 
+import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageJson;
 import com.interactuamovil.apps.contactosms.api.enums.MessageDirection;
+import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
+import com.interactuamovil.apps.contactosms.api.utils.TestProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
@@ -18,9 +22,9 @@ import static org.assertj.core.api.Assertions.*;
 @DisplayName("Messages Delivery Status Tests")
 class MessagesDeliveryStatusTest {
     
-    private static final String TEST_API_KEY = "test-api-key";
-    private static final String TEST_SECRET_KEY = "test-secret-key";
-    private static final String TEST_API_URI = "https://api.test.com/";
+    private static final String TEST_API_KEY = TestProperties.getApiKey();
+    private static final String TEST_SECRET_KEY = TestProperties.getApiSecretKey();
+    private static final String TEST_API_URI = TestProperties.getApiUrl();
     
     private Messages messages;
     
@@ -33,11 +37,11 @@ class MessagesDeliveryStatusTest {
     @DisplayName("Should create message query with delivery status enabled")
     void shouldCreateMessageQueryWithDeliveryStatusEnabled() {
         // Given
-        var startDate = LocalDateTime.now().minusDays(7);
-        var endDate = LocalDateTime.now();
+        LocalDateTime startDate = LocalDateTime.now().minusDays(7);
+        LocalDateTime endDate = LocalDateTime.now();
         
         // When
-        var query = Messages.MessageQuery.ofWithDeliveryStatus(startDate, endDate);
+        Messages.MessageQuery query = Messages.MessageQuery.ofWithDeliveryStatus(startDate, endDate);
         
         // Then
         assertThat(query.deliveryStatusEnabled()).isTrue();
@@ -49,11 +53,11 @@ class MessagesDeliveryStatusTest {
     @DisplayName("Should create message query with delivery status disabled by default")
     void shouldCreateMessageQueryWithDeliveryStatusDisabledByDefault() {
         // Given
-        var startDate = LocalDateTime.now().minusDays(7);
-        var endDate = LocalDateTime.now();
+        LocalDateTime startDate = LocalDateTime.now().minusDays(7);
+        LocalDateTime endDate = LocalDateTime.now();
         
         // When
-        var query = Messages.MessageQuery.of(startDate, endDate);
+        Messages.MessageQuery query = Messages.MessageQuery.of(startDate, endDate);
         
         // Then
         assertThat(query.deliveryStatusEnabled()).isFalse();
@@ -65,14 +69,14 @@ class MessagesDeliveryStatusTest {
     @Disabled("This test times out when connecting to the test endpoint api.test.com")
     void shouldHandleDeliveryStatusParameterCorrectly(boolean deliveryStatusEnabled) {
         // Given
-        var startDate = LocalDateTime.now().minusDays(7);
-        var endDate = LocalDateTime.now();
-        var query = new Messages.MessageQuery(
+        LocalDateTime startDate = LocalDateTime.now().minusDays(7);
+        LocalDateTime endDate = LocalDateTime.now();
+        Messages.MessageQuery query = new Messages.MessageQuery(
                 startDate, endDate, 0, 50, null, MessageDirection.ALL, deliveryStatusEnabled
         );
         
         // When
-        var response = messages.getList(query);
+        ApiResponse<List<MessageJson>> response = messages.getList(query);
         
         // Then
         assertThat(response).isNotNull();
@@ -84,14 +88,14 @@ class MessagesDeliveryStatusTest {
     @DisplayName("Should toggle delivery status in existing query")
     void shouldToggleDeliveryStatusInExistingQuery() {
         // Given
-        var originalQuery = Messages.MessageQuery.of(
+        Messages.MessageQuery originalQuery = Messages.MessageQuery.of(
                 LocalDateTime.now().minusDays(7), 
                 LocalDateTime.now()
         );
         
         // When
-        var enabledQuery = originalQuery.withDeliveryStatus(true);
-        var disabledQuery = enabledQuery.withDeliveryStatus(false);
+        Messages.MessageQuery enabledQuery = originalQuery.withDeliveryStatus(true);
+        Messages.MessageQuery disabledQuery = enabledQuery.withDeliveryStatus(false);
         
         // Then
         assertThat(originalQuery.deliveryStatusEnabled()).isFalse();
@@ -104,13 +108,13 @@ class MessagesDeliveryStatusTest {
     @Disabled("This test times out when connecting to the test endpoint api.test.com")
     void shouldUseConvenienceMethodsWithDeliveryStatus() {
         // Given
-        var startDate = LocalDateTime.now().minusDays(7);
-        var endDate = LocalDateTime.now();
-        var msisdn = "50212345678";
+        LocalDateTime startDate = LocalDateTime.now().minusDays(7);
+        LocalDateTime endDate = LocalDateTime.now();
+        String msisdn = "50212345678";
         
         // When
-        var response1 = messages.getListWithDeliveryStatus(startDate, endDate, 0, 50, msisdn);
-        var response2 = messages.getListWithDeliveryStatus(startDate, endDate, 0, 50, msisdn, MessageDirection.MT);
+        ApiResponse<List<MessageJson>> response1 = messages.getListWithDeliveryStatus(startDate, endDate, 0, 50, msisdn);
+        ApiResponse<List<MessageJson>> response2 = messages.getListWithDeliveryStatus(startDate, endDate, 0, 50, msisdn, MessageDirection.MT);
         
         // Then
         assertThat(response1).isNotNull();

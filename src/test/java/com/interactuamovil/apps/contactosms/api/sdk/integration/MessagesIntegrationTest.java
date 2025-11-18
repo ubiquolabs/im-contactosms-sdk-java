@@ -1,13 +1,16 @@
 package com.interactuamovil.apps.contactosms.api.sdk.integration;
 
 import com.interactuamovil.apps.contactosms.api.sdk.Messages;
+import com.interactuamovil.apps.contactosms.api.client.rest.messages.MessageJson;
 import com.interactuamovil.apps.contactosms.api.enums.MessageDirection;
+import com.interactuamovil.apps.contactosms.api.utils.ApiResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -33,18 +36,18 @@ class MessagesIntegrationTest {
     @DisplayName("Should get messages with delivery status from real API")
     void shouldGetMessagesWithDeliveryStatusFromRealApi() {
         // Given
-        var startDate = LocalDateTime.now().minusDays(1);
-        var endDate = LocalDateTime.now();
+        LocalDateTime startDate = LocalDateTime.now().minusDays(1);
+        LocalDateTime endDate = LocalDateTime.now();
         
-        var queryWithoutDelivery = Messages.MessageQuery.of(startDate, endDate)
+        Messages.MessageQuery queryWithoutDelivery = Messages.MessageQuery.of(startDate, endDate)
                 .withPagination(0, 5);
         
-        var queryWithDelivery = Messages.MessageQuery.ofWithDeliveryStatus(startDate, endDate)
+        Messages.MessageQuery queryWithDelivery = Messages.MessageQuery.ofWithDeliveryStatus(startDate, endDate)
                 .withPagination(0, 5);
         
         // When
-        var responseWithoutDelivery = messages.getList(queryWithoutDelivery);
-        var responseWithDelivery = messages.getList(queryWithDelivery);
+        ApiResponse<List<MessageJson>> responseWithoutDelivery = messages.getList(queryWithoutDelivery);
+        ApiResponse<List<MessageJson>> responseWithDelivery = messages.getList(queryWithDelivery);
         
         // Then
         if (responseWithoutDelivery.isOk()) {
