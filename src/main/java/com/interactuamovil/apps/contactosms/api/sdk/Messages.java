@@ -218,7 +218,7 @@ public final class Messages extends Request {
      * @param start the offset of the results
      * @param limit the limit of the result list
      * @param msisdn The msisdn
-     * @param MessageDirection The messages direction
+     * @param direction The messages direction
      * @return The messages list queried
      */
     public ApiResponse<List<MessageJson>> getList(Date startDate, Date endDate, int start, int limit, String msisdn, MessageDirection direction) {
